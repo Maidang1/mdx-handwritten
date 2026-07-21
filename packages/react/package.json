@@ -1,0 +1,36 @@
+{
+  "name": "mdx-handwritten-react",
+  "version": "0.1.0",
+  "description": "Server-renderable React components for remark-mdx-handwritten",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist/index.js",
+    "dist/index.d.ts"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean --tsconfig tsconfig.build.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=18.2.0"
+  },
+  "devDependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/remark" },
+    { "path": "./packages/react" },
+    { "path": "./apps/docs" }
+  ]
+}

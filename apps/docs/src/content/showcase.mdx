@@ -1,0 +1,43 @@
+<div className="showcase-document hw-scope">
+
+<p className="showcase-kicker">RELEASE / 042</p>
+
+## Ship the context with the code
+
+:hw-text[Small human notes make technical documents easier to trust.]{tone="muted" size="lg" rotate="-1"}
+
+::hw-note[:hw-mark[Spec updated]{kind="underline" tone="success" strength="strong"} in the same commit :)]{appearance="line" tone="success" icon="check" density="compact"}
+
+<div className="showcase-divider" />
+
+### Authentication checklist
+
+The public reference is :hw-annotate[`AUTH-004`]{label="stable task ID" placement="block-start-inline-end" tone="info" mark="highlight" arrow="curved" shift-inline="1"}. It now covers email login and reset behavior.
+
+::hw-note[The implementation shipped before this paragraph was updated.]{appearance="tape" tone="warning" icon="warning" rotate="-1"}
+
+:::hw-brace[one release unit]{side="inline-end" align="center" tone="accent" rotate="-2" distance="normal"}
+
+- magic-link endpoint
+- retry and expiry rules
+- integration tests
+
+:::
+
+:::hw-margin[keep this near the decision]{side="inline-start" align="center" tone="muted" icon="arrow-toward" rotate="-2" distance="tight"}
+
+> The link expires after 15 minutes. A consumed link cannot be reused.
+
+:::
+
+:::hw-watermark[reviewed]{placement="block-end-inline-end" tone="success" size="display" weight="semibold" rotate="3" strength="faint"}
+
+The prose remains readable without CSS, JavaScript, SVG, or the handwriting font.
+
+:::
+
+<p className="showcase-cta">
+  :hw-link[Read the setup]{href="#setup" tone="accent" size="lg" rotate="-1" underline="strong" icon="arrow-forward"}
+</p>
+
+</div>

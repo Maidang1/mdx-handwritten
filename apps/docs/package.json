@@ -1,0 +1,26 @@
+{
+  "name": "@mdx-handwritten/docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fontsource/dm-mono": "^5.2.8",
+    "@fontsource-variable/manrope": "^5.2.8",
+    "mdx-handwritten-react": "*",
+    "mdx-handwritten-theme": "*",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@mdx-js/rollup": "^3.1.1",
+    "@vitejs/plugin-react": "^6.0.3",
+    "remark-directive": "^4.0.0",
+    "remark-mdx-handwritten": "*",
+    "vite": "^8.1.5"
+  }
+}

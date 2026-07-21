@@ -1,0 +1,39 @@
+{
+  "name": "remark-mdx-handwritten",
+  "version": "0.1.0",
+  "description": "Strict handwritten UI directives for MDX",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --sourcemap --clean --tsconfig tsconfig.build.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "mdx",
+    "remark",
+    "directive",
+    "handwritten"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "mdast-util-directive": "^3.1.0",
+    "mdast-util-mdx-jsx": "^3.2.0",
+    "unified": "^11.0.5",
+    "vfile": "^6.0.3"
+  },
+  "peerDependencies": {
+    "remark-directive": "^4.0.0"
+  }
+}
