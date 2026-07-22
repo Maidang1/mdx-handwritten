@@ -8,7 +8,7 @@ The contract is deliberately closed. A plan contains no coordinates, connector p
 
 ## Public Interface
 
-The pure Scene module exposes one synchronous entry point:
+The pure first-party Scene Module exposes one zero-configuration synchronous root entry point:
 
 ```ts
 type CreateScenePlanInput =
@@ -41,6 +41,8 @@ type ScenePlanResult =
 
 declare function createScenePlan(input: CreateScenePlanInput): ScenePlanResult
 ```
+
+The later [third-party Annotation recipe package contract](./third-party-annotation-recipe-packages-v1.md) adds a Configured Scene compiler whose instance exposes the same `createScenePlan` input and result contract. Unless explicitly limited to the root Interface, every finalization, validation, diagnostic, and fail-closed requirement in this document applies equally to that instance method.
 
 `candidateJson` is a string rather than an arbitrary JavaScript value. The implementation checks its byte size before parsing, accepts JSON data only, and rejects unknown fields. Both input variants enter the same normalizer, graph validator, canonical ordering step, and limit checker. Expected input errors do not throw, and no failure returns a partial plan.
 

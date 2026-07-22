@@ -35,15 +35,17 @@ There is no `mdx-handwritten-render` package in V1. Scene plan V1 is already the
 
 ### `mdx-handwritten-scene`
 
-The Scene Module owns the one public callable Interface defined by Scene plan V1:
+The Scene Module owns the zero-configuration root Interface defined by Scene plan V1:
 
 ```ts
 createScenePlan(input: CreateScenePlanInput): ScenePlanResult
 ```
 
-It privately owns source normalization and identity, built-in Annotation recipe selection, parsing, localization, Semantic correction application, reviewed-candidate decoding, graph validation, canonical ordering, limits, provenance, and deterministic diagnostics. It is synchronous, pure, in-process, side-effect-free, and independent of remark, React, DOM, CSS, files, networks, clocks, models, and runtime registries.
+It privately owns source normalization and identity, built-in Annotation recipe selection, parsing, localization, Semantic correction application, reviewed-candidate decoding, graph validation, canonical ordering, limits, provenance, and deterministic diagnostics. The root Interface and all core-owned responsibilities remain synchronous, pure, in-process, side-effect-free, and independent of remark, React, DOM, CSS, files, networks, clocks, models, and runtime registries.
 
-The Module exports its closed V1 plan, input, result, correction, and diagnostic types. It does not export parser fragments, normalizers, hashers, localization services, recipe registries, renderer settings, or dependency-injection ports.
+The explicit secondary export defined by [`third-party-annotation-recipe-packages-v1.md`](./third-party-annotation-recipe-packages-v1.md) adds `createSceneCompiler` as a second, recipe-specific capability. Every Configured Scene compiler contains the installed built-ins plus a frozen configuration snapshot of explicitly imported Recipe packages and materializes through the same finalizer and `ScenePlanResult`; its trusted package code is not covered by the core's side-effect-free guarantee. It never mutates or participates in lookup for the root Interface.
+
+The Module exports its closed V1 plan, input, result, correction, and diagnostic types plus the bounded secondary Recipe package protocol. It does not export parser fragments, normalizers, hashers, localization services, mutable recipe registries, renderer settings, or general-purpose dependency-injection ports.
 
 ### `remark-mdx-handwritten`
 
@@ -51,7 +53,7 @@ The remark Module is the author-source Adapter. It owns:
 
 - recognition and strict validation of the `hw-scene` container;
 - extraction of canonical source and parsed Semantic corrections;
-- calling `createScenePlan` during compilation;
+- calling an explicitly supplied Configured Scene compiler for every scene path, or root `createScenePlan` when none is supplied;
 - mapping Scene diagnostics to VFile strict or warning policy;
 - selecting `component`, `element`, or `strip` output;
 - optional component import generation and stable per-document IDs.
@@ -176,9 +178,6 @@ During migration from the task-explainer vertical slice:
 
 ## Deferred capabilities
 
-The built-in recipe and localization boundary is defined by `annotation-recipe-v1.md`: first-party recipes are private static modules and V1 has no public registry. The optional generation, review, privacy, storage, and stale-plan boundary is defined by `optional-ai-authoring-v1.md`. The build, SSR, CSS, font, client-runtime, and package limits are fixed by [`performance-budgets-v1.md`](./performance-budgets-v1.md). This package boundary intentionally does not decide:
+The built-in recipe and localization boundary is defined by [`annotation-recipe-v1.md`](./annotation-recipe-v1.md): first-party recipes are private static modules and V1 has no public registry. Explicit npm-only third-party distribution and trust are defined by [`third-party-annotation-recipe-packages-v1.md`](./third-party-annotation-recipe-packages-v1.md); that later capability adds Configured Scene compiler instances without mutating the root `createScenePlan` Interface or loading code in an Annotation renderer. The optional generation, review, privacy, storage, and stale-plan boundary is defined by [`optional-ai-authoring-v1.md`](./optional-ai-authoring-v1.md). The build, SSR, CSS, font, client-runtime, and package limits are fixed by [`performance-budgets-v1.md`](./performance-budgets-v1.md), and the canonical cross-renderer fixture and release matrix are fixed by [`release-validation-v1.md`](./release-validation-v1.md).
 
-- third-party Annotation recipe discovery and trust;
-- the canonical cross-renderer fixture and release matrix.
-
-Those are owned by their downstream roadmap tickets. V1 also rejects a public recipe registry, global singleton, renderer callbacks, parts/slot Interface, author-authored plan JSON, author layout controls, and browser-measured core layout.
+V1 still rejects a public mutable recipe registry, global singleton, renderer callbacks, parts/slot Interface, author-authored plan JSON, author layout controls, and browser-measured core layout.

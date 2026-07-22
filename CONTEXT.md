@@ -16,6 +16,14 @@ _Avoid_: Hand-built illustration, fixed layout
 A named convention that turns recognizable source content and an author's intent into an annotation scene. It supplies shared meanings and relationships so authors do not have to repeat them.
 _Avoid_: Template, visual preset
 
+**Recipe package**:
+An explicitly installed and imported npm package that supplies one or more third-party Annotation recipes to a Configured Scene compiler. Importing it is a build-time trust grant; it is never implicitly discovered or loaded by an Annotation renderer.
+_Avoid_: Plugin registry, remote recipe, sandboxed recipe
+
+**Configured Scene compiler**:
+A build-time Scene Module instance containing the installed first-party recipes plus an immutable snapshot of explicitly trusted Recipe package metadata and function references. Its shared finalizer materializes every Scene plan; fixing its configuration does not sandbox package code or freeze a function's closure state.
+_Avoid_: Global recipe registry, runtime plugin loader
+
 **Annotation renderer**:
 A framework or output-mode adapter that turns a valid Scene plan into source-first semantic content and an optional recipe-owned spatial enhancement without deriving new scene meaning.
 _Avoid_: Scene compiler, theme, layout engine

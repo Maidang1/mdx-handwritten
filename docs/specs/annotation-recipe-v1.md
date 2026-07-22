@@ -8,7 +8,7 @@ The three initial built-ins are `task-explainer`, `mdtask-terminal`, and `status
 
 ## Author Interface
 
-The only callable Scene Module Interface remains:
+The zero-configuration callable Scene Module Interface for built-in recipes remains:
 
 ```ts
 createScenePlan(input: CreateScenePlanInput): ScenePlanResult
@@ -241,4 +241,4 @@ Theme contract tests assert that CJK handwriting uses the CJK token while source
 
 V1 does not expose `BuiltInRecipeDefinitionV1`, the static table, message accessors, parser helpers, or a registration function. It does not discover npm packages, load dynamic code, accept third-party catalogs, negotiate package ranges, sandbox recipes, or grant a recipe renderer callbacks or DOM access.
 
-Issue #12 must define third-party packaging, trust, compatibility, and discovery as a separate explicit capability. It may consume the semantic lessons of this private contract, but it cannot turn the built-in table into an ambient mutable registry or weaken strict compilation for first-party recipes.
+Third-party distribution is a separate explicit capability defined by [`third-party-annotation-recipe-packages-v1.md`](./third-party-annotation-recipe-packages-v1.md). It reuses the semantic lessons of this private contract without exposing or mutating the built-in table: hosts explicitly import trusted npm Recipe packages into a Configured Scene compiler, while the root first-party Interface and its strict compilation behavior remain unchanged.
