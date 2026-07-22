@@ -1,6 +1,6 @@
 # MDX Handwritten
 
-An accessible, deterministic handwritten annotation language for MDX. It turns eight strict `hw-*` directives into semantic React components or plain HTML, then adds the handwritten look with CSS and decorative SVG only.
+An accessible, deterministic handwritten annotation language for MDX. It turns eight strict annotation gestures and recipe-driven annotation scenes into semantic React components or plain HTML, then adds the handwritten look with CSS and decorative SVG only.
 
 [Live playground](https://maidang1.github.io/mdx-handwritten/) · [Syntax reference](#syntax) · [Security model](#security)
 
@@ -12,6 +12,7 @@ Handwritten UI is useful for editorial emphasis, margin notes, code annotations,
 
 | Package | Responsibility |
 | --- | --- |
+| `mdx-handwritten-scene` | Pure, versioned scene-plan derivation from compact author input |
 | `remark-mdx-handwritten` | Validation and MDX/HTML/strip compilation |
 | `mdx-handwritten-react` | Server-safe React components and SVG decoration |
 | `mdx-handwritten-theme` | Tokens, self-hosted font, responsive and print CSS |
@@ -45,17 +46,35 @@ export const mdxOptions = {
 Inject the components through your framework's MDX component mechanism and import the theme once:
 
 ```tsx
-import { handwrittenComponents } from 'mdx-handwritten-react'
+import { mdxHandwrittenComponents } from 'mdx-handwritten-react'
 import 'mdx-handwritten-theme/styles.css'
 
-<MDXContent components={handwrittenComponents} />
+<MDXContent components={mdxHandwrittenComponents} />
 ```
 
 The React adapter has no hooks, context dependency, client directive, or browser measurement. It can render on the server and in React Server Components.
 
 ## Syntax
 
-The authoring language is deliberately fixed to eight directives.
+The eight annotation gestures remain a deliberately fixed language. Annotation
+recipes add higher-level automation without expanding that low-level surface.
+
+### Automated annotation scenes
+
+Choose a recipe and provide only the source readers should see. The
+`task-explainer` recipe recognizes the task state, stable ID, description, tags,
+priority, and custom fields, then generates the labels and relationships:
+
+```mdx
+:::hw-scene{recipe="task-explainer"}
+[ ] CLI-042 Add export command #cli !high @blocked_by:CLI-041
+Write task output as JSON for scripts and agents
+:::
+```
+
+The canonical source stays intact and comes first in the DOM. A complete text
+legend follows it, so narrow layouts, print, forced colors, and missing CSS do
+not depend on connector geometry.
 
 ### Inline text, link, mark, and annotation
 
@@ -109,7 +128,7 @@ Use a longer colon fence when containers are nested. A container cannot recursiv
 type OutputMode = 'component' | 'element' | 'strip'
 ```
 
-- `component` emits `HandText`, `HandLink`, `HandMark`, `HandAnnotate`, `HandNote`, `HandBrace`, `HandMargin`, and `HandWatermark` MDX JSX nodes.
+- `component` emits `HandScene` for automated scenes and preserves the existing `HandText`, `HandLink`, `HandMark`, `HandAnnotate`, `HandNote`, `HandBrace`, `HandMargin`, and `HandWatermark` mapping for gestures.
 - `element` emits semantic HTML data contracts for framework-free rendering and sanitization pipelines.
 - `strip` removes decoration while retaining readable content, links, captions, and annotation labels.
 

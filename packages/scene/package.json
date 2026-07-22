@@ -1,0 +1,26 @@
+{
+  "name": "mdx-handwritten-scene",
+  "version": "0.1.0",
+  "description": "Deterministic semantic Scene plans for MDX Handwritten",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --sourcemap --clean --tsconfig tsconfig.build.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.test.json"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

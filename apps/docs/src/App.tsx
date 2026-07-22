@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { handwrittenComponents } from 'mdx-handwritten-react'
+import { mdxHandwrittenComponents } from 'mdx-handwritten-react'
+import Reference from './content/reference.mdx'
 import Showcase from './content/showcase.mdx'
 import showcaseSource from './content/showcase.mdx?raw'
 
@@ -49,6 +50,7 @@ export function App() {
 
         <nav aria-label="Primary navigation">
           <a href="#showcase">Showcase</a>
+          <a href="#reference">Reference</a>
           <a href="#setup">Setup</a>
           <a className="github-link" href={repositoryUrl}>
             <GitHubIcon />
@@ -74,7 +76,7 @@ export function App() {
               <a className="secondary-action" href={repositoryUrl}>View source</a>
             </div>
             <ul className="hero-facts" aria-label="Project features">
-              <li><span aria-hidden="true">✓</span> 8 fixed directives</li>
+              <li><span aria-hidden="true">✓</span> 8 gestures + recipes</li>
               <li><span aria-hidden="true">✓</span> SSR friendly</li>
               <li><span aria-hidden="true">✓</span> Zero client runtime</li>
             </ul>
@@ -101,7 +103,7 @@ export function App() {
           <div className="section-heading">
             <div>
               <p className="overline">The complete language</p>
-              <h2 id="showcase-title">One MDX file. Eight useful gestures.</h2>
+              <h2 id="showcase-title">Eight gestures. One task can explain itself.</h2>
             </div>
             <p>
               Every example below is compiled from the source beside it using
@@ -116,7 +118,7 @@ export function App() {
                 <span className="panel-meta">responsive · semantic HTML</span>
               </div>
               <div className="preview-canvas">
-                <Showcase components={handwrittenComponents} />
+                <Showcase components={mdxHandwrittenComponents} />
               </div>
             </article>
 
@@ -132,14 +134,39 @@ export function App() {
           </div>
         </section>
 
+        <section className="reference-section" id="reference" aria-labelledby="reference-title">
+          <div className="reference-heading">
+            <div>
+              <p className="overline">Syntax reference</p>
+              <h2 id="reference-title">Configuration, source and output—side by side.</h2>
+            </div>
+            <p>
+              Every rendered cell is produced by the real MDX compiler. Change
+              the attributes in the middle column to tune the same semantic
+              gesture without hand-building its layout.
+            </p>
+          </div>
+
+          <div
+            aria-labelledby="reference-title"
+            className="syntax-table-scroll"
+            role="region"
+            tabIndex={0}
+          >
+            <Reference components={mdxHandwrittenComponents} />
+          </div>
+          <p className="syntax-scroll-hint">Scroll horizontally to compare every column.</p>
+        </section>
+
         <section className="setup-section" id="setup" aria-labelledby="setup-title">
           <div className="setup-copy">
             <p className="overline">Build-time by design</p>
             <h2 id="setup-title">Add the language, then bring your own MDX host.</h2>
             <p>
-              The remark package owns parsing and validation. The React package
-              owns semantic markup. The theme is plain CSS, so it stays easy to
-              replace without changing a single document.
+              The scene engine derives meaning, the remark package validates
+              author input, and the React package owns semantic markup. The
+              theme is plain CSS, so it stays easy to replace without changing
+              a single document.
             </p>
           </div>
 
@@ -165,11 +192,11 @@ export function App() {
             <article className="setup-card">
               <span className="step-number">03</span>
               <h3>Render</h3>
-              <pre><code>{`import { handwrittenComponents } from
+              <pre><code>{`import { mdxHandwrittenComponents } from
   'mdx-handwritten-react'
 import 'mdx-handwritten-theme/styles.css'
 
-<Article components={handwrittenComponents} />`}</code></pre>
+<Article components={mdxHandwrittenComponents} />`}</code></pre>
             </article>
           </div>
         </section>

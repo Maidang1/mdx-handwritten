@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "npm run build:packages && npm run build:docs",
-    "build:packages": "npm run build -w remark-mdx-handwritten && npm run build -w mdx-handwritten-react",
+    "build:packages": "npm run build -w mdx-handwritten-scene && npm run build -w remark-mdx-handwritten && npm run build -w mdx-handwritten-react",
     "build:docs": "npm run build -w @mdx-handwritten/docs",
     "dev": "npm run dev -w @mdx-handwritten/docs",
     "test": "vitest run",

@@ -646,6 +646,251 @@ button {
   opacity: 1;
 }
 
+.reference-section {
+  width: min(1280px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 120px 0;
+}
+
+.reference-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.65fr);
+  align-items: end;
+  gap: 70px;
+  margin-bottom: 44px;
+}
+
+.reference-heading h2 {
+  max-width: 780px;
+  margin: 0;
+  color: var(--site-ink);
+  font-size: clamp(2.25rem, 4.5vw, 4.4rem);
+  font-weight: 750;
+  letter-spacing: -0.06em;
+  line-height: 0.98;
+}
+
+.reference-heading > p {
+  margin: 0 0 3px;
+  color: var(--site-muted);
+  font-size: 0.91rem;
+  line-height: 1.75;
+}
+
+.syntax-table-scroll {
+  max-width: 100%;
+  overflow: auto;
+  border: 1px solid #bbb6ac;
+  border-radius: 18px;
+  background: var(--site-paper);
+  box-shadow: 0 24px 65px rgb(41 37 31 / 13%);
+  overscroll-behavior-inline: contain;
+  scrollbar-color: #8c918b #e9e4da;
+}
+
+.syntax-table-scroll:focus-visible {
+  outline: 3px solid var(--site-green);
+  outline-offset: 4px;
+}
+
+.syntax-reference-table {
+  width: 100%;
+  min-width: 76rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  color: var(--site-ink);
+  background: var(--site-paper);
+}
+
+.syntax-reference-table caption {
+  padding: 14px 22px;
+  caption-side: bottom;
+  color: #747a74;
+  background: #f0ece3;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.syntax-reference-table thead th {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  padding: 16px 22px;
+  border-bottom: 1px solid #444a45;
+  color: #dce2dc;
+  background: #222824;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.syntax-reference-table thead th:nth-child(1) { width: 18%; }
+.syntax-reference-table thead th:nth-child(2) { width: 30%; }
+.syntax-reference-table thead th:nth-child(3) { width: 52%; }
+
+.syntax-reference-table thead th:first-child {
+  z-index: 3;
+  left: 0;
+}
+
+.syntax-reference-table thead th + th,
+.syntax-reference-table tbody td,
+.syntax-reference-table tbody th + td {
+  border-left: 1px solid var(--site-line);
+}
+
+.syntax-reference-table tbody th,
+.syntax-reference-table tbody td {
+  padding: 22px;
+  border-bottom: 1px solid var(--site-line);
+  vertical-align: top;
+}
+
+.syntax-reference-table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.syntax-reference-table tbody th {
+  position: sticky;
+  z-index: 1;
+  left: 0;
+  color: inherit;
+  background: #f7f3ea;
+  font-weight: inherit;
+  text-align: left;
+}
+
+.syntax-reference-table tbody td:nth-child(2) {
+  background: #f4f0e8;
+}
+
+.syntax-reference-table tbody td:last-child {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 31px, rgb(39 68 48 / 4%) 31px 32px),
+    #fffdf8;
+}
+
+.syntax-config {
+  display: grid;
+  gap: 9px;
+}
+
+.syntax-config > code {
+  width: fit-content;
+  padding: 4px 7px;
+  border: 1px solid rgb(23 127 91 / 18%);
+  border-radius: 6px;
+  color: var(--site-green);
+  background: var(--site-green-soft);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+}
+
+.syntax-config > strong {
+  font-size: 0.83rem;
+  letter-spacing: -0.02em;
+}
+
+.syntax-config dl {
+  display: grid;
+  gap: 4px;
+  margin: 4px 0 0;
+}
+
+.syntax-config dl > div {
+  display: grid;
+  grid-template-columns: minmax(4.6rem, 0.8fr) minmax(0, 1fr);
+  gap: 8px;
+}
+
+.syntax-config dt,
+.syntax-config dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-family: var(--mono);
+  font-size: 0.61rem;
+  line-height: 1.55;
+}
+
+.syntax-config dt {
+  color: #888d87;
+}
+
+.syntax-config dd {
+  color: #4f5751;
+}
+
+.syntax-reference-table td > pre {
+  box-sizing: border-box;
+  min-height: 100%;
+  margin: 0;
+  padding: 15px 16px;
+  border: 1px solid #343a36;
+  border-radius: 9px;
+  color: #dce3dc;
+  background: #202521;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.syntax-reference-table td > pre code {
+  color: inherit;
+  font: inherit;
+}
+
+.syntax-render {
+  min-height: 4.5rem;
+  color: #3b403c;
+  font-size: 0.82rem;
+  line-height: 1.65;
+  --hw-color-muted: #716d69;
+  --hw-color-info: #356eb8;
+  --hw-color-success: #2f8f5b;
+  --hw-color-warning: #b96817;
+  --hw-color-danger: #bb4e35;
+  --hw-color-accent: #8052ba;
+}
+
+.syntax-render > p,
+.syntax-render blockquote,
+.syntax-render ul {
+  margin-block: 0.5rem;
+}
+
+.syntax-render ul {
+  padding-inline-start: 1.25rem;
+}
+
+.syntax-render :where([data-hw="note"], [data-hw="brace"], [data-hw="margin"], [data-hw="watermark"], figure[data-hw-scene]) {
+  margin-block: 0;
+}
+
+.syntax-render [data-hw="watermark"] {
+  min-height: 4.5rem;
+  padding: 0.7rem;
+  border: 1px solid var(--site-line);
+  border-radius: 8px;
+}
+
+.syntax-scroll-hint {
+  display: none;
+  margin: 12px 2px 0;
+  color: var(--site-muted);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+}
+
 .setup-section {
   width: min(1180px, calc(100% - 40px));
   margin: 0 auto;
@@ -866,6 +1111,7 @@ footer > a:last-child {
   }
 
   .section-heading,
+  .reference-heading,
   .setup-copy {
     grid-template-columns: 1fr;
     gap: 25px;
@@ -925,6 +1171,7 @@ footer > a:last-child {
   }
 
   .hero,
+  .reference-section,
   .setup-section,
   .principles,
   footer {
@@ -972,6 +1219,18 @@ footer > a:last-child {
 
   .showcase-section {
     padding: 80px 14px;
+  }
+
+  .reference-section {
+    padding-block: 90px;
+  }
+
+  .syntax-table-scroll {
+    border-radius: 12px;
+  }
+
+  .syntax-scroll-hint {
+    display: block;
   }
 
   .section-heading {
@@ -1060,6 +1319,7 @@ footer > a:last-child {
 @media (forced-colors: active) {
   .hero-card,
   .workbench,
+  .syntax-table-scroll,
   .setup-steps,
   .command-row {
     border: 1px solid CanvasText;
@@ -1069,6 +1329,46 @@ footer > a:last-child {
   .hero-card::before,
   .hero-card::after,
   .hero-script::after {
+    display: none;
+  }
+
+  .syntax-reference-table thead th,
+  .syntax-reference-table tbody th,
+  .syntax-reference-table tbody td,
+  .syntax-reference-table td > pre {
+    border-color: CanvasText;
+    color: CanvasText;
+    background: Canvas;
+  }
+}
+
+@media print {
+  .reference-section {
+    width: 100%;
+    padding-block: 2rem;
+  }
+
+  .syntax-table-scroll {
+    overflow: visible;
+    border-color: currentColor;
+    box-shadow: none;
+  }
+
+  .syntax-reference-table {
+    min-width: 0;
+    table-layout: auto;
+  }
+
+  .syntax-reference-table thead th,
+  .syntax-reference-table tbody th {
+    position: static;
+  }
+
+  .syntax-reference-table tbody tr {
+    break-inside: avoid-page;
+  }
+
+  .syntax-scroll-hint {
     display: none;
   }
 }

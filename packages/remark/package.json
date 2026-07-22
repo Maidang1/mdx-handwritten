@@ -18,7 +18,7 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --sourcemap --clean --tsconfig tsconfig.build.json",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc -b"
   },
   "keywords": [
     "mdx",
@@ -28,6 +28,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "mdx-handwritten-scene": "*",
     "mdast-util-directive": "^3.1.0",
     "mdast-util-mdx-jsx": "^3.2.0",
     "unified": "^11.0.5",

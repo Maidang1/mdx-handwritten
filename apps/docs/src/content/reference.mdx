@@ -1,0 +1,232 @@
+<table className="syntax-reference-table">
+  <caption>Each preview is compiled from the MDX syntax in the same row.</caption>
+  <thead>
+    <tr>
+      <th scope="col">Configuration</th>
+      <th scope="col">Author syntax</th>
+      <th scope="col">Rendered output</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-text</code>
+          <strong>Editorial voice</strong>
+          <dl>
+            <div><dt>tone</dt><dd>info</dd></div>
+            <div><dt>size</dt><dd>lg</dd></div>
+            <div><dt>rotate</dt><dd>-1</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-text[Human context matters.]{tone="info" size="lg" rotate="-1"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:hw-text[Human context matters.]{tone="info" size="lg" rotate="-1"}
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-link</code>
+          <strong>Hand-drawn action</strong>
+          <dl>
+            <div><dt>href</dt><dd>#setup</dd></div>
+            <div><dt>tone</dt><dd>accent</dd></div>
+            <div><dt>underline</dt><dd>strong</dd></div>
+            <div><dt>icon</dt><dd>arrow-forward</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-link[Read the setup]{href="#setup" tone="accent" underline="strong" icon="arrow-forward"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:hw-link[Read the setup]{href="#setup" tone="accent" underline="strong" icon="arrow-forward"}
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-mark</code>
+          <strong>Draw attention</strong>
+          <dl>
+            <div><dt>kind</dt><dd>highlight</dd></div>
+            <div><dt>tone</dt><dd>warning</dd></div>
+            <div><dt>strength</dt><dd>strong</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-mark[Check this assumption]{kind="highlight" tone="warning" strength="strong"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:hw-mark[Check this assumption]{kind="highlight" tone="warning" strength="strong"}
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-annotate</code>
+          <strong>Explain one target</strong>
+          <dl>
+            <div><dt>label</dt><dd>stable ID</dd></div>
+            <div><dt>placement</dt><dd>block-start</dd></div>
+            <div><dt>mark</dt><dd>highlight</dd></div>
+            <div><dt>arrow</dt><dd>curved</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-annotate[AUTH-004]{label="stable ID" placement="block-start" tone="info" mark="highlight" arrow="curved"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:hw-annotate[AUTH-004]{label="stable ID" placement="block-start" tone="info" mark="highlight" arrow="curved"}
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-note</code>
+          <strong>Status or warning</strong>
+          <dl>
+            <div><dt>appearance</dt><dd>tape</dd></div>
+            <div><dt>tone</dt><dd>warning</dd></div>
+            <div><dt>icon</dt><dd>warning</dd></div>
+            <div><dt>density</dt><dd>compact</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`::hw-note[Update the spec before shipping.]{appearance="tape" tone="warning" icon="warning" density="compact"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+::hw-note[Update the spec before shipping.]{appearance="tape" tone="warning" icon="warning" density="compact"}
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-brace</code>
+          <strong>Group related content</strong>
+          <dl>
+            <div><dt>side</dt><dd>inline-end</dd></div>
+            <div><dt>align</dt><dd>center</dd></div>
+            <div><dt>tone</dt><dd>accent</dd></div>
+            <div><dt>distance</dt><dd>tight</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:::hw-brace[one release unit]{side="inline-end" align="center" tone="accent" distance="tight"}
+- endpoint
+- tests
+:::`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:::hw-brace[one release unit]{side="inline-end" align="center" tone="accent" distance="tight"}
+
+- endpoint
+- tests
+
+:::
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-margin</code>
+          <strong>Keep context nearby</strong>
+          <dl>
+            <div><dt>side</dt><dd>inline-end</dd></div>
+            <div><dt>align</dt><dd>center</dd></div>
+            <div><dt>icon</dt><dd>arrow-toward</dd></div>
+            <div><dt>distance</dt><dd>tight</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:::hw-margin[why this matters]{side="inline-end" align="center" tone="muted" icon="arrow-toward" distance="tight"}
+The decision stays in the document flow.
+:::`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:::hw-margin[why this matters]{side="inline-end" align="center" tone="muted" icon="arrow-toward" distance="tight"}
+
+The decision stays in the document flow.
+
+:::
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-watermark</code>
+          <strong>Decorative state</strong>
+          <dl>
+            <div><dt>placement</dt><dd>center</dd></div>
+            <div><dt>tone</dt><dd>success</dd></div>
+            <div><dt>size</dt><dd>lg</dd></div>
+            <div><dt>strength</dt><dd>faint</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:::hw-watermark[reviewed]{placement="center" tone="success" size="lg" strength="faint"}
+The prose remains primary.
+:::`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:::hw-watermark[reviewed]{placement="center" tone="success" size="lg" strength="faint"}
+
+The prose remains primary.
+
+:::
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-scene</code>
+          <strong>Explain structured input</strong>
+          <dl>
+            <div><dt>recipe</dt><dd>task-explainer</dd></div>
+            <div><dt>locale</dt><dd>en</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:::hw-scene{recipe="task-explainer" locale="en"}
+[ ] CLI-042 Add export command #cli !high @blocked_by:CLI-041
+Write task output as JSON for scripts and agents
+:::`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:::hw-scene{recipe="task-explainer" locale="en"}
+[ ] CLI-042 Add export command #cli !high @blocked_by:CLI-041
+Write task output as JSON for scripts and agents
+:::
+
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -4,6 +4,8 @@ import type {
   Blockquote,
   Emphasis,
   Link,
+  List,
+  ListItem,
   Paragraph,
   PhrasingContent,
   Root,
@@ -19,6 +21,11 @@ import type {
   MdxJsxFlowElement,
   MdxJsxTextElement
 } from 'mdast-util-mdx-jsx'
+import {
+  deriveAnnotationScene,
+  type AnnotationSceneDiagnosticCode,
+  type AnnotationScenePlanV1
+} from 'mdx-handwritten-scene'
 import type {Node, Parent} from 'unist'
 import type {VFile} from 'vfile'
 import {directiveDefinitions, isHandwrittenDirectiveName} from './schema.js'
@@ -83,15 +90,24 @@ interface ValidatedDirective {
   valid: boolean
 }
 
+interface ValidatedScene {
+  source: string
+  plan?: AnnotationScenePlanV1
+  sceneId: string
+  valid: boolean
+}
+
 interface ValidationContext {
   file: VFile
   options: ResolvedOptions
   metadata: WeakMap<HandDirective, ValidatedDirective>
+  sceneMetadata: WeakMap<HandDirective, ValidatedScene>
   errors: Array<ReturnType<VFile['message']>>
   ordinal: number
   recognized: number
   warnedForPath: boolean
   canAutoImport: boolean
+  sceneComponentUsed: boolean
   usage: HandwrittenUsage
 }
 
@@ -259,6 +275,64 @@ function rawAttributeTokens(node: Node, file: VFile): RawAttribute[] | undefined
   return result
 }
 
+function nodeSource(node: Node, file: VFile): string | undefined {
+  const start = node.position?.start.offset
+  const end = node.position?.end.offset
+  if (start === undefined || end === undefined) return undefined
+  return String(file.value).slice(start, end)
+}
+
+function canonicalSceneSource(node: HandDirective, file: VFile): string {
+  if (node.type !== 'containerDirective') {
+    return textContent(node).replace(/\r\n?/gu, '\n').trim()
+  }
+  const complete = nodeSource(node, file)
+  if (complete === undefined) {
+    return textContent(node).replace(/\r\n?/gu, '\n').trim()
+  }
+  const normalized = complete.replace(/\r\n?/gu, '\n')
+  const openingEnd = normalized.indexOf('\n')
+  if (openingEnd < 0) return ''
+  let body = normalized.slice(openingEnd + 1)
+  const closing = /(?:^|\n)[ \t]*:{3,}[ \t]*$/u.exec(body)
+  if (closing) body = body.slice(0, closing.index)
+  return body.trim()
+}
+
+function isPlainSceneNode(node: Node, file: VFile): boolean {
+  if (node.type === 'text') return true
+  if (node.type === 'paragraph' && isParent(node)) {
+    return node.children.every((child) => isPlainSceneNode(child, file))
+  }
+  if (node.type === 'list' && isParent(node)) {
+    const source = nodeSource(node, file)
+    const item = node.children[0]
+    return (
+      node.children.length === 1 &&
+      source !== undefined &&
+      /^-\s+\[(?: |x|X)\](?:\s|$)/u.test(source) &&
+      item?.type === 'listItem' &&
+      isParent(item) &&
+      item.children.length === 1 &&
+      item.children[0]?.type === 'paragraph' &&
+      isPlainSceneNode(item.children[0], file)
+    )
+  }
+  if (node.type !== 'textDirective') return false
+  const directive = node as HandDirective
+  if (directive.name.toLowerCase().startsWith('hw-')) return false
+  if (directive.children.length > 0 || Object.keys(directive.attributes ?? {}).length > 0) {
+    return false
+  }
+  const source = nodeSource(node, file)
+  return source !== undefined && /^:[^\s\[\]{}]+$/u.test(source)
+}
+
+function containsHandwrittenDirective(node: Node): boolean {
+  if (isDirective(node) && node.name.toLowerCase().startsWith('hw-')) return true
+  return isParent(node) && node.children.some(containsHandwrittenDirective)
+}
+
 function safeHref(value: string): boolean {
   if (value !== value.trim() || value.length === 0) return false
   if (
@@ -397,16 +471,14 @@ function collectBindings(root: Root): Set<string> {
 }
 
 function usedComponentNames(context: ValidationContext): string[] {
-  return [
-    ...new Set(
-      handwrittenDirectiveNames
-        .filter((name) => context.usage.directives[name] > 0)
-        .map(
-          (name) =>
-            context.options.components[directiveDefinitions[name].componentKey]
-        )
+  const names = handwrittenDirectiveNames
+    .filter((name) => context.usage.directives[name] > 0)
+    .map(
+      (name) =>
+        context.options.components[directiveDefinitions[name].componentKey]
     )
-  ]
+  if (context.sceneComponentUsed) names.push('HandScene')
+  return [...new Set(names)]
 }
 
 function validateConfiguration(root: Root, context: ValidationContext): void {
@@ -660,17 +732,198 @@ function containsInteractive(node: Node): boolean {
   )
 }
 
+const sceneDiagnosticCodes = new Set<AnnotationSceneDiagnosticCode>([
+  'scene-recipe-unknown',
+  'scene-locale-unsupported',
+  'scene-source-empty',
+  'scene-source-too-long',
+  'scene-task-syntax-invalid',
+  'scene-task-priority-ambiguous'
+])
+
+function sceneRuleId(code: AnnotationSceneDiagnosticCode): HandwrittenRuleId {
+  if (!sceneDiagnosticCodes.has(code)) {
+    throw new Error(`Unhandled Annotation scene diagnostic ${JSON.stringify(code)}.`)
+  }
+  return code
+}
+
+function validateSceneAttributes(
+  context: ValidationContext,
+  node: HandDirective
+): {recipe?: string; locale?: string} {
+  const result: {recipe?: string; locale?: string} = {}
+  const raw = rawAttributeTokens(node, context.file)
+  if (raw) {
+    const counts = new Map<string, number>()
+    for (const token of raw) {
+      const normalized = token.name.startsWith('#')
+        ? 'id'
+        : token.name.startsWith('.')
+          ? 'className'
+          : token.name
+      counts.set(normalized, (counts.get(normalized) ?? 0) + 1)
+      if (!token.quoted) {
+        report(
+          context,
+          node,
+          'attribute-dynamic',
+          `Attribute ${JSON.stringify(normalized)} must use a quoted static string value.`
+        )
+      }
+    }
+    for (const [name, count] of counts) {
+      if (count > 1) {
+        report(
+          context,
+          node,
+          'attribute-duplicate',
+          `Attribute ${JSON.stringify(name)} is repeated.`
+        )
+      }
+    }
+  }
+
+  for (const [name, value] of Object.entries(node.attributes ?? {})) {
+    if (name !== 'recipe' && name !== 'locale') {
+      report(
+        context,
+        node,
+        'attribute-unknown',
+        `Unknown attribute ${JSON.stringify(name)} on hw-scene.`
+      )
+      continue
+    }
+    if (typeof value !== 'string') {
+      report(
+        context,
+        node,
+        'attribute-dynamic',
+        `Attribute ${JSON.stringify(name)} must be a quoted static string.`
+      )
+      continue
+    }
+    if (value.trim().length === 0) {
+      report(
+        context,
+        node,
+        'attribute-invalid',
+        `Attribute ${JSON.stringify(name)} cannot be empty.`
+      )
+      continue
+    }
+    result[name] = value
+  }
+
+  if (!('recipe' in (node.attributes ?? {}))) {
+    report(
+      context,
+      node,
+      'attribute-invalid',
+      'Missing required attribute "recipe".'
+    )
+  }
+  return result
+}
+
+function validateScene(
+  node: HandDirective,
+  context: ValidationContext,
+  handwrittenAncestors: HandwrittenDirectiveName[],
+  sceneAncestor: boolean
+): void {
+  const errorsBefore = context.errors.length
+  const source = canonicalSceneSource(node, context.file)
+  if (node.type !== 'containerDirective') {
+    report(
+      context,
+      node,
+      'directive-wrong-kind',
+      'hw-scene must use a triple-colon container directive.'
+    )
+  }
+  if (handwrittenAncestors.length > 0 || sceneAncestor) {
+    report(
+      context,
+      node,
+      'nesting-invalid',
+      'hw-scene cannot be nested in handwritten content or another hw-scene.'
+    )
+  }
+  const attributes = validateSceneAttributes(context, node)
+
+  if (node.type === 'containerDirective') {
+    const label = containerLabel(node)
+    if (label.present) {
+      report(
+        context,
+        node,
+        'attribute-invalid',
+        'hw-scene does not accept a bracket label; put the canonical source in its body.'
+      )
+    }
+    if (node.children.some(containsHandwrittenDirective)) {
+      report(
+        context,
+        node,
+        'nesting-invalid',
+        'hw-scene cannot contain nested handwritten directives or scenes.'
+      )
+    } else if (!node.children.every((child) => isPlainSceneNode(child, context.file))) {
+      report(
+        context,
+        node,
+        'nesting-invalid',
+        'hw-scene body must contain plain text only.'
+      )
+    }
+  }
+
+  let plan: AnnotationScenePlanV1 | undefined
+  if (
+    context.errors.length === errorsBefore &&
+    attributes.recipe !== undefined
+  ) {
+    const result = deriveAnnotationScene({
+      recipe: attributes.recipe,
+      source,
+      ...(attributes.locale === undefined ? {} : {locale: attributes.locale})
+    })
+    if (result.ok) {
+      plan = result.plan
+      context.sceneComponentUsed = true
+    } else {
+      for (const diagnostic of result.diagnostics) {
+        report(
+          context,
+          node,
+          sceneRuleId(diagnostic.code),
+          diagnostic.message
+        )
+      }
+    }
+  }
+
+  context.sceneMetadata.set(node, {
+    source,
+    sceneId: `hw-scene-${context.ordinal}`,
+    valid: context.errors.length === errorsBefore && plan !== undefined,
+    ...(plan === undefined ? {} : {plan})
+  })
+}
+
 function validateTree(
   node: Node,
   context: ValidationContext,
   ancestors: HandwrittenDirectiveName[] = [],
-  interactiveAncestor = false
+  interactiveAncestor = false,
+  sceneAncestor = false
 ): void {
   if (!isDirective(node)) {
     if (isParent(node)) {
       const nextInteractive = interactiveAncestor || isInteractiveNode(node)
       for (const child of node.children) {
-        validateTree(child, context, ancestors, nextInteractive)
+        validateTree(child, context, ancestors, nextInteractive, sceneAncestor)
       }
     }
     return
@@ -679,7 +932,7 @@ function validateTree(
   const resemblesHandwritten = node.name.toLowerCase().startsWith('hw-')
   if (!resemblesHandwritten) {
     for (const child of node.children) {
-      validateTree(child, context, ancestors, interactiveAncestor)
+      validateTree(child, context, ancestors, interactiveAncestor, sceneAncestor)
     }
     return
   }
@@ -687,10 +940,17 @@ function validateTree(
   context.ordinal += 1
   context.recognized += 1
   const errorsBefore = context.errors.length
+  if (node.name === 'hw-scene') {
+    validateScene(node, context, ancestors, sceneAncestor)
+    for (const child of node.children) {
+      validateTree(child, context, ancestors, interactiveAncestor, true)
+    }
+    return
+  }
   if (!isHandwrittenDirectiveName(node.name)) {
     report(context, node, 'directive-unknown', `Unknown handwritten directive ${JSON.stringify(node.name)}.`)
     for (const child of node.children) {
-      validateTree(child, context, ancestors, interactiveAncestor)
+      validateTree(child, context, ancestors, interactiveAncestor, sceneAncestor)
     }
     return
   }
@@ -791,7 +1051,8 @@ function validateTree(
       child,
       context,
       nextAncestors,
-      interactiveAncestor || name === 'hw-link'
+      interactiveAncestor || name === 'hw-link',
+      sceneAncestor
     )
   }
 }
@@ -848,6 +1109,25 @@ function componentNode(
     name,
     attributes: jsxAttributes(metadata),
     children: children as BlockContent[],
+    ...(node.position ? {position: node.position} : {})
+  }
+}
+
+function sceneComponentNode(
+  node: HandDirective,
+  metadata: ValidatedScene
+): MdxJsxFlowElement {
+  const plan = metadata.plan
+  if (!plan) throw new Error('Expected a valid Annotation scene plan.')
+  return {
+    type: 'mdxJsxFlowElement',
+    name: 'HandScene',
+    attributes: [
+      {type: 'mdxJsxAttribute', name: 'recipe', value: plan.recipe.name},
+      {type: 'mdxJsxAttribute', name: 'source', value: plan.source},
+      {type: 'mdxJsxAttribute', name: 'locale', value: plan.locale}
+    ],
+    children: [],
     ...(node.position ? {position: node.position} : {})
   }
 }
@@ -987,6 +1267,155 @@ function flowSvgElement(
       : {})
   })
   return result
+}
+
+function safeIdPart(value: string): string {
+  const result = value.replace(/[^A-Za-z0-9_-]+/gu, '-')
+  return result.length > 0 ? result : 'item'
+}
+
+function sceneAnnotationId(metadata: ValidatedScene, annotationId: string): string {
+  return `${metadata.sceneId}-annotation-${safeIdPart(annotationId)}`
+}
+
+function sceneSourceChildren(
+  metadata: ValidatedScene,
+  plan: AnnotationScenePlanV1
+): PhrasingContent[] {
+  const ranges = plan.targets
+    .flatMap((target) =>
+      target.ranges.map((range, rangeIndex) => ({range, rangeIndex, target}))
+    )
+    .sort(
+      (left, right) =>
+        left.range.start - right.range.start || left.range.end - right.range.end
+    )
+  const result: PhrasingContent[] = []
+  let cursor = 0
+  for (const {range, rangeIndex, target} of ranges) {
+    if (range.start > cursor) {
+      result.push(labelText(plan.source.slice(cursor, range.start)))
+    }
+    const descriptions = plan.annotations
+      .filter((annotation) => annotation.targetIds.includes(target.id))
+      .map((annotation) => sceneAnnotationId(metadata, annotation.id))
+    result.push(
+      inlineElement(
+        'span',
+        {
+          id: `${metadata.sceneId}-target-${safeIdPart(target.id)}-${rangeIndex + 1}`,
+          'data-hw-target': target.id,
+          'data-hw-target-role': target.role,
+          ...(descriptions.length > 0
+            ? {'aria-describedby': descriptions.join(' ')}
+            : {})
+        },
+        [labelText(plan.source.slice(range.start, range.end))]
+      )
+    )
+    cursor = range.end
+  }
+  if (cursor < plan.source.length) {
+    result.push(labelText(plan.source.slice(cursor)))
+  }
+  return result
+}
+
+function sceneElementNode(metadata: ValidatedScene): RootContent {
+  const plan = metadata.plan
+  if (!plan) throw new Error('Expected a valid Annotation scene plan.')
+  const captionId = `${metadata.sceneId}-caption`
+  const caption = paragraph([labelText(plan.title)])
+  caption.data = hastData('figcaption', {
+    id: captionId,
+    'data-hw-scene-caption': ''
+  })
+
+  const source = paragraph([
+    inlineElement(
+      'code',
+      {'data-hw-scene-code': ''},
+      sceneSourceChildren(metadata, plan)
+    )
+  ])
+  source.data = hastData('pre', {'data-hw-scene-source': ''})
+
+  const targetById = new Map(plan.targets.map((target) => [target.id, target]))
+  const items = plan.annotations.map((annotation) => {
+    const firstTarget = targetById.get(annotation.targetIds[0] ?? '')
+    const content = paragraph([
+      inlineElement(
+        'span',
+        {'data-hw-annotation-text': ''},
+        [labelText(annotation.fallback)]
+      ),
+      svgElement(
+        'data-hw-connector',
+        'M3 18C16 20 27 4 44 7M38 4l6 3-4 5',
+        {viewBox: '0 0 48 24', dataValue: 'curved'}
+      )
+    ])
+    content.data = hastData('p', {'data-hw-annotation-row': ''})
+    return flowElement(
+      'li',
+      {
+        id: sceneAnnotationId(metadata, annotation.id),
+        'data-hw-annotation': annotation.id,
+        'data-hw-annotation-role': firstTarget?.role ?? '',
+        'data-hw-targets': annotation.targetIds.join(' ')
+      },
+      [content]
+    )
+  })
+  const legend = flowElement('ol', {'data-hw-scene-legend': ''}, items)
+  return flowElement(
+    'figure',
+    {
+      'data-hw-scene': plan.recipe.name,
+      'data-hw-scene-version': String(plan.recipe.version),
+      'data-hw-scene-schema': String(plan.schemaVersion),
+      'data-hw-locale': plan.locale,
+      lang: plan.locale,
+      'aria-labelledby': captionId
+    },
+    [caption, source, legend]
+  )
+}
+
+function sceneSourceNode(source: string): Paragraph {
+  const result = paragraph([
+    inlineElement('code', {}, [labelText(source)])
+  ])
+  result.data = hastData('pre', {})
+  return result
+}
+
+function sceneStripNodes(metadata: ValidatedScene): Node[] {
+  const plan = metadata.plan
+  if (!plan) return [sceneSourceNode(metadata.source)]
+  const legend: List = {
+    type: 'list',
+    ordered: true,
+    start: 1,
+    spread: false,
+    children: plan.annotations.map(
+      (annotation): ListItem => ({
+        type: 'listItem',
+        spread: false,
+        children: [paragraph([labelText(annotation.fallback)])]
+      })
+    )
+  }
+  return [sceneSourceNode(plan.source), legend]
+}
+
+function invalidSceneNodes(
+  node: HandDirective,
+  metadata: ValidatedScene
+): Node[] {
+  return node.type === 'textDirective'
+    ? [labelText(metadata.source)]
+    : [sceneSourceNode(metadata.source)]
 }
 
 function elementNode(
@@ -1177,6 +1606,24 @@ function transformChildren(
       transformed.push(child)
       continue
     }
+    if (child.name === 'hw-scene') {
+      const scene = context.sceneMetadata.get(child)
+      if (!scene || !scene.valid) {
+        const fallback = scene ?? {
+          source: canonicalSceneSource(child, context.file),
+          sceneId: 'hw-scene-invalid',
+          valid: false
+        }
+        transformed.push(...invalidSceneNodes(child, fallback))
+      } else if (context.options.output === 'strip') {
+        transformed.push(...sceneStripNodes(scene))
+      } else if (context.options.output === 'element') {
+        transformed.push(sceneElementNode(scene) as Node)
+      } else {
+        transformed.push(sceneComponentNode(child, scene) as Node)
+      }
+      continue
+    }
     const metadata = context.metadata.get(child)
     if (!metadata || !metadata.valid) {
       transformed.push(...stripNode(child, metadata))
@@ -1205,8 +1652,9 @@ function emptyUsage(): HandwrittenUsage {
 }
 
 /**
- * Compile the eight strict `hw-*` directives after `remark-directive` has
- * parsed them. All author attributes stay static and schema-controlled.
+ * Compile the exact-eight gesture directives and the `hw-scene` container
+ * after `remark-directive` has parsed them. All author attributes stay static
+ * and schema-controlled.
  */
 export const remarkMdxHandwritten: RemarkMdxHandwrittenPlugin = function (
   options
@@ -1217,11 +1665,13 @@ export const remarkMdxHandwritten: RemarkMdxHandwrittenPlugin = function (
       file,
       options: resolved,
       metadata: new WeakMap(),
+      sceneMetadata: new WeakMap(),
       errors: [],
       ordinal: 0,
       recognized: 0,
       warnedForPath: false,
       canAutoImport: true,
+      sceneComponentUsed: false,
       usage: emptyUsage()
     }
     validateTree(tree, context)
@@ -1245,7 +1695,7 @@ export const remarkMdxHandwritten: RemarkMdxHandwrittenPlugin = function (
       resolved.output === 'component' &&
       resolved.imports.mode === 'auto' &&
       context.canAutoImport &&
-      context.usage.total > 0
+      usedComponentNames(context).length > 0
     ) {
       tree.children.unshift(autoImportNode(resolved, usedComponentNames(context)))
     }

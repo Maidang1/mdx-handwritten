@@ -21,7 +21,10 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --clean --tsconfig tsconfig.build.json",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "mdx-handwritten-scene": "*"
   },
   "peerDependencies": {
     "react": ">=18.2.0"

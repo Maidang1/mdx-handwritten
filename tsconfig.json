@@ -1,6 +1,7 @@
 {
   "files": [],
   "references": [
+    { "path": "./packages/scene" },
     { "path": "./packages/remark" },
     { "path": "./packages/react" },
     { "path": "./apps/docs" }

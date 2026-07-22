@@ -9,6 +9,7 @@ export {
   HandWatermark,
   isSafeHandwrittenHref,
 } from './components.js'
+export { HandScene } from './scene.js'
 
 import {
   HandAnnotate,
@@ -20,6 +21,7 @@ import {
   HandText,
   HandWatermark,
 } from './components.js'
+import { HandScene } from './scene.js'
 
 export const handwrittenComponents = Object.freeze({
   HandText,
@@ -30,6 +32,13 @@ export const handwrittenComponents = Object.freeze({
   HandBrace,
   HandMargin,
   HandWatermark,
+})
+
+export const handwrittenSceneComponents = Object.freeze({ HandScene })
+
+export const mdxHandwrittenComponents = Object.freeze({
+  ...handwrittenComponents,
+  ...handwrittenSceneComponents,
 })
 
 export type {
@@ -52,3 +61,17 @@ export type {
   HandwrittenVariantProps,
   HandwrittenWeight,
 } from './types.js'
+export type { HandSceneProps } from './scene.js'
+export type {
+  AnnotationRecipeName,
+  AnnotationSceneAnnotation,
+  AnnotationSceneDiagnostic,
+  AnnotationSceneDiagnosticCode,
+  AnnotationSceneLocale,
+  AnnotationScenePlanV1,
+  AnnotationSceneResult,
+  AnnotationSceneTarget,
+  AnnotationSourceRange,
+  AnnotationTargetRole,
+  DeriveAnnotationSceneInput,
+} from 'mdx-handwritten-scene'

@@ -112,6 +112,12 @@ export type HandwrittenRuleId =
   | 'component-invalid'
   | 'output-unhandled'
   | 'variant-path-missing'
+  | 'scene-recipe-unknown'
+  | 'scene-locale-unsupported'
+  | 'scene-source-empty'
+  | 'scene-source-too-long'
+  | 'scene-task-syntax-invalid'
+  | 'scene-task-priority-ambiguous'
 
 export interface HandwrittenUsage {
   total: number

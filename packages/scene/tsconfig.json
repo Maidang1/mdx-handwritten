@@ -4,12 +4,10 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "emitDeclarationOnly": true,
     "noEmit": false,
     "outDir": "dist",
     "rootDir": "src",
     "tsBuildInfoFile": "./.tsbuildinfo"
   },
-  "references": [{ "path": "../scene" }],
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src/**/*.ts"]
 }

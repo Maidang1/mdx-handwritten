@@ -1,0 +1,3 @@
+# Keep annotation scenes semantic and recipe-first
+
+MDX Handwritten accepts compact `hw-scene` source through named, versioned annotation recipes and derives a presentation-independent Scene plan in a pure package. The plan records canonical source, targets, labels, and relationships but never coordinates, connector paths, breakpoints, or collision results: renderers own those details and must retain an in-flow text legend. This keeps author input minimal and deterministic across SSR, print, narrow containers, and missing CSS while preserving the existing eight Annotation gesture contracts unchanged; a generic public recipe registry or measured client layout can be added later only as a separate, explicit capability.
