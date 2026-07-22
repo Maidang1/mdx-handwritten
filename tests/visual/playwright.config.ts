@@ -2,10 +2,11 @@ import {defineConfig, devices} from '@playwright/test'
 import manifest from '../../visual-fixtures.json' with {type: 'json'}
 
 const {wide} = manifest.viewports
+const {screenshotProject} = manifest.runner
 
 const projects = [
   {
-    name: 'chromium',
+    name: screenshotProject,
     testIgnore: /no-js\.spec\.ts$/,
     use: {
       ...devices['Desktop Chrome'],

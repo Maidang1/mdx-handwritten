@@ -12,6 +12,10 @@ import {
 import manifest from '../../../visual-fixtures.json'
 
 interface SceneFixture {
+  expected: {
+    caption: string
+    legend: Array<{targets: string[]; text: string}>
+  }
   id: string
   kind: 'scene'
   locale: string
@@ -62,32 +66,33 @@ function GestureSuite({direction}: {direction: 'ltr' | 'rtl'}) {
     >
       <section className="hw-scope release-fixture">
         <header className="fixture-heading">
-          <p>Canonical content fixture</p>
-          <h1>Eight Annotation gestures</h1>
+          <p lang="en">Canonical content fixture</p>
+          <h1 lang="en">Eight Annotation gestures</h1>
         </header>
 
         <div className="gesture-grid">
           <article>
-            <h2>Text, link, mark, annotate</h2>
+            <h2 lang="en">Text, link, mark, annotate</h2>
             <p><HandText rotate="-1" size="lg" tone="muted">{labels.text}</HandText></p>
             <p><HandLink href="#fixture-end" icon="arrow-forward" tone="accent">{labels.link}</HandLink></p>
             <p><HandMark kind="highlight" strength="strong" tone="warning">{labels.mark}</HandMark></p>
             <p className="gesture-annotation">
-              Reference <HandAnnotate label={labels.annotate} placement="block-start-inline-end" tone="info">CLI-042</HandAnnotate>
+              <span lang="en">Reference</span>{' '}
+              <HandAnnotate label={labels.annotate} placement="block-start-inline-end" tone="info"><span lang="en">CLI-042</span></HandAnnotate>
             </p>
           </article>
 
           <article>
-            <h2>Note, brace, margin, watermark</h2>
+            <h2 lang="en">Note, brace, margin, watermark</h2>
             <HandNote appearance="tape" icon="check" tone="success">{labels.note}</HandNote>
             <HandBrace label={labels.brace} side="inline-end" tone="accent">
-              <ul><li>source</li><li>tests</li><li>specification</li></ul>
+              <ul lang="en"><li>source</li><li>tests</li><li>specification</li></ul>
             </HandBrace>
             <HandMargin label={labels.margin} side="inline-start">
-              <p>The decision remains in document flow.</p>
+              <p lang="en">The decision remains in document flow.</p>
             </HandMargin>
             <HandWatermark label={labels.watermark} placement="block-end-inline-end" tone="success">
-              <p id="fixture-end">Meaningful content stays readable.</p>
+              <p id="fixture-end" lang="en">Meaningful content stays readable.</p>
             </HandWatermark>
           </article>
         </div>

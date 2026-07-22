@@ -1,6 +1,6 @@
 import {expect, test} from '@playwright/test'
 
-test('emits a real multi-page tagged PDF for the complete fixture document', async ({
+test('emits a real multi-page tagged PDF for the complete Canonical content fixture document', async ({
   page
 }) => {
   await page.goto('/')

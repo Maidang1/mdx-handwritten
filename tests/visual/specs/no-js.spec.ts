@@ -1,6 +1,6 @@
 import {expect, test} from '@playwright/test'
 
-test('keeps the static release fixtures readable with JavaScript disabled', async ({page}) => {
+test('keeps the static Canonical content fixtures readable with JavaScript disabled', async ({page}) => {
   await page.goto('/')
 
   await expect(page.locator('script')).toHaveCount(0)

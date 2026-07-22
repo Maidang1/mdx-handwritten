@@ -13,12 +13,17 @@ interface FixtureManifest {
     recipeVersion?: number
     source?: string
     sourceLanguage?: string
+    expected?: {
+      caption: string
+      legend: Array<{targets: string[]; text: string}>
+    }
   }>
   fallbackStates: string[]
   localizationLocales: string[]
   runner: {
     container: string
     playwrightVersion: string
+    screenshotProject: string
   }
   viewports: Record<'narrow' | 'wide', {height: number; width: number}>
 }
@@ -77,6 +82,32 @@ test('renders each Annotation gesture exactly once in both directions', async ({
   }
 })
 
+test('marks English reader text explicitly inside the RTL gesture Canonical content fixture', async ({
+  page
+}) => {
+  await openFixtures(page)
+
+  expect(
+    await page
+      .locator('[data-fixture-id="gestures-rtl"]')
+      .evaluate((fixture) => {
+        const mismatches: string[] = []
+        const walker = document.createTreeWalker(fixture, NodeFilter.SHOW_TEXT)
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          const text = node.textContent?.trim() ?? ''
+          if (!/[A-Za-z]/u.test(text)) {
+            continue
+          }
+          const language = node.parentElement?.closest('[lang]')?.getAttribute('lang')
+          if (language !== 'en') {
+            mismatches.push(`${language ?? 'missing'}: ${text}`)
+          }
+        }
+        return mismatches
+      })
+  ).toEqual([])
+})
+
 test('keeps the manifest viewport and fallback matrix aligned with browser coverage', async ({
   page
 }) => {
@@ -117,7 +148,7 @@ test('pins one package-matched Linux visual environment across manifest and CI',
   expect(workflow).toContain(manifest.runner.container)
 })
 
-test('renders the canonical task scene from the public React package without client script', async ({
+test('renders the canonical task-explainer Annotation scene from the public React package without client script', async ({
   page
 }) => {
   await openFixtures(page)
@@ -130,14 +161,16 @@ test('renders the canonical task scene from the public React package without cli
   ).toHaveCount(1)
 })
 
-test('preserves source-first scene semantics and localized reader text', async ({page}) => {
+test('preserves source-first Annotation scene semantics and exact localized reader meaning', async ({page}) => {
   await openFixtures(page)
 
   for (const fixture of manifest.fixtures.filter(({kind}) => kind === 'scene')) {
     const root = page.locator(`[data-fixture-id="${fixture.id}"]`)
     const figure = root.locator('figure[data-hw-scene]')
     const source = figure.locator('[data-hw-scene-source]')
+    const caption = figure.locator('[data-hw-scene-caption]')
     const legend = figure.locator('[data-hw-scene-legend]')
+    const expected = fixture.expected!
 
     await expect(figure).toHaveAttribute('data-hw-scene', fixture.recipe!)
     await expect(figure).toHaveAttribute(
@@ -145,18 +178,26 @@ test('preserves source-first scene semantics and localized reader text', async (
       String(fixture.recipeVersion)
     )
     await expect(figure).toHaveAttribute('data-hw-scene-schema', '1')
-    await expect(figure.locator('[data-hw-scene-caption]')).toHaveAttribute(
-      'lang',
-      fixture.locale!
-    )
+    await expect(caption).toHaveAttribute('lang', fixture.locale!)
+    expect(await caption.textContent()).toBe(expected.caption)
     await expect(legend).toHaveAttribute('lang', fixture.locale!)
-    await expect(source).toContainText(fixture.source!)
+    expect(await source.textContent()).toBe(fixture.source)
     expect(
       await source.evaluate((element) =>
         element.closest('[lang]')?.getAttribute('lang')
       )
     ).toBe(fixture.sourceLanguage)
-    await expect(legend.locator('li')).not.toHaveCount(0)
+    await expect(legend.locator('li')).toHaveCount(expected.legend.length)
+    expect(
+      await legend.locator('li').evaluateAll((items) =>
+        items.map((item) => ({
+          targets: (item.getAttribute('data-hw-targets') ?? '')
+            .split(/\s+/u)
+            .filter(Boolean),
+          text: item.querySelector('[data-hw-annotation-text]')?.textContent
+        }))
+      )
+    ).toEqual(expected.legend)
 
     expect(
       await figure.evaluate((element) =>
@@ -197,32 +238,48 @@ test('keeps invalid recipe input readable and fail-closed', async ({page}) => {
   await openFixtures(page)
 
   const invalid = page.locator('[data-fixture-id="task-explainer-1-invalid"]')
-  await expect(invalid.locator('[data-hw-scene-invalid]')).toContainText(
+  await expect(invalid.locator('[data-hw-scene-invalid]')).toHaveText(
     'This is not a structured task.'
   )
   await expect(invalid.locator('[data-hw-scene-legend]')).toHaveCount(0)
 })
 
-test('has no automated WCAG 2.2 A or AA violations', async ({page}) => {
+test('has no automated WCAG 2.0, 2.1, or 2.2 A or AA violations', async ({page}) => {
   await openFixtures(page)
 
-  const results = await new AxeBuilder({page})
+  const tags = [
+    'wcag2a',
+    'wcag2aa',
+    'wcag21a',
+    'wcag21aa',
+    'wcag22a',
+    'wcag22aa'
+  ]
+  const semanticResults = await new AxeBuilder({page})
+    .include('[data-release-fixtures]')
+    .withTags(tags)
+    .disableRules(['color-contrast'])
+    .analyze()
+  const contrastResults = await new AxeBuilder({page})
     .include('[data-release-fixtures]')
     .exclude('[data-hw="watermark"] > [data-hw-label]')
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+    .withRules(['color-contrast'])
     .analyze()
 
-  expect(
-    results.violations.map(({id, impact, nodes}) => ({
-      id,
-      impact,
-      nodes: nodes.map(({any, failureSummary, target}) => ({
-        checks: any.map(({data, message}) => ({data, message})),
-        failureSummary,
-        target
-      }))
+  const violations = [
+    ...semanticResults.violations,
+    ...contrastResults.violations
+  ].map(({id, impact, nodes}) => ({
+    id,
+    impact,
+    nodes: nodes.map(({any, failureSummary, target}) => ({
+      checks: any.map(({data, message}) => ({data, message})),
+      failureSummary,
+      target
     }))
-  ).toEqual([])
+  }))
+
+  expect(violations).toEqual([])
 })
 
 test('keeps the page contained and linearizes connectors at the narrow viewport', async ({
@@ -241,6 +298,12 @@ test('keeps the page contained and linearizes connectors at the narrow viewport'
       connectors.every((connector) => getComputedStyle(connector).display === 'none')
     )
   ).toBe(true)
+  const invalid = page.locator('[data-fixture-id="task-explainer-1-invalid"]')
+  await expect(invalid.locator('[data-hw-scene-invalid]')).toHaveText(
+    'This is not a structured task.'
+  )
+  await expect(invalid.locator('[data-hw-scene-invalid]')).toBeVisible()
+  await expect(invalid.locator('[data-hw-scene-legend]')).toHaveCount(0)
 })
 
 test('keeps margin labels inside wide gesture screenshot boundaries', async ({page}) => {

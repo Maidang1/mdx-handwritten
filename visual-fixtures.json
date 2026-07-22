@@ -47,7 +47,18 @@
       "recipeVersion": 1,
       "locale": "en",
       "sourceLanguage": "en",
-      "source": "[ ] CLI-042 Add export command #cli !high @blocked_by:CLI-041\nWrite task output as JSON for scripts and agents"
+      "source": "[ ] CLI-042 Add export command #cli !high @blocked_by:CLI-041\nWrite task output as JSON for scripts and agents",
+      "expected": {
+        "caption": "Task explainer",
+        "legend": [
+          {"targets": ["state"], "text": "open task: [ ]"},
+          {"targets": ["stable-id"], "text": "stable ID: CLI-042"},
+          {"targets": ["description"], "text": "description: Add export command\nWrite task output as JSON for scripts and agents"},
+          {"targets": ["tag:cli"], "text": "tag: #cli"},
+          {"targets": ["priority"], "text": "priority: !high"},
+          {"targets": ["field:blocked_by"], "text": "custom field: @blocked_by:CLI-041"}
+        ]
+      }
     },
     {
       "id": "task-explainer-1-zh-CN",
@@ -56,7 +67,18 @@
       "recipeVersion": 1,
       "locale": "zh-CN",
       "sourceLanguage": "zh-CN",
-      "source": "[ ] CLI-042 添加导出命令 #cli !high @blocked_by:CLI-041\n将任务输出为 JSON，供脚本与智能体使用"
+      "source": "[ ] CLI-042 添加导出命令 #cli !high @blocked_by:CLI-041\n将任务输出为 JSON，供脚本与智能体使用",
+      "expected": {
+        "caption": "任务解析",
+        "legend": [
+          {"targets": ["state"], "text": "未完成任务：[ ]"},
+          {"targets": ["stable-id"], "text": "稳定 ID：CLI-042"},
+          {"targets": ["description"], "text": "描述：添加导出命令\n将任务输出为 JSON，供脚本与智能体使用"},
+          {"targets": ["tag:cli"], "text": "标签：#cli"},
+          {"targets": ["priority"], "text": "优先级：!high"},
+          {"targets": ["field:blocked_by"], "text": "自定义字段：@blocked_by:CLI-041"}
+        ]
+      }
     },
     {
       "id": "task-explainer-1-invalid",

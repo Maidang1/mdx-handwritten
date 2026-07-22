@@ -19,13 +19,14 @@ async function expectFixtureScreenshot(locator: Locator, name: string) {
 
 test.beforeEach(async ({page}, testInfo) => {
   test.skip(
-    process.env.VISUAL_SNAPSHOTS !== '1' || testInfo.project.name !== 'chromium',
+    process.env.VISUAL_SNAPSHOTS !== '1' ||
+      testInfo.project.name !== manifest.runner.screenshotProject,
     'Pixel baselines run only in the pinned Chromium Linux release job.'
   )
   await openSettledFixture(page)
 })
 
-test('matches the wide LTR and RTL gesture fixtures', async ({page}) => {
+test('matches the wide LTR and RTL gesture Canonical content fixtures', async ({page}) => {
   await expectFixtureScreenshot(
     page.locator('[data-fixture-id="gestures-ltr"]'),
     'gestures-ltr-wide.png'
@@ -36,7 +37,7 @@ test('matches the wide LTR and RTL gesture fixtures', async ({page}) => {
   )
 })
 
-test('matches the narrow LTR and RTL gesture fixtures', async ({page}) => {
+test('matches the narrow LTR and RTL gesture Canonical content fixtures', async ({page}) => {
   await page.setViewportSize(narrow)
 
   await expectFixtureScreenshot(
@@ -49,7 +50,7 @@ test('matches the narrow LTR and RTL gesture fixtures', async ({page}) => {
   )
 })
 
-test('matches both localized wide Scene fixtures', async ({page}) => {
+test('matches both localized wide Canonical content fixtures', async ({page}) => {
   await expectFixtureScreenshot(
     page.locator('[data-fixture-id="task-explainer-1-en"]'),
     'task-explainer-1-en-wide.png'
@@ -60,7 +61,7 @@ test('matches both localized wide Scene fixtures', async ({page}) => {
   )
 })
 
-test('matches both localized narrow Scene fallbacks', async ({page}) => {
+test('matches both localized narrow Annotation scene fallbacks', async ({page}) => {
   await page.setViewportSize(narrow)
 
   await expectFixtureScreenshot(
@@ -73,7 +74,7 @@ test('matches both localized narrow Scene fallbacks', async ({page}) => {
   )
 })
 
-test('matches print and forced-color Scene fallbacks', async ({page}) => {
+test('matches print and forced-color Annotation scene fallbacks', async ({page}) => {
   const englishFixture = page.locator('[data-fixture-id="task-explainer-1-en"]')
   const chineseFixture = page.locator('[data-fixture-id="task-explainer-1-zh-CN"]')
 
