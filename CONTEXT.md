@@ -16,6 +16,10 @@ _Avoid_: Hand-built illustration, fixed layout
 A named convention that turns recognizable source content and an author's intent into an annotation scene. It supplies shared meanings and relationships so authors do not have to repeat them.
 _Avoid_: Template, visual preset
 
+**Annotation relationship**:
+A semantic connection an Annotation scene asserts between a real-text label and one or more ordered Annotation targets, independent of connector geometry.
+_Avoid_: Connector, arrow, graph edge
+
 **Annotation target**:
 A scene-local semantic identity, scoped by its annotation recipe and version, that associates meaning with one or more exact canonical-source ranges. Ranges locate a target but do not define its identity.
 _Avoid_: Text match, DOM selector, source offset
@@ -23,6 +27,10 @@ _Avoid_: Text match, DOM selector, source offset
 **Scene plan**:
 A reviewable description of an annotation scene's targets, labels, relationships, and gestures, independent of their final geometric arrangement.
 _Avoid_: Rendered scene, pixel layout
+
+**Plan provenance**:
+A compact record of how a Scene plan was materialized and whether Semantic corrections or an approved proposal contributed. It is review context, not proof or a generation transcript.
+_Avoid_: Audit log, prompt history
 
 **Semantic correction**:
 Sparse author input that resolves an ambiguous target, label, or relationship in an annotation scene without specifying geometry or visual styling.
