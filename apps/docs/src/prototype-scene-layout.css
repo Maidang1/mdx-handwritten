@@ -431,8 +431,8 @@
 
 .prototype-matrix {
   display: grid;
-  grid-template-columns: 190px repeat(5, minmax(380px, 1fr));
-  min-width: 2280px;
+  grid-template-columns: 190px 1120px repeat(4, 380px);
+  min-width: 2880px;
   gap: 10px;
 }
 
@@ -507,7 +507,7 @@
 }
 
 .prototype-matrix-cell[data-matrix-mode="rich"] {
-  min-width: 1120px;
+  min-width: 0;
 }
 
 .prototype-matrix-cell[data-matrix-mode="rich"] .prototype-rail-stage {
@@ -701,6 +701,16 @@
     display: none !important;
   }
 
+  .prototype-source {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .prototype-scene[data-recipe="mdtask-terminal"] .prototype-source {
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
   .prototype-scene--rails .prototype-source [data-marker]::after {
     display: inline-grid;
   }
@@ -712,6 +722,17 @@
   }
 
   .prototype-source [data-prototype-target] {
+    outline: 1px solid currentColor;
+  }
+
+  .prototype-scene--rails .prototype-source [data-marker]::after {
+    display: inline-grid;
+  }
+
+  .prototype-source [data-marker]::after,
+  .prototype-legend-number {
+    color: CanvasText;
+    background: Canvas;
     outline: 1px solid currentColor;
   }
 }

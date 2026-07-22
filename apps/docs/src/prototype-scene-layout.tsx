@@ -800,6 +800,7 @@ export function LayoutPrototype() {
     url.hash = 'layout-prototype'
     window.history.replaceState(null, '', url)
     setVariant(next)
+    document.getElementById('layout-prototype')?.scrollIntoView({ block: 'start' })
   }
 
   useEffect(() => {
