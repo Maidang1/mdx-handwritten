@@ -39,3 +39,7 @@ _Avoid_: Layout override, manual positioning
 **Visual style**:
 The appearance used to render an annotation gesture without changing what that gesture communicates.
 _Avoid_: Annotation gesture
+
+**Rich-layout envelope**:
+A recipe-versioned boundary that proves an Annotation scene's container and content fit one finite spatial arrangement. Outside it, the whole scene uses its linear reading order rather than author positioning or inferred geometry.
+_Avoid_: Breakpoint, collision result, manual layout
