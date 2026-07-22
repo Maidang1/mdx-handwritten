@@ -58,6 +58,7 @@ jobs:
 
       - name: Validate Firefox and WebKit semantics
         env:
+          HOME: /root
           RELEASE_FIXTURE_PROJECTS: firefox,webkit
         run: npm run test:release-fixtures
 
