@@ -1,0 +1,232 @@
+{
+  "schema": "mdx-handwritten/scene-plan",
+  "schemaVersion": 1,
+  "recipe": {
+    "name": "task-explainer",
+    "version": 1
+  },
+  "localization": {
+    "locale": "en",
+    "catalog": {
+      "id": "mdx-handwritten/task-explainer/reader-text",
+      "version": 1
+    }
+  },
+  "title": "Task explainer",
+  "source": {
+    "text": "[ ] CLI-042 Add export command #cli !high @blocked_by:CLI-041\nWrite task output as JSON for scripts and agents",
+    "identity": {
+      "normalization": "trim-lf-v1",
+      "algorithm": "sha256",
+      "digest": "2c79b786797663d91d551320a3554d19a4da2aac5a2955f9e3c1286d7ffee1ab"
+    }
+  },
+  "targets": [
+    {
+      "id": "state",
+      "role": "state",
+      "ranges": [
+        {
+          "start": 0,
+          "end": 3,
+          "exactText": "[ ]"
+        }
+      ]
+    },
+    {
+      "id": "stable-id",
+      "role": "stable-id",
+      "ranges": [
+        {
+          "start": 4,
+          "end": 11,
+          "exactText": "CLI-042"
+        }
+      ]
+    },
+    {
+      "id": "description",
+      "role": "description",
+      "ranges": [
+        {
+          "start": 12,
+          "end": 30,
+          "exactText": "Add export command"
+        },
+        {
+          "start": 62,
+          "end": 110,
+          "exactText": "Write task output as JSON for scripts and agents"
+        }
+      ]
+    },
+    {
+      "id": "tag:cli",
+      "role": "tag",
+      "ranges": [
+        {
+          "start": 31,
+          "end": 35,
+          "exactText": "#cli"
+        }
+      ]
+    },
+    {
+      "id": "priority",
+      "role": "priority",
+      "ranges": [
+        {
+          "start": 36,
+          "end": 41,
+          "exactText": "!high"
+        }
+      ]
+    },
+    {
+      "id": "field:blocked_by",
+      "role": "field",
+      "ranges": [
+        {
+          "start": 42,
+          "end": 61,
+          "exactText": "@blocked_by:CLI-041"
+        }
+      ]
+    }
+  ],
+  "labels": [
+    {
+      "id": "state-label",
+      "text": "open task"
+    },
+    {
+      "id": "stable-id-label",
+      "text": "stable ID"
+    },
+    {
+      "id": "description-label",
+      "text": "description"
+    },
+    {
+      "id": "tag-label",
+      "text": "tag"
+    },
+    {
+      "id": "priority-label",
+      "text": "priority"
+    },
+    {
+      "id": "field-label",
+      "text": "custom field"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "state-annotation",
+      "kind": "describes",
+      "labelId": "state-label",
+      "targetIds": [
+        "state"
+      ],
+      "detailKind": "short-description",
+      "legendText": "open task: [ ]"
+    },
+    {
+      "id": "stable-id-annotation",
+      "kind": "describes",
+      "labelId": "stable-id-label",
+      "targetIds": [
+        "stable-id"
+      ],
+      "detailKind": "short-description",
+      "legendText": "stable ID: CLI-042"
+    },
+    {
+      "id": "description-annotation",
+      "kind": "describes",
+      "labelId": "description-label",
+      "targetIds": [
+        "description"
+      ],
+      "detailKind": "short-description",
+      "legendText": "description: Add export command\nWrite task output as JSON for scripts and agents"
+    },
+    {
+      "id": "tag-annotation",
+      "kind": "describes",
+      "labelId": "tag-label",
+      "targetIds": [
+        "tag:cli"
+      ],
+      "detailKind": "short-description",
+      "legendText": "tag: #cli"
+    },
+    {
+      "id": "priority-annotation",
+      "kind": "describes",
+      "labelId": "priority-label",
+      "targetIds": [
+        "priority"
+      ],
+      "detailKind": "short-description",
+      "legendText": "priority: !high"
+    },
+    {
+      "id": "field-annotation",
+      "kind": "describes",
+      "labelId": "field-label",
+      "targetIds": [
+        "field:blocked_by"
+      ],
+      "detailKind": "short-description",
+      "legendText": "custom field: @blocked_by:CLI-041"
+    }
+  ],
+  "gestures": [
+    {
+      "id": "state-annotation-gesture",
+      "kind": "annotate",
+      "relationshipId": "state-annotation"
+    },
+    {
+      "id": "stable-id-annotation-gesture",
+      "kind": "annotate",
+      "relationshipId": "stable-id-annotation"
+    },
+    {
+      "id": "description-annotation-gesture",
+      "kind": "annotate",
+      "relationshipId": "description-annotation"
+    },
+    {
+      "id": "tag-annotation-gesture",
+      "kind": "annotate",
+      "relationshipId": "tag-annotation"
+    },
+    {
+      "id": "priority-annotation-gesture",
+      "kind": "annotate",
+      "relationshipId": "priority-annotation"
+    },
+    {
+      "id": "field-annotation-gesture",
+      "kind": "annotate",
+      "relationshipId": "field-annotation"
+    }
+  ],
+  "provenance": {
+    "kind": "reviewed-proposal",
+    "engine": {
+      "name": "mdx-handwritten-scene",
+      "version": "0.1.0"
+    },
+    "generator": {
+      "id": "docs-fixture",
+      "version": "1"
+    },
+    "review": {
+      "status": "approved",
+      "id": "review_docs_showcase_v1"
+    }
+  }
+}

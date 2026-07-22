@@ -1,5 +1,6 @@
 import type {Plugin} from 'unified'
 import type {Root} from 'mdast'
+import type {SceneDiagnosticV1} from 'mdx-handwritten-scene'
 
 /** The eight directives understood by this package. */
 export const handwrittenDirectiveNames = [
@@ -76,6 +77,11 @@ export interface HandwrittenLimits {
   maxDirectivesPerFile: number
 }
 
+export interface HandwrittenReviewedPlans {
+  /** Absolute project root containing `.mdx-handwritten/plans`. */
+  projectRoot: string
+}
+
 export type HandwrittenImports =
   | {mode: 'manual'}
   | {mode: 'auto'; source: string}
@@ -92,6 +98,8 @@ export interface HandwrittenOptions {
   /** `strict` throws after reporting errors; `warn` reports and strips invalid nodes. */
   diagnostics?: HandwrittenDiagnostics
   limits?: Partial<HandwrittenLimits>
+  /** Resolve explicitly bound Reviewed plan artifacts during this build. */
+  reviewedPlans?: HandwrittenReviewedPlans
   /** Record usage counts on `file.data.mdxHandwritten`. */
   recordUsage?: boolean
 }
@@ -112,12 +120,11 @@ export type HandwrittenRuleId =
   | 'component-invalid'
   | 'output-unhandled'
   | 'variant-path-missing'
-  | 'scene-recipe-unknown'
-  | 'scene-locale-unsupported'
-  | 'scene-source-empty'
-  | 'scene-source-too-long'
-  | 'scene-task-syntax-invalid'
-  | 'scene-task-priority-ambiguous'
+  | SceneDiagnosticV1['code']
+  | 'scene-plan-binding-invalid'
+  | 'scene-plan-artifact-missing'
+  | 'scene-plan-artifact-unreadable'
+  | 'scene-plan-declaration-mismatch'
 
 export interface HandwrittenUsage {
   total: number

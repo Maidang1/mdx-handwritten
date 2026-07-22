@@ -14,6 +14,7 @@ import {
   handwrittenSceneComponents,
   isSafeHandwrittenHref,
   mdxHandwrittenComponents,
+  type ScenePlanV1,
 } from '../src/index.js'
 
 describe('mdx-handwritten-react server rendering', () => {
@@ -136,6 +137,113 @@ describe('mdx-handwritten-react server rendering', () => {
 describe('Annotation scene server rendering', () => {
   const source = `[ ] CLI-042 Add export command #cli !high @blocked_by:CLI-041\nWrite task output as JSON for scripts and agents`
 
+  const reviewedPlan = {
+    schema: 'mdx-handwritten/scene-plan',
+    schemaVersion: 1,
+    recipe: { name: 'status-change', version: 1 },
+    localization: {
+      locale: 'en',
+      catalog: { id: 'status-change/en', version: 1 },
+    },
+    title: 'Reviewed status change',
+    source: {
+      text: 'draft becomes shipped',
+      identity: {
+        normalization: 'trim-lf-v1',
+        algorithm: 'sha256',
+        digest: '0'.repeat(64),
+      },
+    },
+    targets: [
+      {
+        id: 'before',
+        role: 'before',
+        ranges: [{ start: 0, end: 5, exactText: 'draft' }],
+      },
+      {
+        id: 'after',
+        role: 'after',
+        ranges: [{ start: 14, end: 21, exactText: 'shipped' }],
+      },
+    ],
+    labels: [{ id: 'change-label', text: 'status change' }],
+    relationships: [
+      {
+        id: 'status-change',
+        kind: 'relates',
+        relation: 'changes-to',
+        labelId: 'change-label',
+        fromTargetIds: ['before'],
+        toTargetIds: ['after'],
+        detailKind: 'short-description',
+        legendText: 'status change: draft becomes shipped',
+      },
+    ],
+    gestures: [
+      {
+        id: 'status-connector',
+        kind: 'connect',
+        relationshipId: 'status-change',
+      },
+    ],
+    provenance: {
+      kind: 'reviewed-proposal',
+      engine: { name: 'mdx-handwritten-scene', version: '0.1.0' },
+      generator: { id: 'fixture-generator' },
+      review: { status: 'approved', id: 'review_01k0m6q7j8v3c2f5' },
+    },
+  } as const satisfies ScenePlanV1
+
+  it('renders a supplied materialized Scene plan without deriving new meaning', () => {
+    const html = renderToStaticMarkup(<HandScene plan={reviewedPlan} />)
+
+    expect(html).toContain(
+      '<figure data-hw-locale="en" data-hw-scene="status-change" data-hw-scene-version="1" data-hw-scene-schema="1"',
+    )
+    expect(html).toContain('Reviewed status change')
+    expect(html).toContain('data-hw-target="before" data-hw-target-role="before">draft</span>')
+    expect(html).toContain('data-hw-target="after" data-hw-target-role="after">shipped</span>')
+    expect(html).toContain('data-hw-annotation="status-change"')
+    expect(html).toContain('data-hw-annotation-role="before"')
+    expect(html).toContain('data-hw-gesture="connect"')
+    expect(html).toContain('data-hw-gestures="status-connector"')
+    expect(html).toContain('data-hw-relation="changes-to"')
+    expect(html).toContain('data-hw-relationship="relates"')
+    expect(html).toContain('data-hw-connector="straight"')
+    expect(html).toContain('status change: draft becomes shipped')
+    expect(html).not.toContain('data-hw-scene-invalid')
+  })
+
+  it('maps target emphasis and verdict intent from a materialized plan', () => {
+    const plan: ScenePlanV1 = {
+      ...reviewedPlan,
+      gestures: [
+        ...reviewedPlan.gestures,
+        {
+          id: 'before-warning',
+          kind: 'emphasize',
+          targetIds: ['before'],
+          intent: 'warning',
+        },
+        {
+          id: 'status-verdict',
+          kind: 'verdict',
+          relationshipId: 'status-change',
+          intent: 'positive',
+        },
+      ],
+    }
+    const html = renderToStaticMarkup(<HandScene plan={plan} />)
+
+    expect(html).toContain('<mark data-hw-gesture="emphasize"')
+    expect(html).toContain('data-hw-gestures="before-warning"')
+    expect(html).toContain('data-hw-intent="warning"')
+    expect(html).toContain('data-hw-target="before"')
+    expect(html).toContain('data-hw-gesture="connect verdict"')
+    expect(html).toContain('data-hw-intent="positive"')
+    expect(html).toContain('<mark data-hw-annotation-text="" data-hw-verdict="">')
+  })
+
   it('keeps canonical source before a complete legend with decorative connectors', () => {
     const html = renderToStaticMarkup(<HandScene recipe="task-explainer" source={source} />)
 
@@ -152,6 +260,7 @@ describe('Annotation scene server rendering', () => {
     expect(code).not.toContain('data-hw-connector=')
     expect(html).toContain('stable ID: CLI-042')
     expect(html).toContain('data-hw-annotation-role="stable-id"')
+    expect(html).toContain('data-hw-relationship="describes"')
     expect(html).toMatch(/<li[^>]*>[\s\S]*?<svg aria-hidden="true" data-hw-connector="curved"/)
     expect(html.match(/data-hw-connector="curved"/g)).toHaveLength(
       html.match(/data-hw-annotation="/g)?.length ?? 0,

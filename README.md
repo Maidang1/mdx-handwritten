@@ -76,6 +76,42 @@ The canonical source stays intact and comes first in the DOM. A complete text
 legend follows it, so narrow layouts, print, forced colors, and missing CSS do
 not depend on connector geometry.
 
+#### Reviewed scene plans
+
+The ordinary path above remains fully deterministic and needs no extra files.
+When an upstream authoring tool has produced and an author has approved a Scene
+plan, the tool adds one opaque binding while leaving the readable source in
+place:
+
+```mdx
+:::hw-scene{recipe="task-explainer" locale="en" plan="rp1_01k4m6h8q2w9c5x7t3v0n8s6dy"}
+[ ] CLI-042 Add export command #cli !high @blocked_by:CLI-041
+Write task output as JSON for scripts and agents
+:::
+```
+
+The binding resolves exactly one committed JSON artifact at
+`.mdx-handwritten/plans/<binding>.json` under an explicitly configured absolute
+project root:
+
+```ts
+[remarkHandwritten, {
+  output: 'component',
+  diagnostics: 'strict',
+  reviewedPlans: { projectRoot: process.cwd() }
+}]
+```
+
+Authors do not write the JSON, source offsets, digest, or path. Every build
+reads the bounded artifact again and validates it against the current canonical
+source. A missing, stale, incompatible, or malformed bound plan fails strict
+compilation; warning mode reports the problem and retains source only. It never
+falls back to different inferred meaning or calls a model. The sidecar is a
+build input, not an emitted asset, unless a host separately publishes it. The
+opaque binding is never interpreted as a path, URL, or glob; the resolver also
+rejects symlinked artifacts, out-of-root files, invalid UTF-8, and artifacts
+over 64 KiB.
+
 ### Inline text, link, mark, and annotation
 
 ```mdx
