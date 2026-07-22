@@ -3,6 +3,8 @@ import { mdxHandwrittenComponents } from 'mdx-handwritten-react'
 import Reference from './content/reference.mdx'
 import Showcase from './content/showcase.mdx'
 import showcaseSource from './content/showcase.mdx?raw'
+import { LayoutPrototype } from './prototype-scene-layout'
+import './prototype-scene-layout.css'
 
 const repositoryUrl =
   import.meta.env.VITE_REPOSITORY_URL ??
@@ -49,6 +51,7 @@ export function App() {
         </a>
 
         <nav aria-label="Primary navigation">
+          <a href="#layout-prototype">Layout lab</a>
           <a href="#showcase">Showcase</a>
           <a href="#reference">Reference</a>
           <a href="#setup">Setup</a>
@@ -98,6 +101,8 @@ export function App() {
             </div>
           </div>
         </section>
+
+        <LayoutPrototype />
 
         <section className="showcase-section" id="showcase" aria-labelledby="showcase-title">
           <div className="section-heading">
