@@ -24,9 +24,12 @@ import type {
 } from 'mdast-util-mdx-jsx'
 import {
   createScenePlan,
+  type CreateScenePlanInput,
   type SceneDiagnosticV1,
+  type ScenePlanResult,
   type ScenePlanV1
 } from 'mdx-handwritten-scene'
+import type {ConfiguredSceneCompiler} from 'mdx-handwritten-scene/recipes'
 import type {Expression, Program, Property} from 'estree'
 import type {Node, Parent} from 'unist'
 import type {VFile} from 'vfile'
@@ -87,6 +90,7 @@ interface ResolvedOptions {
   diagnostics: 'strict' | 'warn'
   maxDirectivesPerFile: number
   reviewedPlans: ResolvedReviewedPlans | undefined
+  sceneCompiler: ConfiguredSceneCompiler | undefined
   recordUsage: boolean
 }
 
@@ -138,8 +142,19 @@ function resolveOptions(options: HandwrittenOptions | undefined): ResolvedOption
     diagnostics: options?.diagnostics ?? 'strict',
     maxDirectivesPerFile: options?.limits?.maxDirectivesPerFile ?? 500,
     reviewedPlans: resolveReviewedPlans(options?.reviewedPlans),
+    sceneCompiler: options?.sceneCompiler,
     recordUsage: options?.recordUsage ?? false
   }
+}
+
+function createScenePlanForContext(
+  context: ValidationContext,
+  input: CreateScenePlanInput
+): ScenePlanResult {
+  const compiler = context.options.sceneCompiler
+  return compiler === undefined
+    ? createScenePlan(input)
+    : compiler.createScenePlan(input)
 }
 
 function report(
@@ -910,7 +925,7 @@ function materializeBoundScene(
   const candidateJson = readCandidateJson(context, node, attributes.plan)
   if (candidateJson === undefined) return undefined
 
-  const result = createScenePlan({source, candidateJson})
+  const result = createScenePlanForContext(context, {source, candidateJson})
   if (!result.ok) {
     reportSceneDiagnostics(context, node, result.diagnostics)
     return undefined
@@ -1008,7 +1023,7 @@ function validateScene(
         plan: attributes.plan
       })
     } else {
-      const result = createScenePlan({
+      const result = createScenePlanForContext(context, {
         recipe: attributes.recipe,
         source,
         ...(attributes.locale === undefined ? {} : {locale: attributes.locale})

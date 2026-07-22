@@ -26,7 +26,7 @@ The committed [`../../budgets.json`](../../budgets.json) file is the machine-rea
 | Scene and remark npm tarballs | 45 KiB each |
 | React and theme npm tarballs | 7 KiB each |
 
-The three-entry combined value is the sum of the three independently compressed ESM entries. It is not a recompressed concatenation.
+The three-entry combined value is the sum of the three independently measured ESM entry graphs. It is not a recompressed concatenation.
 
 ## Canonical environment
 
@@ -43,7 +43,11 @@ Local runs on another supported Node or npm version are useful before a push, bu
 
 ## ESM and consumer fixtures
 
-Raw ESM is the exact byte length of each built `dist/index.js`. Gzip is the exact stdout length of the canonical gzip command.
+Raw ESM is the sum of the exact byte lengths of every built JavaScript file in the
+static dependency graph rooted at `dist/index.js`. Gzip is the sum of the exact
+canonical gzip stdout lengths for those files. A shared chunk is therefore charged to
+every public entry graph that loads it; splitting a large implementation behind a tiny
+re-export file cannot bypass the limit.
 
 Consumer measurements bundle the committed `HandScene` and `HandText` fixtures from the public `mdx-handwritten-react` package root with:
 

@@ -1,0 +1,92 @@
+{
+  "schema": "mdx-handwritten/scene-plan",
+  "schemaVersion": 1,
+  "recipe": {
+    "name": "@evidence/transition-recipes/status-transition",
+    "version": 1
+  },
+  "localization": {
+    "locale": "en",
+    "catalog": {
+      "id": "evidence/status-transition/reader-text",
+      "version": 1
+    }
+  },
+  "title": "Release transition",
+  "source": {
+    "text": "draft -> shipped",
+    "identity": {
+      "normalization": "trim-lf-v1",
+      "algorithm": "sha256",
+      "digest": "3c4bd7ac7858019014cb85281a9afbbec2eaa510958e5b2f159baa3f8a4381e6"
+    }
+  },
+  "targets": [
+    {
+      "id": "before",
+      "role": "before",
+      "ranges": [
+        {
+          "start": 0,
+          "end": 5,
+          "exactText": "draft"
+        }
+      ]
+    },
+    {
+      "id": "after",
+      "role": "after",
+      "ranges": [
+        {
+          "start": 9,
+          "end": 16,
+          "exactText": "shipped"
+        }
+      ]
+    }
+  ],
+  "labels": [
+    {
+      "id": "transition-label",
+      "text": "status transition"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "transition-relationship",
+      "kind": "relates",
+      "relation": "changes-to",
+      "labelId": "transition-label",
+      "fromTargetIds": [
+        "before"
+      ],
+      "toTargetIds": [
+        "after"
+      ],
+      "detailKind": "short-description",
+      "legendText": "status transition: draft -> shipped"
+    }
+  ],
+  "gestures": [
+    {
+      "id": "transition-connector",
+      "kind": "connect",
+      "relationshipId": "transition-relationship"
+    }
+  ],
+  "provenance": {
+    "kind": "reviewed-proposal",
+    "engine": {
+      "name": "mdx-handwritten-scene",
+      "version": "0.1.0"
+    },
+    "generator": {
+      "id": "third-party-recipe-authoring-tool",
+      "version": "1"
+    },
+    "review": {
+      "status": "approved",
+      "id": "review-rsc-fixture-1"
+    }
+  }
+}

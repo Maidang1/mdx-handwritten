@@ -29,6 +29,8 @@ budget('consumer.handScene.raw', actual.consumerBundles.handScene.rawBytes, mani
 budget('consumer.handScene.gzip', actual.consumerBundles.handScene.gzipBytes, manifest.limits.consumerBundles.handScene.gzipBytes)
 budget('consumer.handText.gzip', actual.consumerBundles.handText.gzipBytes, manifest.limits.consumerBundles.handText.gzipBytes)
 budget('consumer.handText.scene', actual.consumerBundles.handText.sceneBytes, manifest.limits.consumerBundles.handText.sceneBytes)
+equal('consumer.handScene.recipesEntry', actual.consumerBundles.handScene.recipesEntryBytes, 0)
+equal('consumer.handText.recipesEntry', actual.consumerBundles.handText.recipesEntryBytes, 0)
 budget('theme.resolved.raw', actual.theme.rawBytes, manifest.limits.theme.rawBytes)
 budget('theme.resolved.gzip', actual.theme.gzipBytes, manifest.limits.theme.gzipBytes)
 budget('fonts.default.total', actual.fonts.totalBytes, manifest.limits.fonts.totalBytes)
@@ -42,13 +44,55 @@ for (const [workspace, maximum] of Object.entries(manifest.limits.npmPacked)) {
 }
 
 invariant('consumer.handScene.exported', actual.invariants.handSceneExported)
+invariant(
+  'consumer.handScene.recipeImplementationExcluded',
+  actual.invariants.handSceneRecipeImplementationExcluded,
+)
 invariant('consumer.handText.exported', actual.invariants.handTextExported)
+invariant(
+  'consumer.handText.recipeImplementationExcluded',
+  actual.invariants.handTextRecipeImplementationExcluded,
+)
 invariant('fonts.default.fileSet', actual.invariants.fontFilesMatch)
 invariant('runtime.noBrowserExport', actual.invariants.noBrowserExport)
 invariant('runtime.noUseClientDirective', actual.invariants.noUseClientDirective)
 invariant('theme.importsResolved', actual.invariants.themeImportsResolved)
 invariant('npmPacked.sceneSourceMap', actual.invariants.sceneSourceMapPacked)
 invariant('npmPacked.remarkSourceMap', actual.invariants.remarkSourceMapPacked)
+invariant('npmPacked.sceneRecipesEntry', actual.invariants.sceneRecipesEntryPacked)
+invariant('npmPacked.sceneRecipesDeclaration', actual.invariants.sceneRecipesDeclarationPacked)
+invariant('npmPacked.sceneRecipesSourceMap', actual.invariants.sceneRecipesSourceMapPacked)
+invariant('npmPacked.sceneSourceMapsComplete', actual.invariants.sceneSourceMapsComplete)
+invariant('npmPacked.recipeFixtureFiles', actual.invariants.packedRecipeFixtureFilesMatch)
+invariant('npmPacked.recipeFixtureConformance', actual.invariants.packedRecipeFixtureConforms)
+invariant('npmPacked.recipeFixtureImport', actual.invariants.packedRecipeFixtureImported)
+invariant('npmPacked.recipeFixtureName', actual.invariants.packedRecipeFixtureNameMatches)
+invariant('npmPacked.recipeFixturePeer', actual.invariants.packedRecipeFixturePeerDependency)
+invariant(
+  'npmPacked.reactServerConditionActive',
+  actual.invariants.packedReactServerConditionActive,
+)
+invariant(
+  'npmPacked.reactServerPackageImport',
+  actual.invariants.packedReactServerPackageImported,
+)
+invariant(
+  'npmPacked.reactServerImportSucceeded',
+  actual.invariants.packedReactServerImportSucceeded,
+)
+invariant(
+  'npmPacked.reactServerMaterializedPlanOnly',
+  actual.invariants.packedReactServerMaterializedPlanOnly,
+)
+invariant(
+  'npmPacked.reactServerMeaningPreserved',
+  actual.invariants.packedReactServerMeaningPreserved,
+)
+invariant(
+  'npmPacked.reactServerStructureComplete',
+  actual.invariants.packedReactServerStructureComplete,
+)
+invariant('npmPacked.reactServerScriptFree', actual.invariants.packedReactServerScriptFree)
 equal(
   'tooling.esbuildVersion',
   actual.invariants.esbuildVersion,

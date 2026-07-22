@@ -43,9 +43,106 @@ npm is the only standardized distribution channel. Git URLs, tarball URLs, CDNs,
 
 ## Package and compiler boundary
 
-One Recipe package may expose one or more exact Annotation recipe versions. Its public package definition contains declarative metadata plus a synchronous compile function, conceptually equivalent to:
+One Recipe package may expose one or more exact Annotation recipe versions. The secondary export `mdx-handwritten-scene/recipes` defines this normative Interface:
 
 ```ts
+interface AnnotationRecipeLimitsV1 {
+  readonly sourceCodeUnits: number
+  readonly targets: number
+  readonly rangesPerTarget: number
+  readonly ranges: number
+  readonly labels: number
+  readonly relationships: number
+  readonly gestures: number
+  readonly targetReferencesPerRelationship: number
+  readonly localizedTextCodeUnits: number
+  readonly textCodeUnits: number
+}
+
+interface AnnotationRecipeMessagesV1 {
+  readonly title: string
+  readonly [key: string]: string
+}
+
+interface AnnotationRecipeCatalogV1 {
+  readonly id: string
+  readonly version: number
+  readonly messages: {
+    readonly en: AnnotationRecipeMessagesV1
+    readonly 'zh-CN': AnnotationRecipeMessagesV1
+  }
+}
+
+interface AnnotationRecipeCorrectionSlotsV1 {
+  readonly targets: readonly string[]
+  readonly labels: readonly string[]
+  readonly relationships: readonly string[]
+}
+
+interface AnnotationRecipeCompileContextV1 {
+  readonly source: string
+  readonly locale: 'en' | 'zh-CN'
+  readonly messages: AnnotationRecipeMessagesV1
+  readonly targetCorrections: readonly Extract<
+    SemanticCorrectionV1,
+    {kind: 'target'}
+  >[]
+  readonly limits: AnnotationRecipeLimitsV1
+}
+
+interface AnnotationRecipeDraftV1 {
+  readonly targets: readonly AnnotationTargetV1[]
+  readonly labels: readonly AnnotationLabelV1[]
+  readonly relationships: readonly AnnotationRelationshipV1[]
+  readonly gestures: readonly AnnotationGestureV1[]
+}
+
+interface AnnotationRecipeDiagnosticV1 {
+  readonly reason: string
+  readonly message: string
+  readonly sourceRange?: {readonly start: number; readonly end: number}
+  readonly candidates?: readonly {
+    readonly start: number
+    readonly end: number
+  }[]
+}
+
+type AnnotationRecipeCompileResultV1 =
+  | {readonly ok: true; readonly draft: AnnotationRecipeDraftV1}
+  | {
+      readonly ok: false
+      readonly diagnostics: NonEmpty<AnnotationRecipeDiagnosticV1>
+    }
+
+interface AnnotationRecipeValidationContextV1 {
+  readonly source: string
+  readonly locale: 'en' | 'zh-CN'
+  readonly messages: AnnotationRecipeMessagesV1
+  readonly draft: AnnotationRecipeDraftV1
+  readonly appliedCorrections: readonly SemanticCorrectionV1[]
+}
+
+type AnnotationRecipeValidationResultV1 =
+  | {readonly ok: true}
+  | {
+      readonly ok: false
+      readonly diagnostics: NonEmpty<AnnotationRecipeDiagnosticV1>
+    }
+
+interface AnnotationRecipeDefinitionV1 {
+  readonly ref: {readonly name: string; readonly version: number}
+  readonly roles: readonly string[]
+  readonly correctionSlots: AnnotationRecipeCorrectionSlotsV1
+  readonly catalog: AnnotationRecipeCatalogV1
+  readonly limits: AnnotationRecipeLimitsV1
+  compile(
+    context: AnnotationRecipeCompileContextV1
+  ): AnnotationRecipeCompileResultV1
+  validate(
+    context: AnnotationRecipeValidationContextV1
+  ): AnnotationRecipeValidationResultV1
+}
+
 interface AnnotationRecipePackageV1 {
   readonly protocol: 'mdx-handwritten/annotation-recipe-package'
   readonly protocolVersion: 1
@@ -53,23 +150,67 @@ interface AnnotationRecipePackageV1 {
   readonly recipes: readonly AnnotationRecipeDefinitionV1[]
   readonly activeVersions: Readonly<Record<string, number>>
 }
+
+interface AnnotationRecipePackageBindingV1 {
+  readonly packageName: string
+  readonly definition: AnnotationRecipePackageV1
+}
+
+interface CreateSceneCompilerOptions {
+  readonly recipePackages: readonly AnnotationRecipePackageBindingV1[]
+}
+
+interface ConfiguredSceneCompiler {
+  readonly createScenePlan: (
+    input: CreateScenePlanInput
+  ) => ScenePlanResult
+}
+
+type SceneCompilerConfigurationErrorCode =
+  | 'scene-compiler-package-invalid'
+  | 'scene-compiler-package-protocol-unsupported'
+  | 'scene-compiler-package-name-mismatch'
+  | 'scene-compiler-recipe-duplicate'
+  | 'scene-compiler-active-version-missing'
+
+declare class SceneCompilerConfigurationError extends Error {
+  readonly name: 'SceneCompilerConfigurationError'
+  readonly code: SceneCompilerConfigurationErrorCode
+  readonly path: readonly (string | number)[]
+}
+
+declare function createSceneCompiler(
+  options: CreateSceneCompilerOptions
+): ConfiguredSceneCompiler
 ```
+
+The secondary export also provides frozen `annotationRecipePackageProtocolV1` and `annotationRecipeLimitsV1` values. The latter contains the Scene Module maxima for every recipe-owned limit, so a package can copy the defaults and deliberately lower individual values.
 
 The host configuration binds an expected npm package name to the imported definition. The definition repeats that package name, and compiler construction rejects a mismatch. This explicit binding is the namespace authority; the Scene Module does not introspect ESM resolution or prove which registry served the module. The packed-package conformance check separately compares the definition against its `package.json` name.
 
 Each recipe definition declares:
 
 - one canonical recipe name and positive integer version;
-- a closed role vocabulary and declared Semantic correction slots;
+- a closed role vocabulary and exact target, label, and relationship Semantic correction slots;
 - complete, versioned plain-text `en` and `zh-CN` Localization catalogs;
 - fixed input and draft limits no larger than the Scene Module limits; and
-- one synchronous compile function that the publisher promises is pure and deterministic from bounded canonical source context to a semantic draft or recipe diagnostics.
+- one synchronous compile function and one synchronous semantic validator that the publisher promises are pure and deterministic.
 
-The definition may produce only candidate targets, labels, relationships, gestures, and diagnostics allowed by the package protocol. It cannot produce a final Scene plan, Plan provenance, source fingerprint, HTML, Markdown, JSX, CSS, coordinates, renderer callbacks, arbitrary extension fields, files, URLs, or executable content.
+The compile function receives normalized source, the canonical locale, a frozen copy of the selected catalog messages, validated target corrections needed to resolve parsing ambiguity, and the package limits. Compile and validate are invoked as captured plain functions with an `undefined` receiver; they cannot use `this` to inspect or mutate the compiler's internal recipe contract. The compile function may produce only candidate targets, labels, relationships, gestures, or bounded package diagnostics. It cannot produce a title, final Scene plan, Plan provenance, source fingerprint, HTML, Markdown, JSX, CSS, coordinates, renderer callbacks, arbitrary extension fields, files, URLs, or executable content.
+
+Catalogs contain strings only. `en` and `zh-CN` must have the same identifier-key set, including `title`; values are non-empty, bounded plain text. Core selects the exact catalog and materializes `messages.title` as the plan title. The compile function may combine the remaining selected strings with bounded semantic values to produce label and legend text, after which core validates every resolved string. There is no formatter DSL, ICU payload, locale fallback, function-valued message, or host translation lookup.
+
+Core decodes every Semantic correction before package code runs. A target correction is passed to compile only when its slot is listed in `correctionSlots.targets`; this permits deterministic ambiguity resolution. Label and relationship corrections are not passed to compile. After a strict draft decode, core rejects any correction whose label or relationship ID is not declared, applies all three correction kinds through the shared correction machinery, and then revalidates the complete graph. Recipes with dynamic IDs must omit unsupported correction kinds rather than declare a pattern or wildcard.
+
+The validator receives a frozen read-only graph after corrections and must enforce the exact recipe version's target identity, source meaning, and recipe-specific graph semantics. Core invokes it for both deterministic drafts and Reviewed candidates, but a candidate path never invokes `compile`. Current-source identity binding and generic closed-field, role, range, reference, gesture, provenance, catalog, and limit validation always run in core before the recipe-specific validator, so a Stale or structurally invalid candidate cannot invoke package code and package validation cannot replace or weaken the Scene plan contract.
 
 The Scene Module remains the sole finalizer. It owns source normalization and identity, locale resolution, Semantic correction validation, range and reference integrity, catalog materialization, canonical ordering, limits, Plan provenance, stable diagnostics, and all-or-nothing Scene plan construction. Every successful output is therefore the same closed pure-JSON Scene plan consumed by first-party Annotation renderers.
 
-Invalid package configuration is a host build-configuration failure: `createSceneCompiler` synchronously throws a typed `SceneCompilerConfigurationError` and returns no partial compiler. This construction error is outside `ScenePlanResult` because no scene compilation began. Once constructed, a recipe compile failure follows the existing result contract: diagnostics are returned and `plan` is `null`. A recipe exception is caught at the compiler boundary and returns `scene-recipe-rejected` with `<canonical-recipe-name>@<version>/package-compile-threw` as its stable `recipeCode` rather than a partial plan.
+Invalid package configuration is a host build-configuration failure: `createSceneCompiler` synchronously throws a typed `SceneCompilerConfigurationError` and returns no partial compiler. The error has the fixed `name`, stable `code`, immutable `path`, and explanatory `message` shown above. Validation visits package bindings in supplied order; within one binding it checks protocol, host name, package metadata, recipe definitions in array order, then lexicographically sorted active-version entries, and throws the first problem. Duplicate package bindings use `scene-compiler-package-invalid`; malformed shapes, catalogs, roles, corrections, limits, or functions use the same general code. This construction error is outside `ScenePlanResult` because no scene compilation began.
+
+Once constructed, a recipe failure follows the existing result contract: diagnostics are returned and `plan` is `null`. Valid package diagnostics use a lowercase ASCII reason matching `[a-z][a-z0-9-]{0,79}` and are wrapped as `scene-recipe-rejected` with `<canonical-recipe-name>@<version>/<reason>` as `recipeCode`; a package cannot return a core diagnostic code. Core validates and bounds the message, source range, candidate ranges, count, and field set before wrapping it.
+
+A thrown compile or validate function maps to the fixed suffix `package-compile-threw` or `package-validate-threw` without exposing the exception text or stack. A Promise, `null`, wrong discriminant, missing field, or unknown result field maps to `package-compile-result-invalid` or `package-validate-result-invalid`; rejected Promise results are consumed so their rejection cannot escape as an unhandled build-process error. A malformed package diagnostic maps to `package-diagnostic-invalid`. Result objects and every nested draft value must use enumerable string-keyed data properties: symbols, accessors, non-enumerable properties, and unknown fields are rejected before any value can enter a final plan. Core applies collection and nested-reference limits before traversing or copying package arrays. A structurally valid draft with an unknown field or invalid graph uses the corresponding core Scene plan diagnostic. None of these failures returns a partial plan.
 
 The existing root `createScenePlan` export remains the zero-configuration, first-party-only Interface. It does not consult Configured Scene compiler instances or gain mutable process state. Every Configured Scene compiler always contains the exact first-party recipes supported by the installed Scene Module plus its supplied third-party definitions, so enabling an extension cannot make an existing built-in scene unknown. Built-ins are not re-registered through the public Recipe package protocol.
 
@@ -121,7 +262,7 @@ Hosts therefore apply their normal dependency policy before installation: regist
 
 The compiler still contains the semantic output boundary. It passes no renderer, DOM, storage, model, network, or host callback to the recipe; validates every draft independently; enforces closed fields and fixed limits; and mints Plan provenance only after successful finalization. These checks protect Scene plan integrity and readable failure behavior. They do not turn package code into untrusted data or make a security claim about its side effects.
 
-Author source can never name a module to load. Unknown or unconfigured recipe selectors fail without invoking any Recipe package compile function, although npm install scripts and ESM module evaluation may already have executed. Candidate JSON remains untrusted data and never acquires authority to install, import, select, or execute a Recipe package.
+Author source can never name a module to load. Unknown or unconfigured recipe selectors fail without invoking any Recipe package compile function, although npm install scripts and ESM module evaluation may already have executed. Candidate JSON remains untrusted data and never acquires authority to install or import a Recipe package. It may name only an exact recipe version already captured by the host's Configured Scene compiler; after core binds the current source and validates the catalog, provenance, closed graph, and limits, core invokes that captured definition's semantic validator but never its compile function.
 
 ## Renderer and authoring boundaries
 
@@ -133,18 +274,20 @@ A Recipe package may publish static CSS through an ordinary explicit npm export,
 
 ## Compatibility and failure checks
 
-Compiler construction fails closed with `SceneCompilerConfigurationError` when any configured package has an unsupported protocol, mismatched host package binding, invalid declarative definition shape, invalid package-qualified name, duplicate identity, missing active version, incomplete catalog, undeclared role or correction slot, or limits outside the protocol. The error exposes one stable construction code from `scene-compiler-package-invalid`, `scene-compiler-package-protocol-unsupported`, `scene-compiler-package-name-mismatch`, `scene-compiler-recipe-duplicate`, or `scene-compiler-active-version-missing`, plus a path and explanatory message. No subset of an invalid package is silently enabled.
+Compiler construction fails closed with `SceneCompilerConfigurationError` when any configured package has an unsupported protocol, mismatched host package binding, invalid declarative definition shape, invalid package-qualified name, duplicate identity, missing active version, incomplete catalog, undeclared role or correction slot, or limits outside the protocol. The error exposes one stable construction code from `scene-compiler-package-invalid`, `scene-compiler-package-protocol-unsupported`, `scene-compiler-package-name-mismatch`, `scene-compiler-recipe-duplicate`, or `scene-compiler-active-version-missing`, plus its immutable path and explanatory message. No subset of an invalid package is silently enabled.
 
 Per-scene compilation returns no plan when a selector is unknown or unconfigured, an exact reviewed version is absent, the recipe rejects its source, the recipe throws, a draft has unknown fields or exceeds a limit, a range is unsafe, a reference is unresolved, catalog output is invalid, or the shared finalizer rejects any invariant. Strict remark policy fails the build. Warning policy emits canonical source and diagnostics. Neither policy retries another version or recipe, preserves a partial scene, loads a package, or migrates data.
 
-The implementation must supply a conformance suite that package authors and the repository can run against packed npm artifacts. It covers:
+The implementation must supply a conformance suite that package authors and the repository can run against packed npm artifacts. The repository runner and case format are documented in [`scripts/recipe-conformance/README.md`](../../scripts/recipe-conformance/README.md). It covers:
 
 - ESM import and peer-dependency metadata from `npm pack` output;
 - protocol, host namespace binding, name grammar, active-version, duplicate, metadata-snapshot, catalog, and limit checks;
 - exact full-plan fixtures for every declared recipe, version, and locale;
 - repeated-call and JSON-round-trip determinism;
-- a thrown compile function producing exact `scene-recipe-rejected` / `<canonical-recipe-name>@<version>/package-compile-threw`, plus malformed, oversized, unknown-field, unsafe-range, and unresolved-reference drafts;
+- thrown, Promise, `null`, malformed-result, invalid-diagnostic, oversized, unknown-field, unsafe-range, and unresolved-reference compile or validate outcomes with their exact diagnostic mapping;
 - an unknown selector not invoking any compile function;
+- active and inactive exact versions, proving that a Reviewed candidate invokes only `validate` for its installed exact version;
+- declaration checks for all three Semantic correction kinds and target-correction delivery to compile;
 - mixed built-in and third-party scenes, plus strict, warning, deterministic, and reviewed-candidate remark behavior through one explicitly supplied compiler;
 - identical materialized plans across component, element, strip, SSR, and RSC paths; and
 - proof that renderer bundles and browser output contain no Recipe package implementation.

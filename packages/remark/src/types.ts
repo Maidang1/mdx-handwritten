@@ -1,6 +1,7 @@
 import type {Plugin} from 'unified'
 import type {Root} from 'mdast'
 import type {SceneDiagnosticV1} from 'mdx-handwritten-scene'
+import type {ConfiguredSceneCompiler} from 'mdx-handwritten-scene/recipes'
 
 /** The eight directives understood by this package. */
 export const handwrittenDirectiveNames = [
@@ -100,6 +101,8 @@ export interface HandwrittenOptions {
   limits?: Partial<HandwrittenLimits>
   /** Resolve explicitly bound Reviewed plan artifacts during this build. */
   reviewedPlans?: HandwrittenReviewedPlans
+  /** Materialize every Annotation scene with this explicit build-time compiler. */
+  sceneCompiler?: ConfiguredSceneCompiler
   /** Record usage counts on `file.data.mdxHandwritten`. */
   recordUsage?: boolean
 }

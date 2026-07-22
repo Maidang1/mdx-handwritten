@@ -1,9 +1,11 @@
 import {spawnSync} from 'node:child_process'
 import {createRequire} from 'node:module'
-import {readFileSync, statSync} from 'node:fs'
-import {basename, dirname, resolve} from 'node:path'
+import {mkdtempSync, readFileSync, realpathSync, rmSync, statSync} from 'node:fs'
+import {tmpdir} from 'node:os'
+import {basename, dirname, isAbsolute, relative, resolve} from 'node:path'
 import {fileURLToPath, pathToFileURL} from 'node:url'
 import {build, version as esbuildVersion} from 'esbuild'
+import {runRecipePackageConformance} from '../recipe-conformance/index.mjs'
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url))
 export const projectRoot = resolve(scriptDirectory, '../..')
@@ -32,9 +34,40 @@ function readArtifact(relativePath) {
   return readFileSync(resolve(projectRoot, relativePath))
 }
 
-function measureBytes(relativePath) {
-  const bytes = readArtifact(relativePath)
-  return {gzipBytes: gzipSize(bytes), rawBytes: bytes.byteLength}
+async function measureEsmEntryGraph(relativePath) {
+  const entryPath = resolve(projectRoot, relativePath)
+  const result = await build({
+    absWorkingDir: projectRoot,
+    bundle: true,
+    entryPoints: [entryPath],
+    format: 'esm',
+    logLevel: 'silent',
+    metafile: true,
+    packages: 'external',
+    platform: 'node',
+    write: false,
+  })
+  const files = Object.keys(result.metafile.inputs)
+    .map((path) => isAbsolute(path) ? path : resolve(projectRoot, path))
+    .sort()
+  if (!files.includes(entryPath)) {
+    throw new Error(`esbuild did not include ${relativePath} in its static ESM dependency graph.`)
+  }
+
+  const entries = files.map((path) => ({
+    bytes: readFileSync(path),
+    path: relative(projectRoot, path),
+  }))
+  return {
+    files: entries.map(({path}) => path),
+    gzipBytes: entries.reduce((total, {bytes}) => total + gzipSize(bytes), 0),
+    rawBytes: entries.reduce((total, {bytes}) => total + bytes.byteLength, 0),
+  }
+}
+
+function readEsmGraphs(graphs) {
+  const files = [...new Set(graphs.flatMap(({files}) => files))]
+  return Buffer.concat(files.map((path) => readArtifact(path))).toString('utf8')
 }
 
 async function measureConsumer(fixture) {
@@ -61,12 +94,24 @@ async function measureConsumer(fixture) {
   const sceneBytes = Object.entries(metadata.inputs)
     .filter(([input]) => input.includes('packages/scene/dist/'))
     .reduce((total, [, value]) => total + value.bytesInOutput, 0)
+  const recipesEntryBytes = Object.entries(metadata.inputs)
+    .filter(([input]) => /packages\/scene\/dist\/recipes\.js$/u.test(input))
+    .reduce((total, [, value]) => total + value.bytesInOutput, 0)
+  const inputPaths = Object.keys(metadata.inputs)
 
   return {
     exports: metadata.exports,
+    fixtureInputIncluded: inputPaths.some((input) =>
+      input.includes('tests/fixtures/recipe-package/'),
+    ),
     gzipBytes: gzipSize(output.contents),
     rawBytes: output.contents.byteLength,
+    recipesEntryIncluded: inputPaths.some((input) =>
+      /packages\/scene\/dist\/recipes\.js$/u.test(input),
+    ),
+    recipesEntryBytes,
     sceneBytes,
+    text: output.text,
   }
 }
 
@@ -133,6 +178,96 @@ function measurePackedWorkspace(workspace) {
   return {
     files: pack.files.map(({path}) => path),
     size: pack.size,
+  }
+}
+
+const failedReactServerCondition = Object.freeze({
+  conditionActive: false,
+  importSucceeded: false,
+  materializedPlanOnly: false,
+  meaningPreserved: false,
+  packedArtifactImported: false,
+  recipePackageAbsent: false,
+  scriptFree: false,
+  structureComplete: false,
+})
+
+function packWorkspace(workspace, destination) {
+  const result = runNpm(['pack', '--json', '--pack-destination', destination, '-w', workspace])
+  const [pack] = JSON.parse(result.stdout)
+  if (!pack || typeof pack.filename !== 'string' || basename(pack.filename) !== pack.filename) {
+    throw new Error(`npm returned an invalid packed archive for ${workspace}.`)
+  }
+  return resolve(destination, pack.filename)
+}
+
+function measurePackedReactServerCondition() {
+  const temporaryDirectory = mkdtempSync(resolve(tmpdir(), 'mdx-handwritten-react-server-'))
+  try {
+    const reactArchive = packWorkspace('mdx-handwritten-react', temporaryDirectory)
+    const sceneArchive = packWorkspace('mdx-handwritten-scene', temporaryDirectory)
+    runNpm([
+      'install',
+      '--ignore-scripts',
+      '--no-package-lock',
+      '--no-audit',
+      '--no-fund',
+      reactArchive,
+      sceneArchive,
+      realpathSync(resolve(projectRoot, 'node_modules/react')),
+    ], {cwd: temporaryDirectory})
+
+    const fixture = readFileSync(
+      resolve(scriptDirectory, 'fixtures/react-server-condition-rsc.mjs'),
+      'utf8',
+    )
+    const verification = spawnSync(
+      process.execPath,
+      ['--conditions=react-server', '--input-type=module', '--eval', fixture],
+      {
+        cwd: temporaryDirectory,
+        encoding: 'utf8',
+        maxBuffer: 1024 * 1024,
+      },
+    )
+    try {
+      const parsed = JSON.parse(verification.stdout.trim())
+      return Object.fromEntries(
+        Object.keys(failedReactServerCondition).map((key) => [key, parsed[key] === true]),
+      )
+    } catch {
+      return {...failedReactServerCondition}
+    }
+  } finally {
+    rmSync(temporaryDirectory, {force: true, recursive: true})
+  }
+}
+
+const packedRecipeFixtureSource = 'before -> after'
+const packedRecipeCompileSentinel =
+  'MDX_HANDWRITTEN_PACKED_RECIPE_COMPILE_SENTINEL_v1'
+
+async function measurePackedRecipeFixture() {
+  const result = await runRecipePackageConformance({
+    packageDirectory: resolve(projectRoot, 'tests/fixtures/recipe-package'),
+    scenePackageDirectory: resolve(projectRoot, 'packages/scene'),
+  })
+  return {
+    conformsThroughCompiler:
+      result.checks.plans === 2 &&
+      result.checks.reviewedCandidates === 1 &&
+      result.checks.corrections === 1 &&
+      result.checks.failures >= 14 &&
+      result.checks.configurationFailures >= 11 &&
+      result.checks.compilerLifecycles >= 3,
+    files: result.files,
+    importedAndExecutable: true,
+    packageNameMatches:
+      result.packageName === '@mdx-handwritten-fixtures/recipe-package',
+    peerDependency:
+      result.peerDependency.name === 'mdx-handwritten-scene' &&
+      result.peerDependency.range === '^0.1.0',
+    size: result.size,
   }
 }
 
@@ -225,11 +360,12 @@ function hasBrowserSpecificEntry(packageJson) {
 }
 
 export async function measureBlockingBudgets() {
-  const esm = {
-    react: measureBytes('packages/react/dist/index.js'),
-    remark: measureBytes('packages/remark/dist/index.js'),
-    scene: measureBytes('packages/scene/dist/index.js'),
-  }
+  const [reactEsm, remarkEsm, sceneEsm] = await Promise.all([
+    measureEsmEntryGraph('packages/react/dist/index.js'),
+    measureEsmEntryGraph('packages/remark/dist/index.js'),
+    measureEsmEntryGraph('packages/scene/dist/index.js'),
+  ])
+  const esm = {react: reactEsm, remark: remarkEsm, scene: sceneEsm}
   const [handScene, handText] = await Promise.all([
     measureConsumer('hand-scene-entry.mjs'),
     measureConsumer('hand-text-entry.mjs'),
@@ -244,12 +380,23 @@ export async function measureBlockingBudgets() {
       'mdx-handwritten-theme',
     ].map((workspace) => [workspace, measurePackedWorkspace(workspace)]),
   )
+  const packedRecipeFixture = await measurePackedRecipeFixture()
+  const packedReactServerCondition = measurePackedReactServerCondition()
   const reactPackage = JSON.parse(readFileSync(resolve(projectRoot, 'packages/react/package.json'), 'utf8'))
   const scenePackage = JSON.parse(readFileSync(resolve(projectRoot, 'packages/scene/package.json'), 'utf8'))
-  const browserReachable = Buffer.concat([
-    readArtifact('packages/react/dist/index.js'),
-    readArtifact('packages/scene/dist/index.js'),
-  ]).toString('utf8')
+  const scenePackedFiles = new Set(npmPacked['mdx-handwritten-scene'].files)
+  const browserReachable = readEsmGraphs([reactEsm, sceneEsm])
+  const forbiddenRecipeImplementationMarkers = [
+    'mdx-handwritten/annotation-recipe-package',
+    'scene-compiler-package-invalid',
+    packedRecipeFixtureSource,
+    packedRecipeCompileSentinel,
+  ]
+  const consumerExcludesRecipeImplementation = (consumer) =>
+    !consumer.fixtureInputIncluded &&
+    !consumer.recipesEntryIncluded &&
+    consumer.recipesEntryBytes === 0 &&
+    forbiddenRecipeImplementationMarkers.every((marker) => !consumer.text.includes(marker))
 
   return {
     consumerBundles: {handScene, handText},
@@ -262,15 +409,44 @@ export async function measureBlockingBudgets() {
       fontFilesMatch: fonts.files.map(({file}) => file).sort().join('\n') ===
         [...loadBudgetManifest().limits.fonts.files].sort().join('\n'),
       handSceneExported: handScene.exports.includes('HandScene'),
+      handSceneRecipeImplementationExcluded: consumerExcludesRecipeImplementation(handScene),
       handTextExported: handText.exports.includes('HandText'),
+      handTextRecipeImplementationExcluded: consumerExcludesRecipeImplementation(handText),
       noBrowserExport: !hasBrowserSpecificEntry(reactPackage) &&
         !hasBrowserSpecificEntry(scenePackage),
       noUseClientDirective: !browserReachable.includes('use client'),
+      packedRecipeFixtureFilesMatch:
+        packedRecipeFixture.files.sort().join('\n') ===
+        ['conformance.js', 'index.js', 'package.json'].join('\n'),
+      packedRecipeFixtureConforms: packedRecipeFixture.conformsThroughCompiler,
+      packedRecipeFixtureImported: packedRecipeFixture.importedAndExecutable,
+      packedRecipeFixtureNameMatches: packedRecipeFixture.packageNameMatches,
+      packedRecipeFixturePeerDependency: packedRecipeFixture.peerDependency,
+      packedReactServerConditionActive: packedReactServerCondition.conditionActive,
+      packedReactServerImportSucceeded: packedReactServerCondition.importSucceeded,
+      packedReactServerMaterializedPlanOnly:
+        packedReactServerCondition.materializedPlanOnly &&
+        packedReactServerCondition.recipePackageAbsent,
+      packedReactServerMeaningPreserved: packedReactServerCondition.meaningPreserved,
+      packedReactServerPackageImported: packedReactServerCondition.packedArtifactImported,
+      packedReactServerScriptFree: packedReactServerCondition.scriptFree,
+      packedReactServerStructureComplete: packedReactServerCondition.structureComplete,
       remarkSourceMapPacked: npmPacked['remark-mdx-handwritten'].files.includes('dist/index.js.map'),
-      sceneSourceMapPacked: npmPacked['mdx-handwritten-scene'].files.includes('dist/index.js.map'),
+      sceneRecipesDeclarationPacked:
+        npmPacked['mdx-handwritten-scene'].files.includes('dist/recipes.d.ts'),
+      sceneRecipesEntryPacked:
+        npmPacked['mdx-handwritten-scene'].files.includes('dist/recipes.js'),
+      sceneRecipesSourceMapPacked:
+        scenePackedFiles.has('dist/recipes.js.map'),
+      sceneSourceMapPacked: scenePackedFiles.has('dist/index.js.map'),
+      sceneSourceMapsComplete: [...scenePackedFiles]
+        .filter((path) => path.endsWith('.js'))
+        .every((path) => scenePackedFiles.has(`${path}.map`)),
       themeImportsResolved: theme.importsResolved,
     },
     npmPacked,
+    packedRecipeFixture,
+    packedReactServerCondition,
     scene,
     theme,
   }
