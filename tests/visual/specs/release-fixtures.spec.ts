@@ -146,6 +146,12 @@ test('pins one package-matched Linux visual environment across manifest and CI',
     manifest.runner.playwrightVersion
   )
   expect(workflow).toContain(manifest.runner.container)
+  expect(workflow).toContain(`
+      - name: Validate Firefox and WebKit semantics
+        env:
+          HOME: /root
+          RELEASE_FIXTURE_PROJECTS: firefox,webkit
+  `)
 })
 
 test('renders the canonical task-explainer Annotation scene from the public React package without client script', async ({
