@@ -1,0 +1,3 @@
+# Address Annotation targets by semantic identity and source fingerprint
+
+An Annotation target is identified by its annotation recipe name and version plus a scene-local target ID minted from a grammar slot, structured key, or named Semantic correction anchor; text, source-order ordinals, ranges, AST paths, and CSS selectors are never identity. Materialized targets use ordered, disjoint, surrogate-safe half-open UTF-16 ranges over `trim-lf-v1` canonical source and carry a SHA-256 fingerprint of its normalized UTF-8 bytes; any fingerprint mismatch stales the whole plan and requires deterministic re-derivation, never fuzzy relocation. This deliberately prefers strict diagnostics and explicit anchors over silently retargeting repeated content after source edits.

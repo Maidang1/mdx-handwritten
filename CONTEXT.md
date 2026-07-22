@@ -16,6 +16,10 @@ _Avoid_: Hand-built illustration, fixed layout
 A named convention that turns recognizable source content and an author's intent into an annotation scene. It supplies shared meanings and relationships so authors do not have to repeat them.
 _Avoid_: Template, visual preset
 
+**Annotation target**:
+A scene-local semantic identity, scoped by its annotation recipe and version, that associates meaning with one or more exact canonical-source ranges. Ranges locate a target but do not define its identity.
+_Avoid_: Text match, DOM selector, source offset
+
 **Scene plan**:
 A reviewable description of an annotation scene's targets, labels, relationships, and gestures, independent of their final geometric arrangement.
 _Avoid_: Rendered scene, pixel layout
