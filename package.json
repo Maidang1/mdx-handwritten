@@ -12,19 +12,26 @@
     "build": "npm run build:packages && npm run build:docs",
     "build:packages": "npm run build -w mdx-handwritten-scene && npm run build -w remark-mdx-handwritten && npm run build -w mdx-handwritten-react",
     "build:docs": "npm run build -w @mdx-handwritten/docs",
+    "build:release-fixtures": "npm run build:packages && vite build --config tests/visual/vite.config.ts",
+    "check:release": "npm run check && npm run test:release-fixtures",
     "check:budgets": "npm run build:packages && node scripts/budgets/check.mjs",
     "dev": "npm run dev -w @mdx-handwritten/docs",
+    "preview:release-fixtures": "vite preview --config tests/visual/vite.config.ts --host 127.0.0.1 --port 4174",
     "test": "vitest run",
+    "test:release-fixtures": "npm run typecheck:release-fixtures && npm run build:release-fixtures && playwright test --config tests/visual/playwright.config.ts",
     "test:watch": "vitest",
     "report:performance": "node scripts/budgets/report-performance.mjs",
     "typecheck": "tsc -b",
+    "typecheck:release-fixtures": "tsc --noEmit --project tests/visual/tsconfig.json",
     "check": "npm run typecheck && npm run test && npm run check:budgets && npm run build:docs"
   },
   "engines": {
     "node": ">=20.19"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
     "@mdx-js/mdx": "^3.1.1",
+    "@playwright/test": "1.61.1",
     "@types/mdast": "^4.0.4",
     "@types/node": "^24.0.0",
     "@types/react": "^19.2.17",
@@ -35,6 +42,7 @@
     "remark-directive": "4.0.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
+    "vite": "8.1.5",
     "vitest": "^4.1.10"
   }
 }

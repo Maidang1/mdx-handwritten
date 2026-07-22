@@ -1,0 +1,73 @@
+name: Validate release fixtures
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  chromium:
+    name: Chromium release fixtures
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble@sha256:cf0daee9b994042e011bc29f20cdff1a9f682a039b43fcd738f7d8a9d3bcd9d6
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up project
+        uses: ./.github/actions/setup-project
+
+      - name: Validate Chromium fixtures and baselines
+        env:
+          RELEASE_FIXTURE_PROJECTS: chromium,chromium-no-js
+          VISUAL_SNAPSHOTS: "1"
+        run: npm run check:release
+
+      - name: Upload Chromium validation evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: chromium-release-fixtures-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            playwright-report/
+            test-results/
+            tests/visual/__screenshots__/chromium-linux/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  cross-browser:
+    name: Firefox and WebKit release fixtures
+    if: github.event_name != 'pull_request'
+    needs: chromium
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble@sha256:cf0daee9b994042e011bc29f20cdff1a9f682a039b43fcd738f7d8a9d3bcd9d6
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up project
+        uses: ./.github/actions/setup-project
+
+      - name: Validate Firefox and WebKit semantics
+        env:
+          RELEASE_FIXTURE_PROJECTS: firefox,webkit
+        run: npm run test:release-fixtures
+
+      - name: Upload cross-browser validation evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: cross-browser-release-fixtures-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 30

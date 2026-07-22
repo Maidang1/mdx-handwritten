@@ -72,6 +72,10 @@ _Avoid_: Layout override, manual positioning
 The appearance used to render an annotation gesture without changing what that gesture communicates.
 _Avoid_: Annotation gesture
 
+**Canonical content fixture**:
+A stable author input and expected reader meaning used to prove an Annotation gesture or Annotation scene across renderers, locales, and fallback states. Its identity comes from semantic content, not screenshot pixels.
+_Avoid_: Golden screenshot, demo mockup
+
 **Rich-layout envelope**:
 A recipe-versioned boundary that proves an Annotation scene's container and content fit one finite spatial arrangement. Outside it, the whole scene uses its linear reading order rather than author positioning or inferred geometry.
 _Avoid_: Breakpoint, collision result, manual layout

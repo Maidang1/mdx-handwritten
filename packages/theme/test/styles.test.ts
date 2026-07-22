@@ -4,6 +4,12 @@ import {describe, expect, it} from 'vitest'
 const styles = await readFile(new URL('../styles.css', import.meta.url), 'utf8')
 
 describe('mdx-handwritten-theme language and recipe contracts', () => {
+  it('publishes a system-only CJK font stack that remains printable', () => {
+    expect(styles).toContain(
+      '--hw-font-family-print-cjk: "Arial Unicode MS", "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;',
+    )
+  })
+
   it('uses the CJK handwriting token through inherited language selectors', () => {
     expect(styles).toContain(
       '--hw-font-family-cjk: "Kaiti SC", "KaiTi", "STKaiti", "Klee One", cursive;',

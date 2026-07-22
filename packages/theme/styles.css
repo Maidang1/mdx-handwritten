@@ -6,10 +6,11 @@
   :root {
     --hw-font-family: "Shantell Sans Variable", "Shantell Sans", "Klee One", "KaiTi", "STKaiti", cursive;
     --hw-font-family-cjk: "Kaiti SC", "KaiTi", "STKaiti", "Klee One", cursive;
+    --hw-font-family-print-cjk: "Arial Unicode MS", "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 
     --hw-color-neutral: currentColor;
-    --hw-color-muted: #716d69;
-    --hw-color-info: #356eb8;
+    --hw-color-muted: #5f5b57;
+    --hw-color-info: #1f568f;
     --hw-color-success: #287a4d;
     --hw-color-warning: #a75a11;
     --hw-color-danger: #bb4e35;
@@ -1121,6 +1122,15 @@
     :where([data-hw-scene-source], [data-hw-scene-invalid]) {
       border-color: currentColor;
       background: transparent;
+    }
+
+    :where(
+      [data-hw-scene-source],
+      [data-hw-scene-caption],
+      [data-hw-scene-legend] > li,
+      [data-hw-annotation-text]
+    ):is(:lang(zh-CN), :lang(zh-Hans), :lang(zh-Hans-CN)) {
+      font-family: var(--hw-font-family-print-cjk);
     }
 
     :where([data-hw-scene-legend]) {

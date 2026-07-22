@@ -193,6 +193,7 @@ npm run typecheck
 npm test
 npm run check:budgets
 npm run report:performance
+npm run test:release-fixtures
 npm run build
 ```
 
@@ -202,6 +203,13 @@ records the report-only timing calibration described in
 The Pages workflow runs the blocking checks before deploying the Vite output.
 The preview is built from an actual `.mdx` file using the local remark
 transformer, not from hard-coded lookalike markup.
+
+`npm run test:release-fixtures` builds a separate static, zero-client-script
+page from the public React package and checks its semantic, accessibility,
+fallback, and browser behavior. `npm run check:release` adds that complete
+Playwright matrix to the ordinary repository check. Chromium screenshot pixels
+are compared only in the pinned Linux workflow described in
+[`docs/specs/release-validation-v1.md`](./docs/specs/release-validation-v1.md).
 
 ## License
 
