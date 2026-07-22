@@ -19,6 +19,9 @@ Use `--scene-package-directory=./path/to/mdx-handwritten-scene` to select an exp
 built Scene package instead of the nearest installed peer.
 Programmatic callers can supply local dependency package directories through
 `additionalPackageDirectories`; each is packed and installed into the same consumer.
+The CLI accepts exactly one package-directory positional and the documented options.
+Unknown or duplicate options, extra positionals, empty option values, and options combined
+with `--help` fail instead of being ignored.
 
 The Recipe definition defaults to the packed entry's `default` export. Every case is based on
 that same imported definition; a case cannot provide an alternate `packageDefinition`. Use
@@ -77,10 +80,13 @@ executing the packed definition.
 
 The same installed consumer also runs runner-owned adapter probes. One explicitly supplied
 compiler handles mixed built-in and packed third-party scenes through deterministic, reviewed,
-strict, and warning remark paths. A reviewed materialized plan is checked across component,
-element, strip, packed React SSR, and a `--conditions=react-server` process. An esbuild browser
-bundle must contain neither an input from the installed Recipe package nor its implementation
-sentinel bytes.
+strict, and warning remark paths. The mixed component output must transport both plans exactly;
+the built-in expectation is independently materialized by that same configured compiler. A
+reviewed materialized plan is checked across component, element, strip, packed React SSR, and a
+`--conditions=react-server` process. Esbuild bundles the actual generated mixed remark module
+from inside the packed consumer, proving its automatic imports resolve. The bundle metafile must
+contain neither the installed Recipe package nor the Scene `/recipes` entry, and its output must
+exclude the Recipe implementation sentinel bytes.
 
 Run the case-set guard self-test when changing the runner contract:
 
@@ -91,6 +97,7 @@ node scripts/recipe-conformance/self-test.mjs
 The root `npm run check` command runs this self-test in CI. It proves that blank categories,
 a missing locale/version fixture, an undeclared fixture, wrong-category/duplicate/missing or
 behaviorally forged coverage, alternate case definitions, duplicate cases, empty lifecycle
-steps, CommonJS entries, incompatible peers, and invalid peer ranges all fail.
+steps, CommonJS entries, incompatible peers, invalid peer ranges, and malformed CLI invocations
+all fail.
 It also proves ordinary dependencies resolve and ordered `node`/`import` conditions choose the
 real Node branch from packages without a `type` field.
