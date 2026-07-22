@@ -142,10 +142,10 @@ describe('Annotation scene server rendering', () => {
     expect(html).toContain(
       '<figure data-hw-locale="en" data-hw-scene="task-explainer" data-hw-scene-version="1"',
     )
-    expect(html).toContain('<figcaption data-hw-scene-caption="">')
+    expect(html).toContain('<figcaption data-hw-scene-caption="" lang="en">')
     expect(html).toContain('<pre data-hw-scene-source=""><code>')
     expect(html.indexOf('<pre data-hw-scene-source="">')).toBeLessThan(
-      html.indexOf('<ol data-hw-scene-legend="">'),
+      html.indexOf('<ol data-hw-scene-legend="" lang="en">'),
     )
     const code = /<code>([\s\S]*?)<\/code>/.exec(html)?.[1]
     expect(code).not.toContain('data-hw-annotation=')
@@ -173,7 +173,9 @@ describe('Annotation scene server rendering', () => {
     )
 
     expect(html).toContain('data-hw-locale="zh-CN"')
-    expect(html).toContain('lang="zh-CN"')
+    expect(html).not.toMatch(/<figure[^>]*\slang=/u)
+    expect(html).toContain('<figcaption data-hw-scene-caption="" lang="zh-CN">')
+    expect(html).toContain('<ol data-hw-scene-legend="" lang="zh-CN">')
     expect(html).toContain('稳定 ID：CLI-042')
   })
 
@@ -185,6 +187,8 @@ describe('Annotation scene server rendering', () => {
 
     expect(html).toContain('data-hw-scene-invalid=""')
     expect(html).toContain(`<code>${invalidSource}</code>`)
+    expect(html).not.toContain('data-hw-locale')
+    expect(html).not.toContain(' lang=')
     expect(html).not.toContain('<ol')
   })
 })

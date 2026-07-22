@@ -153,6 +153,16 @@ describe('task semantics', () => {
     ])
   })
 
+  it.each([
+    ['EN', 'en'],
+    ['zh-cn', 'zh-CN'],
+    ['ZH-CN', 'zh-CN']
+  ] as const)('canonicalizes the exact catalog locale %s', (locale, canonical) => {
+    expect(derivePlan('[ ] AUTH-004 Add passwordless login', locale).locale).toBe(
+      canonical
+    )
+  })
+
   it('omits absent optional metadata and groups repeated metadata targets', () => {
     const minimal = derivePlan('[ ] AUTH-004 Add passwordless login')
     expect(minimal.targets.map(({role}) => role)).toEqual([
@@ -236,6 +246,39 @@ describe('stable diagnostics', () => {
       })
     })
   }
+
+  it.each(['task-explainer@1', 'task-explainer@^1'])(
+    'rejects author-facing recipe version syntax for %s',
+    recipe => {
+      expect(
+        deriveAnnotationScene({
+          recipe,
+          source: '[ ] CLI-042 Add export command'
+        })
+      ).toMatchObject({
+        ok: false,
+        plan: null,
+        diagnostics: [{code: 'scene-recipe-unknown'}]
+      })
+    }
+  )
+
+  it.each(['en-US', 'zh', 'zh-Hans', 'zh-CN-x-blog', ' zh-CN'])(
+    'rejects unsupported locale lookup or trimming for %s',
+    locale => {
+      expect(
+        deriveAnnotationScene({
+          recipe: 'task-explainer',
+          source: '[ ] CLI-042 Add export command',
+          locale
+        })
+      ).toMatchObject({
+        ok: false,
+        plan: null,
+        diagnostics: [{code: 'scene-locale-unsupported'}]
+      })
+    }
+  )
 })
 
 describe('normalization and determinism', () => {

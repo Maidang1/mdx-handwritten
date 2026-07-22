@@ -5,7 +5,7 @@
 @layer handwritten.tokens {
   :root {
     --hw-font-family: "Shantell Sans Variable", "Shantell Sans", "Klee One", "KaiTi", "STKaiti", cursive;
-    --hw-font-family-cjk: "Klee One", "KaiTi", "STKaiti", var(--hw-font-family);
+    --hw-font-family-cjk: "Kaiti SC", "KaiTi", "STKaiti", "Klee One", cursive;
 
     --hw-color-neutral: currentColor;
     --hw-color-muted: #716d69;
@@ -744,27 +744,27 @@
     -webkit-box-decoration-break: clone;
   }
 
-  :where(figure[data-hw-scene] [data-hw-target-role="state"], figure[data-hw-scene] [data-hw-annotation-role="state"]) {
+  :where(figure[data-hw-scene="task-explainer"][data-hw-scene-version="1"] [data-hw-target-role="state"], figure[data-hw-scene="task-explainer"][data-hw-scene-version="1"] [data-hw-annotation-role="state"]) {
     --hw-scene-role-color: var(--hw-color-warning);
   }
 
-  :where(figure[data-hw-scene] [data-hw-target-role="stable-id"], figure[data-hw-scene] [data-hw-annotation-role="stable-id"]) {
+  :where(figure[data-hw-scene="task-explainer"][data-hw-scene-version="1"] [data-hw-target-role="stable-id"], figure[data-hw-scene="task-explainer"][data-hw-scene-version="1"] [data-hw-annotation-role="stable-id"]) {
     --hw-scene-role-color: var(--hw-color-info);
   }
 
-  :where(figure[data-hw-scene] [data-hw-target-role="description"], figure[data-hw-scene] [data-hw-annotation-role="description"]) {
+  :where(figure[data-hw-scene="task-explainer"][data-hw-scene-version="1"] [data-hw-target-role="description"], figure[data-hw-scene="task-explainer"][data-hw-scene-version="1"] [data-hw-annotation-role="description"]) {
     --hw-scene-role-color: var(--hw-color-muted);
   }
 
-  :where(figure[data-hw-scene] [data-hw-target-role="tag"], figure[data-hw-scene] [data-hw-annotation-role="tag"]) {
+  :where(figure[data-hw-scene="task-explainer"][data-hw-scene-version="1"] [data-hw-target-role="tag"], figure[data-hw-scene="task-explainer"][data-hw-scene-version="1"] [data-hw-annotation-role="tag"]) {
     --hw-scene-role-color: var(--hw-color-success);
   }
 
-  :where(figure[data-hw-scene] [data-hw-target-role="priority"], figure[data-hw-scene] [data-hw-annotation-role="priority"]) {
+  :where(figure[data-hw-scene="task-explainer"][data-hw-scene-version="1"] [data-hw-target-role="priority"], figure[data-hw-scene="task-explainer"][data-hw-scene-version="1"] [data-hw-annotation-role="priority"]) {
     --hw-scene-role-color: var(--hw-color-danger);
   }
 
-  :where(figure[data-hw-scene] [data-hw-target-role="field"], figure[data-hw-scene] [data-hw-annotation-role="field"]) {
+  :where(figure[data-hw-scene="task-explainer"][data-hw-scene-version="1"] [data-hw-target-role="field"], figure[data-hw-scene="task-explainer"][data-hw-scene-version="1"] [data-hw-annotation-role="field"]) {
     --hw-scene-role-color: var(--hw-color-accent);
   }
 
@@ -793,6 +793,21 @@
     font-size: var(--hw-size-sm);
     line-height: 1.35;
     rotate: -0.35deg;
+  }
+
+  :where(
+    [data-hw="text"],
+    [data-hw="link"],
+    [data-hw="note"],
+    [data-hw="annotate"] > [data-hw-label],
+    [data-hw="brace"] > [data-hw-label],
+    [data-hw="margin"] > [data-hw-label],
+    [data-hw="watermark"] > [data-hw-label],
+    [data-hw-scene-caption],
+    [data-hw-scene-legend] > li,
+    [data-hw-annotation-text]
+  ):is(:lang(zh-CN), :lang(zh-Hans), :lang(zh-Hans-CN)) {
+    font-family: var(--hw-font-family-cjk);
   }
 
   :where([data-hw-annotation-row]) {

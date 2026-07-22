@@ -127,13 +127,14 @@ In warning mode, an invalid scene emits canonical source only and reports VFile 
 
 Component and element Annotation renderers produce the same source-first structure:
 
-1. `figure[data-hw-scene]` with recipe, version, locale, and plan-schema metadata;
-2. a real-text `figcaption[data-hw-scene-caption]`;
+1. `figure[data-hw-scene]` with recipe, version, Localization locale, and plan-schema metadata;
+2. a real-text `figcaption[data-hw-scene-caption]` carrying the Localization locale as `lang`;
 3. `pre[data-hw-scene-source] > code` containing the exact canonical source;
 4. real-text target spans with stable target identity and role data;
 5. `ol[data-hw-scene-legend]` containing every Annotation relationship in canonical order;
 6. target-to-legend ARIA references where the output can assign stable document IDs;
-7. optional SVG or glyph connectors that are decorative and removable.
+7. a real `lang` on the generated legend while canonical source inherits the host article language; and
+8. optional SVG or glyph connectors that are decorative and removable.
 
 The documented element names, reading order, target/relationship identity attributes, and ARIA meaning are compatibility surface. Package-private classes, connector paths, CSS custom-property values, and geometry are not. Removing semantic nodes or attributes, reordering source after legend, or turning real text into generated or graphical content is breaking.
 
@@ -167,9 +168,8 @@ During migration from the task-explainer vertical slice:
 
 ## Deferred capabilities
 
-This boundary intentionally does not decide:
+The built-in recipe and localization boundary is defined by `annotation-recipe-v1.md`: first-party recipes are private static modules and V1 has no public registry. This boundary intentionally does not decide:
 
-- built-in Annotation recipe registration, configuration, or localization extension;
 - optional AI generation, review storage, privacy, or stale-plan policy;
 - third-party Annotation recipe discovery and trust;
 - build, SSR, CSS, font, or client bundle budgets;

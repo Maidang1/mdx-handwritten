@@ -46,7 +46,7 @@ declare function createScenePlan(input: CreateScenePlanInput): ScenePlanResult
 
 The candidate path is for a proposal that an upstream review workflow has approved. `createScenePlan` validates the approval reference's shape; it cannot establish that an external review occurred. It does not call a model, perform review, or persist review records.
 
-When omitted on the recipe path, `locale` resolves to `en`. A successful plan always records the resolved canonical BCP 47 language tag and exact localization catalog version.
+When omitted on the recipe path, `locale` resolves to `en`. A successful plan always records the canonical Localization locale used for generated reader text and the exact catalog version. Locale resolution follows the centralized exact-match policy in the built-in Annotation recipe contract; it does not declare the language of author-supplied source.
 
 ## Materialized plan
 
@@ -146,7 +146,7 @@ type AnnotationGestureV1 =
     }
 ```
 
-`NonEmpty<T>` means a readonly array with at least one item. The plan stores resolved, plain-text `title`, label text, and legend text for its canonical BCP 47 locale. It never stores localization keys, HTML, Markdown, ICU messages, or other executable content.
+`NonEmpty<T>` means a readonly array with at least one item. `localization.locale` is the canonical BCP 47 language of the Localization catalog that produced the plan's plain-text `title`, label text, and legend text. Renderers put that language on generated reader text, while canonical source inherits its host document language. The plan never stores localization keys, HTML, Markdown, ICU messages, or other executable content.
 
 Every label is referenced by an Annotation relationship, and every Annotation relationship is referenced by an Annotation gesture. The graph cannot contain orphan presentation payload. A renderer chooses geometry and Visual style from semantic gesture kind, relationship kind, relation, and intent; those rendering choices do not become plan data.
 
@@ -274,6 +274,7 @@ Limits belong to the implementation-owned V1 validator and are not plan fields t
 | One label, title, or legend string, UTF-16 code units | 240 |
 | All localized text, UTF-16 code units | 16,384 |
 | Returned diagnostics | 32 |
+| Candidates in one diagnostic | 32 |
 
 These are safety caps, not layout promises or a performance budget. Oversized input fails closed; an author must split a larger explanation into multiple Annotation scenes.
 

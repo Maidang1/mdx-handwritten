@@ -138,14 +138,15 @@ export function deriveAnnotationScene(
 ): AnnotationSceneResult {
   const recipe = typeof input?.recipe === 'string' ? input.recipe : ''
   const rawSource = typeof input?.source === 'string' ? input.source : ''
-  const requestedLocale = input?.locale === undefined ? 'en' : input.locale
+  const localeInput = input?.locale === undefined ? 'en' : input.locale
+  const locale = resolveLocale(localeInput)
   const source = normalizeSource(rawSource)
   const diagnostics: AnnotationSceneDiagnostic[] = []
 
   if (!isRecipeName(recipe)) {
     diagnostics.push(diagnostic('scene-recipe-unknown'))
   }
-  if (!isLocale(requestedLocale)) {
+  if (locale === null) {
     diagnostics.push(diagnostic('scene-locale-unsupported'))
   }
   if (source.length === 0) {
@@ -154,7 +155,7 @@ export function deriveAnnotationScene(
     diagnostics.push(diagnostic('scene-source-too-long'))
   }
 
-  if (diagnostics.length > 0 || !isLocale(requestedLocale)) {
+  if (diagnostics.length > 0 || locale === null) {
     return {ok: false, plan: null, diagnostics}
   }
 
@@ -164,15 +165,15 @@ export function deriveAnnotationScene(
   }
 
   const targets = createTargets(source, parsed)
-  const labels = localizedText[requestedLocale]
-  const annotations = createAnnotations(targets, parsed.state.checked, requestedLocale)
+  const labels = localizedText[locale]
+  const annotations = createAnnotations(targets, parsed.state.checked, locale)
 
   return {
     ok: true,
     plan: {
       schemaVersion: 1,
       recipe: {name: 'task-explainer', version: 1},
-      locale: requestedLocale,
+      locale,
       title: labels.title,
       source,
       targets,
@@ -194,8 +195,12 @@ function isRecipeName(value: string): value is AnnotationRecipeName {
   return (annotationRecipeNames as readonly string[]).includes(value)
 }
 
-function isLocale(value: unknown): value is AnnotationSceneLocale {
-  return value === 'en' || value === 'zh-CN'
+function resolveLocale(value: unknown): AnnotationSceneLocale | null {
+  if (typeof value !== 'string') return null
+  const compared = value.toLowerCase()
+  if (compared === 'en') return 'en'
+  if (compared === 'zh-cn') return 'zh-CN'
+  return null
 }
 
 function parseTask(

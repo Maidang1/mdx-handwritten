@@ -296,7 +296,7 @@ describe('element output', () => {
     expect(output).toContain('任务解析')
     expect(output).toContain('优先级：!high')
     expect(output).toContain('自定义字段：@blocked_by:CLI-041')
-    expect(output).toContain('lang: "zh-CN"')
+    expect(output.match(/lang: "zh-CN"/gu)).toHaveLength(2)
   })
 })
 
@@ -320,6 +320,15 @@ describe('strip output', () => {
     expect(output).toContain('description: Add export command\\nWrite task output as JSON for scripts and agents')
     expect(output).toContain('priority: !high')
     expect(output).toContain('_components.ol')
+  })
+
+  it('marks the generated localized title and legend language', async () => {
+    const output = String(await compileMdx(taskScene('zh-CN'), {output: 'strip'}))
+
+    expect(output.match(/lang: "zh-CN"/gu)).toHaveLength(2)
+    expect(output).toContain('任务解析')
+    expect(output).toContain('@blocked_by:CLI-041')
+    expect(output).toContain('优先级：!high')
   })
 
   it('preserves exact canonical source text when strip output is evaluated', async () => {

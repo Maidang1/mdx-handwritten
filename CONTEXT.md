@@ -32,6 +32,14 @@ _Avoid_: Text match, DOM selector, source offset
 A reviewable description of an annotation scene's targets, labels, relationships, and gestures, independent of their final geometric arrangement.
 _Avoid_: Rendered scene, pixel layout
 
+**Localization locale**:
+The canonical BCP 47 language of the Localization catalog selected for an Annotation recipe's generated title, labels, and legend. It does not declare the language of author-supplied source.
+_Avoid_: Source language, detected language, UI locale, font locale
+
+**Localization catalog**:
+A complete, versioned set of plain-text reader-facing messages and formatters that one Annotation recipe supplies for a supported Localization locale.
+_Avoid_: Runtime translation fallback, partial locale overlay
+
 **Plan provenance**:
 A compact record of how a Scene plan was materialized and whether Semantic corrections or an approved proposal contributed. It is review context, not proof or a generation transcript.
 _Avoid_: Audit log, prompt history

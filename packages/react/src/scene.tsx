@@ -46,19 +46,13 @@ function renderSource(plan: AnnotationScenePlanV1) {
  * complete textual legend remains available when presentation styles fail.
  */
 export function HandScene({ recipe, source, locale }: HandSceneProps) {
-  const renderedLocale = locale ?? 'en'
   const result = deriveAnnotationScene(
     locale === undefined ? { recipe, source } : { locale, recipe, source },
   )
 
   if (!result.ok) {
     return (
-      <pre
-        data-hw-locale={renderedLocale}
-        data-hw-scene={recipe}
-        data-hw-scene-invalid=""
-        lang={renderedLocale}
-      >
+      <pre data-hw-scene={recipe} data-hw-scene-invalid="">
         <code>{source}</code>
       </pre>
     )
@@ -71,13 +65,14 @@ export function HandScene({ recipe, source, locale }: HandSceneProps) {
       data-hw-locale={plan.locale}
       data-hw-scene={plan.recipe.name}
       data-hw-scene-version={plan.recipe.version}
-      lang={plan.locale}
     >
-      <figcaption data-hw-scene-caption="">{plan.title}</figcaption>
+      <figcaption data-hw-scene-caption="" lang={plan.locale}>
+        {plan.title}
+      </figcaption>
       <pre data-hw-scene-source="">
         <code>{renderSource(plan)}</code>
       </pre>
-      <ol data-hw-scene-legend="">
+      <ol data-hw-scene-legend="" lang={plan.locale}>
         {plan.annotations.map((annotation) => {
           const firstTargetId = annotation.targetIds[0]
           const role = plan.targets.find((target) => target.id === firstTargetId)?.role

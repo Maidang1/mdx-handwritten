@@ -1328,7 +1328,8 @@ function sceneElementNode(metadata: ValidatedScene): RootContent {
   const caption = paragraph([labelText(plan.title)])
   caption.data = hastData('figcaption', {
     id: captionId,
-    'data-hw-scene-caption': ''
+    'data-hw-scene-caption': '',
+    lang: plan.locale
   })
 
   const source = paragraph([
@@ -1367,7 +1368,11 @@ function sceneElementNode(metadata: ValidatedScene): RootContent {
       [content]
     )
   })
-  const legend = flowElement('ol', {'data-hw-scene-legend': ''}, items)
+  const legend = flowElement(
+    'ol',
+    {'data-hw-scene-legend': '', lang: plan.locale},
+    items
+  )
   return flowElement(
     'figure',
     {
@@ -1375,7 +1380,6 @@ function sceneElementNode(metadata: ValidatedScene): RootContent {
       'data-hw-scene-version': String(plan.recipe.version),
       'data-hw-scene-schema': String(plan.schemaVersion),
       'data-hw-locale': plan.locale,
-      lang: plan.locale,
       'aria-labelledby': captionId
     },
     [caption, source, legend]
@@ -1387,6 +1391,15 @@ function sceneSourceNode(source: string): Paragraph {
     inlineElement('code', {}, [labelText(source)])
   ])
   result.data = hastData('pre', {})
+  return result
+}
+
+function sceneStripCaptionNode(plan: AnnotationScenePlanV1): Paragraph {
+  const result = paragraph([labelText(plan.title)])
+  result.data = hastData('p', {
+    'data-hw-scene-caption': '',
+    lang: plan.locale
+  })
   return result
 }
 
@@ -1406,7 +1419,8 @@ function sceneStripNodes(metadata: ValidatedScene): Node[] {
       })
     )
   }
-  return [sceneSourceNode(plan.source), legend]
+  legend.data = hastData('ol', {lang: plan.locale})
+  return [sceneStripCaptionNode(plan), sceneSourceNode(plan.source), legend]
 }
 
 function invalidSceneNodes(
