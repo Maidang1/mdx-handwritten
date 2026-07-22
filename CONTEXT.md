@@ -16,6 +16,10 @@ _Avoid_: Hand-built illustration, fixed layout
 A named convention that turns recognizable source content and an author's intent into an annotation scene. It supplies shared meanings and relationships so authors do not have to repeat them.
 _Avoid_: Template, visual preset
 
+**Annotation renderer**:
+A framework or output-mode adapter that turns a valid Scene plan into source-first semantic content and an optional recipe-owned spatial enhancement without deriving new scene meaning.
+_Avoid_: Scene compiler, theme, layout engine
+
 **Annotation relationship**:
 A semantic connection an Annotation scene asserts between a real-text label and one or more ordered Annotation targets, independent of connector geometry.
 _Avoid_: Connector, arrow, graph edge
