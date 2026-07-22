@@ -18,12 +18,13 @@
     "dev": "npm run dev -w @mdx-handwritten/docs",
     "preview:release-fixtures": "vite preview --config tests/visual/vite.config.ts --host 127.0.0.1 --port 4174",
     "test": "vitest run",
+    "test:recipe-conformance": "node scripts/recipe-conformance/self-test.mjs",
     "test:release-fixtures": "npm run build:release-fixtures && npm run typecheck:release-fixtures && playwright test --config tests/visual/playwright.config.ts",
     "test:watch": "vitest",
     "report:performance": "node scripts/budgets/report-performance.mjs",
     "typecheck": "tsc -b",
     "typecheck:release-fixtures": "tsc --noEmit --project tests/visual/tsconfig.json",
-    "check": "npm run typecheck && npm run test && npm run check:budgets && npm run build:docs"
+    "check": "npm run typecheck && npm run test && npm run check:budgets && npm run test:recipe-conformance && npm run build:docs"
   },
   "engines": {
     "node": ">=20.19"
@@ -40,6 +41,8 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "remark-directive": "4.0.0",
+    "semver": "7.8.5",
+    "terser": "5.49.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vite": "8.1.5",

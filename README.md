@@ -76,6 +76,49 @@ The canonical source stays intact and comes first in the DOM. A complete text
 legend follows it, so narrow layouts, print, forced colors, and missing CSS do
 not depend on connector geometry.
 
+#### Third-party npm Recipe packages
+
+Trusted Recipe packages are explicit ESM npm dependencies. The host imports a
+package definition once, constructs a Configured Scene compiler, and supplies
+that compiler to the remark Adapter:
+
+```ts
+import acmeRecipes from '@acme/mdx-handwritten-recipes'
+import { createSceneCompiler } from 'mdx-handwritten-scene/recipes'
+
+const sceneCompiler = createSceneCompiler({
+  recipePackages: [{
+    packageName: '@acme/mdx-handwritten-recipes',
+    definition: acmeRecipes
+  }]
+})
+
+export const mdxOptions = {
+  remarkPlugins: [
+    remarkDirective,
+    [remarkHandwritten, { sceneCompiler }]
+  ]
+}
+```
+
+Authors still write only a package-qualified recipe name and readable source.
+There is no package scan, registry request, source-driven import, browser
+loader, or global registry. Recipe code runs during compilation; component,
+element, strip, SSR, and RSC rendering receive only the materialized JSON Scene
+plan. The root `createScenePlan` and direct React `recipe + source` forms remain
+first-party-only.
+
+Package authors can validate the bytes they will publish with a real
+`npm pack` round trip:
+
+```bash
+npm run build:packages
+node scripts/recipe-conformance/cli.mjs ./path/to/recipe-package
+```
+
+See the [V1 npm Recipe package contract](./docs/specs/third-party-annotation-recipe-packages-v1.md)
+and [conformance format](./scripts/recipe-conformance/README.md).
+
 #### Reviewed scene plans
 
 The ordinary path above remains fully deterministic and needs no extra files.

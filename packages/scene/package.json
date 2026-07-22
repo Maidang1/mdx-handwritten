@@ -11,12 +11,16 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./recipes": {
+      "types": "./dist/recipes.d.ts",
+      "import": "./dist/recipes.js"
     }
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --sourcemap --clean --tsconfig tsconfig.build.json",
+    "build": "tsup src/index.ts src/recipes.ts --format esm --sourcemap --clean --minify terser --tsconfig tsconfig.build.json && tsup src/index.ts --format esm --dts --dts-only --clean false --tsconfig tsconfig.build.json && tsup src/recipes.ts --format esm --dts --dts-only --clean false --tsconfig tsconfig.build.json",
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.test.json"
   },

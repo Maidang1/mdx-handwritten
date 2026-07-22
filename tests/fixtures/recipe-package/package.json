@@ -1,0 +1,25 @@
+{
+  "name": "@mdx-handwritten-fixtures/recipe-package",
+  "version": "1.0.0",
+  "description": "Packed ESM conformance fixture for MDX Handwritten Recipe packages",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "conformance.js",
+    "index.js"
+  ],
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "default": "./index.js"
+    },
+    "./conformance": {
+      "import": "./conformance.js",
+      "default": "./conformance.js"
+    }
+  },
+  "peerDependencies": {
+    "mdx-handwritten-scene": "^0.1.0"
+  },
+  "license": "MIT"
+}

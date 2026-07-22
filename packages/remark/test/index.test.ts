@@ -7,8 +7,11 @@ import remarkDirective from 'remark-directive'
 import {afterEach, describe, expect, it} from 'vitest'
 import {
   createScenePlan,
+  type CreateScenePlanInput,
+  type ScenePlanResult,
   type ScenePlanV1
 } from 'mdx-handwritten-scene'
+import type {ConfiguredSceneCompiler} from 'mdx-handwritten-scene/recipes'
 import remarkMdxHandwritten, {
   handwrittenComponentNames,
   handwrittenDirectiveNames,
@@ -155,6 +158,21 @@ function reviewedPlanWithDistinctMeaning(): ScenePlanV1 {
   }
 }
 
+function trackingSceneCompiler(
+  calls: CreateScenePlanInput[],
+  receivers: unknown[] = [],
+  compile: (input: CreateScenePlanInput) => ScenePlanResult = createScenePlan
+): ConfiguredSceneCompiler {
+  const compiler: ConfiguredSceneCompiler = {
+    createScenePlan(input: CreateScenePlanInput) {
+      calls.push(input)
+      receivers.push(this)
+      return compile(input)
+    }
+  }
+  return compiler
+}
+
 async function temporaryProjectRoot(): Promise<string> {
   const root = await mkdtemp(join(tmpdir(), 'mdx-handwritten-remark-'))
   temporaryProjectRoots.push(root)
@@ -211,6 +229,100 @@ describe('public contract', () => {
       'hw-watermark'
     ])
     expect(handwrittenComponentNames.note).toBe('HandNote')
+  })
+})
+
+describe('Configured Scene compiler', () => {
+  it('uses the same explicit compiler for deterministic and Reviewed candidate paths while preserving its receiver', async () => {
+    const calls: CreateScenePlanInput[] = []
+    const receivers: unknown[] = []
+    const sceneCompiler = trackingSceneCompiler(calls, receivers)
+
+    await compileMdx(taskScene(), {sceneCompiler})
+    const projectRoot = await writeReviewedPlan(reviewedPlan())
+    await compileMdx(boundTaskScene(), {
+      reviewedPlans: {projectRoot},
+      sceneCompiler
+    })
+
+    expect(calls).toHaveLength(2)
+    expect(calls[0]).toEqual({
+      recipe: 'task-explainer',
+      source: taskSceneBody
+    })
+    expect(calls[1]).toMatchObject({
+      source: taskSceneBody,
+      candidateJson: expect.any(String)
+    })
+    expect(receivers).toEqual([sceneCompiler, sceneCompiler])
+  })
+
+  it('does not fall back to the root compiler when the explicit compiler rejects deterministic or Reviewed candidate input', async () => {
+    const calls: CreateScenePlanInput[] = []
+    const failure: ScenePlanResult = {
+      ok: false,
+      plan: null,
+      diagnostics: [
+        {
+          code: 'scene-recipe-rejected',
+          message: 'The explicit compiler rejected this scene.'
+        }
+      ]
+    }
+    const sceneCompiler = trackingSceneCompiler(calls, [], () => failure)
+
+    const deterministicFailure = await compileFailure(taskScene(), {
+      sceneCompiler
+    })
+    const projectRoot = await writeReviewedPlan(reviewedPlan())
+    const candidateFailure = await compileFailure(boundTaskScene(), {
+      reviewedPlans: {projectRoot},
+      sceneCompiler
+    })
+
+    expect(deterministicFailure.ruleId).toBe('scene-recipe-rejected')
+    expect(candidateFailure.ruleId).toBe('scene-recipe-rejected')
+    expect(calls).toHaveLength(2)
+  })
+
+  it('keeps the zero-configuration root compiler output unchanged', async () => {
+    const rootOutput = String(await compileMdx(taskScene()))
+    const sceneCompiler = trackingSceneCompiler([])
+    const configuredOutput = String(
+      await compileMdx(taskScene(), {sceneCompiler})
+    )
+
+    expect(configuredOutput).toBe(rootOutput)
+  })
+
+  it('passes a package-qualified Recipe selector through unchanged', async () => {
+    const recipe = '@acme/mdx-handwritten-recipes/task-summary'
+    const calls: CreateScenePlanInput[] = []
+    const sceneCompiler = trackingSceneCompiler(calls, [], (input) => {
+      const result = createScenePlan({
+        recipe: 'task-explainer',
+        source: input.source,
+        ...('locale' in input && input.locale !== undefined
+          ? {locale: input.locale}
+          : {})
+      })
+      if (!result.ok) return result
+      return {
+        ok: true,
+        diagnostics: [],
+        plan: {...result.plan, recipe: {name: recipe, version: 1}}
+      }
+    })
+
+    const output = String(
+      await compileMdx(
+        `:::hw-scene{recipe="${recipe}"}\n${taskSceneBody}\n:::`,
+        {sceneCompiler}
+      )
+    )
+
+    expect(calls[0]).toMatchObject({recipe})
+    expect(output).toContain(`"name": "${recipe}"`)
   })
 })
 
