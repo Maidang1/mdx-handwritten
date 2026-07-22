@@ -16,6 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b",
+    "prototype:annotation-automation": "node packages/remark/prototype-annotation-automation.mjs",
     "check": "npm run typecheck && npm run test && npm run build"
   },
   "engines": {
