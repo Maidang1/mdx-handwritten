@@ -20,6 +20,10 @@ _Avoid_: Template, visual preset
 A reviewable description of an annotation scene's targets, labels, relationships, and gestures, independent of their final geometric arrangement.
 _Avoid_: Rendered scene, pixel layout
 
+**Semantic correction**:
+Sparse author input that resolves an ambiguous target, label, or relationship in an annotation scene without specifying geometry or visual styling.
+_Avoid_: Layout override, manual positioning
+
 **Visual style**:
 The appearance used to render an annotation gesture without changing what that gesture communicates.
 _Avoid_: Annotation gesture
