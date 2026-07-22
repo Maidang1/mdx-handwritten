@@ -40,8 +40,17 @@ function packDirectory(packageDirectory, destination, label) {
     ['pack', '--json', '--pack-destination', destination, packageDirectory],
     {cwd: packageDirectory},
   )
-  const [pack] = JSON.parse(result.stdout)
+  const report = JSON.parse(result.stdout)
+  const packs = Array.isArray(report)
+    ? report
+    : report && typeof report === 'object'
+      ? typeof report.filename === 'string'
+        ? [report]
+        : Object.values(report)
+      : []
+  const [pack] = packs
   if (
+    packs.length !== 1 ||
     !pack ||
     typeof pack.filename !== 'string' ||
     typeof pack.name !== 'string' ||
@@ -1091,6 +1100,7 @@ async function runPackedAdapterProbes({
   installedRecipeDirectory,
   installedReactDirectory,
   installedRemarkDirectory,
+  installedSceneDirectory,
   sceneRecipes,
 }) {
   const adapterLoaderPath = resolve(consumerDirectory, 'adapter-loader.mjs')
@@ -1104,12 +1114,14 @@ async function runPackedAdapterProbes({
     "export {HandScene} from 'mdx-handwritten-react'",
     "export const remarkUrl = import.meta.resolve('remark-mdx-handwritten')",
     "export const reactUrl = import.meta.resolve('mdx-handwritten-react')",
+    "export const sceneRecipesUrl = import.meta.resolve('mdx-handwritten-scene/recipes')",
     '',
   ].join('\n'))
   const adapters = await import(pathToFileURL(adapterLoaderPath).href)
   for (const [url, directory, name] of [
     [adapters.remarkUrl, installedRemarkDirectory, 'remark-mdx-handwritten'],
     [adapters.reactUrl, installedReactDirectory, 'mdx-handwritten-react'],
+    [adapters.sceneRecipesUrl, installedSceneDirectory, 'mdx-handwritten-scene/recipes'],
   ]) {
     const resolvedEntry = realpathSync(fileURLToPath(url))
     const packageRoot = realpathSync(directory)
@@ -1124,7 +1136,6 @@ async function runPackedAdapterProbes({
   })
   const exactCase = cases.plans[0]
   const reviewedCase = cases.reviewedCandidates[0]
-  const exactPlan = exactCase.expected.plan
   const reviewedPlan = reviewedCase.expected.plan
   const compilerResult = sceneCompiler.createScenePlan(exactCase.input)
   assert.deepStrictEqual(
@@ -1147,22 +1158,43 @@ async function runPackedAdapterProbes({
     },
   )
   const thirdPartyScene = sceneDirective(exactCase)
+  const builtInSource = '[ ] RUNNER-001 Verify packed integration'
   const mixedSource = [
     ':::hw-scene{recipe="task-explainer"}',
-    '[ ] RUNNER-001 Verify packed integration',
+    builtInSource,
     ':::',
     '',
     thirdPartyScene,
   ].join('\n')
-  const mixed = String(await compileMdx(mixedSource, {
+  const mixedCompiled = await compileMdx(mixedSource, {
     imports: {mode: 'auto', source: 'mdx-handwritten-react'},
     sceneCompiler,
-  }))
+  })
+  const mixed = String(mixedCompiled)
   assert.match(mixed, /task-explainer/u, 'Mixed remark output must include the built-in Scene.')
   assert.match(
     mixed,
     new RegExp(definition.packageName.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&'), 'u'),
     'Mixed remark output must include the packed third-party Scene.',
+  )
+  const browserEntryPath = resolve(consumerDirectory, 'packed-mixed-generated.mjs')
+  writeFileSync(browserEntryPath, mixed)
+
+  const builtInResult = sceneCompiler.createScenePlan({
+    recipe: 'task-explainer',
+    source: builtInSource,
+  })
+  assert.equal(builtInResult.ok, true, 'The configured compiler must materialize the built-in Scene.')
+  const mixedModule = await import(pathToFileURL(browserEntryPath).href)
+  const mixedTree = mixedModule.default({})
+  const mixedScenes = renderedElements(
+    mixedTree,
+    ({type}) => type === adapters.HandScene,
+  )
+  assert.deepStrictEqual(
+    mixedScenes.map(({props}) => props),
+    [{plan: builtInResult.plan}, {plan: compilerResult.plan}],
+    'Mixed component output must transport the exact built-in and packed third-party plans.',
   )
 
   const unknownScene = ':::hw-scene{recipe="@runner-owned/missing"}\nunknown source\n:::'
@@ -1241,14 +1273,6 @@ async function runPackedAdapterProbes({
   assert.equal(rscResult.after, rscResult.before, 'RSC must not mutate the materialized plan.')
   for (const meaning of expectedMeaning) assert.ok(rscResult.rendered.includes(meaning), 'RSC must preserve plan meaning.')
 
-  const browserEntryPath = resolve(consumerDirectory, 'browser-entry.mjs')
-  writeFileSync(browserEntryPath, [
-    "import {createElement} from 'react'",
-    "import {HandScene} from 'mdx-handwritten-react'",
-    `const plan = ${JSON.stringify(reviewedPlan)}`,
-    'export const scene = createElement(HandScene, {plan})',
-    '',
-  ].join('\n'))
   const browserBundle = await build({
     absWorkingDir: consumerDirectory,
     bundle: true,
@@ -1259,6 +1283,7 @@ async function runPackedAdapterProbes({
     write: false,
   })
   const recipeRoot = realpathSync(installedRecipeDirectory)
+  const sceneRecipesEntry = realpathSync(fileURLToPath(adapters.sceneRecipesUrl))
   for (const input of Object.keys(browserBundle.metafile.inputs)) {
     const inputPath = resolve(consumerDirectory, input)
     if (existsSync(inputPath)) {
@@ -1266,6 +1291,11 @@ async function runPackedAdapterProbes({
       assert.ok(
         realInput !== recipeRoot && !realInput.startsWith(`${recipeRoot}/`),
         'The browser bundle must exclude the packed Recipe implementation.',
+      )
+      assert.notEqual(
+        realInput,
+        sceneRecipesEntry,
+        'The browser bundle must exclude the Scene /recipes implementation.',
       )
     }
   }
@@ -1456,6 +1486,10 @@ export async function runRecipePackageConformance({
       installedRemarkDirectory: installedPackageDirectory(
         consumerDirectory,
         'remark-mdx-handwritten',
+      ),
+      installedSceneDirectory: installedPackageDirectory(
+        consumerDirectory,
+        'mdx-handwritten-scene',
       ),
       sceneRecipes,
     })

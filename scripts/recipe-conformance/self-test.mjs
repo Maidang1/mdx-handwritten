@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import {spawnSync} from 'node:child_process'
 import {mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
 import {tmpdir} from 'node:os'
 import {dirname, resolve} from 'node:path'
@@ -12,9 +13,58 @@ import {
   validatePreparedCompilerLifecycle,
   validateRecipeConformanceCaseSet,
 } from './index.mjs'
+import {parseRecipeConformanceArguments} from './cli.mjs'
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url))
 const projectRoot = resolve(scriptDirectory, '../..')
+const cliPath = resolve(scriptDirectory, 'cli.mjs')
+
+assert.deepStrictEqual(
+  parseRecipeConformanceArguments([
+    './recipe',
+    '--definition-export=recipePackage',
+    '--conformance-export=./checks',
+    '--scene-package-directory=./scene',
+  ]),
+  {
+    conformanceExport: './checks',
+    definitionExport: 'recipePackage',
+    help: false,
+    packageDirectory: './recipe',
+    scenePackageDirectory: './scene',
+  },
+)
+assert.deepStrictEqual(parseRecipeConformanceArguments(['--help']), {help: true})
+
+function assertCliFailure(arguments_, message) {
+  const result = spawnSync(process.execPath, [cliPath, ...arguments_], {encoding: 'utf8'})
+  assert.equal(result.status, 1, `${arguments_.join(' ')} must fail.`)
+  assert.match(result.stderr, message)
+}
+
+assertCliFailure(['./recipe', '--unknown=value'], /Unknown option: --unknown=value/u)
+assertCliFailure(
+  ['./recipe', '--definition-export=default', '--definition-export=recipePackage'],
+  /Duplicate option: --definition-export/u,
+)
+assertCliFailure(['./recipe', './extra'], /Unexpected extra positional argument/u)
+for (const option of [
+  '--definition-export=',
+  '--conformance-export=',
+  '--scene-package-directory=',
+]) {
+  assertCliFailure(['./recipe', option], /requires a non-empty value/u)
+}
+assertCliFailure(
+  ['./recipe', '--scene-package-dir=./scene'],
+  /Unknown option: --scene-package-dir=\.\/scene/u,
+)
+assertCliFailure([], /Package directory is required/u)
+assertCliFailure(['--help', './recipe'], /--help cannot be combined with other arguments/u)
+
+const helpResult = spawnSync(process.execPath, [cliPath, '--help'], {encoding: 'utf8'})
+assert.equal(helpResult.status, 0)
+assert.match(helpResult.stdout, /^Usage: node scripts\/recipe-conformance\/cli\.mjs/u)
 
 assert.doesNotThrow(() => {
   validateRecipeConformanceCaseSet({definition, cases: recipeConformanceCases})
