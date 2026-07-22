@@ -176,10 +176,9 @@ During migration from the task-explainer vertical slice:
 
 ## Deferred capabilities
 
-The built-in recipe and localization boundary is defined by `annotation-recipe-v1.md`: first-party recipes are private static modules and V1 has no public registry. The optional generation, review, privacy, storage, and stale-plan boundary is defined by `optional-ai-authoring-v1.md`. This package boundary intentionally does not decide:
+The built-in recipe and localization boundary is defined by `annotation-recipe-v1.md`: first-party recipes are private static modules and V1 has no public registry. The optional generation, review, privacy, storage, and stale-plan boundary is defined by `optional-ai-authoring-v1.md`. The build, SSR, CSS, font, client-runtime, and package limits are fixed by [`performance-budgets-v1.md`](./performance-budgets-v1.md). This package boundary intentionally does not decide:
 
 - third-party Annotation recipe discovery and trust;
-- build, SSR, CSS, font, or client bundle budgets;
 - the canonical cross-renderer fixture and release matrix.
 
 Those are owned by their downstream roadmap tickets. V1 also rejects a public recipe registry, global singleton, renderer callbacks, parts/slot Interface, author-authored plan JSON, author layout controls, and browser-measured core layout.

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "measurement": {
+    "node": "22.23.1",
+    "npm": "11.9.0",
+    "kibibyteBytes": 1024,
+    "gzip": "gzip -9 -n -c",
+    "consumerBundle": {
+      "bundler": "esbuild 0.27.7",
+      "bundle": true,
+      "minify": true,
+      "format": "esm",
+      "platform": "browser",
+      "charset": "utf8",
+      "legalComments": "none",
+      "external": ["react", "react/*"],
+      "treeShaking": true
+    }
+  },
+  "limits": {
+    "esm": {
+      "scene": {"rawBytes": 65536, "gzipBytes": 14336},
+      "remark": {"rawBytes": 65536, "gzipBytes": 15360},
+      "react": {"rawBytes": 18432, "gzipBytes": 4096},
+      "combinedGzipBytes": 35840
+    },
+    "consumerBundles": {
+      "handScene": {"rawBytes": 43008, "gzipBytes": 13312},
+      "handText": {"gzipBytes": 4096, "sceneBytes": 0}
+    },
+    "theme": {"rawBytes": 40960, "gzipBytes": 6144},
+    "fonts": {
+      "totalBytes": 230400,
+      "commonLatinBytes": 87040,
+      "commonLatinFile": "shantell-sans-latin-wght-normal.woff2",
+      "files": [
+        "shantell-sans-cyrillic-ext-wght-normal.woff2",
+        "shantell-sans-cyrillic-wght-normal.woff2",
+        "shantell-sans-vietnamese-wght-normal.woff2",
+        "shantell-sans-latin-ext-wght-normal.woff2",
+        "shantell-sans-latin-wght-normal.woff2"
+      ]
+    },
+    "scene": {
+      "componentTransportBytes": 6144,
+      "ssrHtmlBytes": 6144,
+      "requiredClientRuntimeBytes": 0
+    },
+    "npmPacked": {
+      "mdx-handwritten-scene": 46080,
+      "remark-mdx-handwritten": 46080,
+      "mdx-handwritten-react": 7168,
+      "mdx-handwritten-theme": 7168
+    },
+    "timing": {
+      "enforcement": "report",
+      "calibrationMainRuns": 5,
+      "warmPackageBuildP95Ms": 10000,
+      "oneHundredSceneCompileP95Ms": 100,
+      "singleSceneSsrP95Ms": 0.25
+    }
+  }
+}

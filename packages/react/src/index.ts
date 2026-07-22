@@ -23,7 +23,7 @@ import {
 } from './components.js'
 import { HandScene } from './scene.js'
 
-export const handwrittenComponents = Object.freeze({
+export const handwrittenComponents = /* @__PURE__ */ Object.freeze({
   HandText,
   HandLink,
   HandMark,
@@ -34,11 +34,20 @@ export const handwrittenComponents = Object.freeze({
   HandWatermark,
 })
 
-export const handwrittenSceneComponents = Object.freeze({ HandScene })
+export const handwrittenSceneComponents = /* @__PURE__ */ Object.freeze({
+  HandScene,
+})
 
-export const mdxHandwrittenComponents = Object.freeze({
-  ...handwrittenComponents,
-  ...handwrittenSceneComponents,
+export const mdxHandwrittenComponents = /* @__PURE__ */ Object.freeze({
+  HandText,
+  HandLink,
+  HandMark,
+  HandAnnotate,
+  HandNote,
+  HandBrace,
+  HandMargin,
+  HandWatermark,
+  HandScene,
 })
 
 export type {

@@ -1,0 +1,46 @@
+name: Check Annotation scene budgets
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  budgets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up project
+        uses: ./.github/actions/setup-project
+
+      - name: Check blocking budgets
+        run: npm run check:budgets
+
+  performance:
+    if: github.event_name != 'pull_request'
+    needs: budgets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up project
+        uses: ./.github/actions/setup-project
+
+      - name: Report performance calibration
+        env:
+          PERFORMANCE_REPORT_PATH: ${{ runner.temp }}/annotation-scene-performance.json
+        run: npm run report:performance
+
+      - name: Upload performance report
+        uses: actions/upload-artifact@v7
+        with:
+          name: annotation-scene-performance-${{ github.run_id }}
+          path: ${{ runner.temp }}/annotation-scene-performance.json
+          retention-days: 30

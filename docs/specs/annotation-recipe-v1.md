@@ -219,7 +219,7 @@ Annotation renderers place `localization.locale` on generated title, label, and 
 
 The Scene plan contains no font family, glyph choice, line-breaking rule, direction, or layout measurement. `mdx-handwritten-theme` owns language-sensitive Visual style through `:lang()` and `--hw-font-family-cjk`. Chinese handwritten labels prefer Kai-capable system fonts before the Latin handwriting font, while canonical source remains in the independent monospace stack. Hosts may override the token without changing recipe or plan compatibility.
 
-V1 does not bundle a large CJK web font. Issue #13 owns font and bundle budgets. A Rich-layout envelope must be proven for each recipe version and Localization locale without relying on one machine's exact glyph metrics; otherwise the whole scene uses its linear fallback. Issue #14 owns cross-browser CJK visual fixtures.
+V1 does not bundle a large CJK web font. The default font and CSS limits are fixed by [`performance-budgets-v1.md`](./performance-budgets-v1.md), and every additional Visual style or font is explicit opt-in. A Rich-layout envelope must be proven for each recipe version and Localization locale without relying on one machine's exact glyph metrics; otherwise the whole scene uses its linear fallback. Issue #14 owns cross-browser CJK visual fixtures.
 
 ## Required validation
 
