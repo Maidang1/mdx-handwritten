@@ -23,6 +23,8 @@ const commonProps = {
   strokeLinejoin: 'round',
   strokeWidth: 1.8,
   viewBox: '0 0 24 24',
+  width: 24,
+  height: 24,
 } as const
 
 export function HandGlyph({ name }: HandGlyphProps) {
@@ -97,6 +99,8 @@ export function HandConnector({ kind }: { kind: 'curved' | 'straight' }) {
       focusable="false"
       preserveAspectRatio="none"
       viewBox="0 0 72 32"
+      width="72"
+      height="32"
     >
       {kind === 'curved' ? (
         <path d="M4 7c22-3 38 7 61 18m-7-7 7 7-10 2" />
@@ -115,6 +119,8 @@ export function HandBraceGlyph() {
       focusable="false"
       preserveAspectRatio="none"
       viewBox="0 0 24 100"
+      width="24"
+      height="100"
     >
       <path d="M3 1c13 0 13 8 13 20v19c0 7 2 10 7 10-5 0-7 3-7 10v19c0 12 0 20-13 20" />
     </svg>

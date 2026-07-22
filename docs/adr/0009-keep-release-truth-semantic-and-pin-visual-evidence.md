@@ -1,0 +1,3 @@
+# Keep release truth semantic and pin visual evidence
+
+V1 defines each Canonical content fixture by stable author input and expected reader meaning, then verifies its static public-package output across languages, viewports, accessibility states, and browser engines; screenshots are derived evidence rather than the Annotation recipe contract. Chromium pixel diffs run only in one package-matched, digest-pinned Playwright Linux image, while Firefox and WebKit enforce semantic, accessibility, overflow, and fallback behavior without sharing pixels; CI never updates baselines automatically. This trades a small, explicitly reviewed Linux screenshot set for reproducible failures and avoids treating OS fonts, rasterization, or browser-specific painting as Scene plan meaning.

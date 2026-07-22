@@ -96,6 +96,18 @@ describe('mdx-handwritten-react server rendering', () => {
     expect(html).toContain('aria-hidden="true"')
   })
 
+  it('keeps link glyphs bounded when CSS is unavailable', () => {
+    const html = renderToStaticMarkup(
+      <HandLink href="/guide" icon="arrow-forward">
+        Guide
+      </HandLink>,
+    )
+
+    expect(html).toContain('data-hw-glyph="arrow-forward"')
+    expect(html).toContain('width="24"')
+    expect(html).toContain('height="24"')
+  })
+
   it('keeps annotation labels in real DOM and connectors decorative', () => {
     const html = renderToStaticMarkup(
       <HandAnnotate label="stable ID" placement="block-start-inline-end" shiftInline="2">
@@ -108,6 +120,18 @@ describe('mdx-handwritten-react server rendering', () => {
     expect(html).toContain('<span data-hw-target=""><code>CLI-042</code></span>')
     expect(html).toContain('<span data-hw-label="" dir="auto">stable ID</span>')
     expect(html).toMatch(/<svg aria-hidden="true" data-hw-connector="curved"/)
+  })
+
+  it('keeps annotation connectors bounded when CSS is unavailable', () => {
+    const html = renderToStaticMarkup(
+      <HandAnnotate label="stable ID">
+        <code>CLI-042</code>
+      </HandAnnotate>,
+    )
+
+    expect(html).toContain('data-hw-connector="curved"')
+    expect(html).toContain('width="72"')
+    expect(html).toContain('height="32"')
   })
 
   it('renders a static note without creating a live region or landmark', () => {
@@ -142,6 +166,18 @@ describe('mdx-handwritten-react server rendering', () => {
     expect(brace).toContain('data-hw-brace-glyph=""')
     expect(margin).toContain('<aside data-hw-label="" dir="auto">')
     expect(margin).toContain('<span>the backlog</span>')
+  })
+
+  it('keeps brace glyphs bounded when CSS is unavailable', () => {
+    const html = renderToStaticMarkup(
+      <HandBrace label="spec">
+        <section>Specification</section>
+      </HandBrace>,
+    )
+
+    expect(html).toContain('data-hw-brace-glyph=""')
+    expect(html).toContain('width="24"')
+    expect(html).toContain('height="100"')
   })
 
   it('keeps watermark copy decorative while preserving body content', () => {
