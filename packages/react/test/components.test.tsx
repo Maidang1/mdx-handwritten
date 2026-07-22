@@ -47,6 +47,28 @@ describe('mdx-handwritten-react server rendering', () => {
     ])
     expect(Object.isFrozen(handwrittenSceneComponents)).toBe(true)
     expect(Object.isFrozen(mdxHandwrittenComponents)).toBe(true)
+    expect(handwrittenComponents).toEqual({
+      HandText,
+      HandLink,
+      HandMark,
+      HandAnnotate,
+      HandNote,
+      HandBrace,
+      HandMargin,
+      HandWatermark,
+    })
+    expect(handwrittenSceneComponents.HandScene).toBe(HandScene)
+    expect(mdxHandwrittenComponents).toEqual({
+      HandText,
+      HandLink,
+      HandMark,
+      HandAnnotate,
+      HandNote,
+      HandBrace,
+      HandMargin,
+      HandWatermark,
+      HandScene,
+    })
   })
 
   it('renders inline components with stable data attributes', () => {

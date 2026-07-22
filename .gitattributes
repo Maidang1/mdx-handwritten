@@ -1,0 +1,3 @@
+/budgets.json text eol=lf
+/scripts/budgets/** text eol=lf
+/packages/theme/styles.css text eol=lf

@@ -191,10 +191,17 @@ For untrusted authors, accept plain Markdown only, compile with `output: 'elemen
 npm install
 npm run typecheck
 npm test
+npm run check:budgets
+npm run report:performance
 npm run build
 ```
 
-The Pages workflow runs the same checks before deploying the Vite output. The preview is built from an actual `.mdx` file using the local remark transformer, not from hard-coded lookalike markup.
+`npm run check` includes the blocking budgets. `npm run report:performance`
+records the report-only timing calibration described in
+[`docs/specs/performance-budgets-v1.md`](./docs/specs/performance-budgets-v1.md).
+The Pages workflow runs the blocking checks before deploying the Vite output.
+The preview is built from an actual `.mdx` file using the local remark
+transformer, not from hard-coded lookalike markup.
 
 ## License
 

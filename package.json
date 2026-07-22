@@ -12,11 +12,13 @@
     "build": "npm run build:packages && npm run build:docs",
     "build:packages": "npm run build -w mdx-handwritten-scene && npm run build -w remark-mdx-handwritten && npm run build -w mdx-handwritten-react",
     "build:docs": "npm run build -w @mdx-handwritten/docs",
+    "check:budgets": "npm run build:packages && node scripts/budgets/check.mjs",
     "dev": "npm run dev -w @mdx-handwritten/docs",
     "test": "vitest run",
     "test:watch": "vitest",
+    "report:performance": "node scripts/budgets/report-performance.mjs",
     "typecheck": "tsc -b",
-    "check": "npm run typecheck && npm run test && npm run build"
+    "check": "npm run typecheck && npm run test && npm run check:budgets && npm run build:docs"
   },
   "engines": {
     "node": ">=20.19"
@@ -27,6 +29,10 @@
     "@types/node": "^24.0.0",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "esbuild": "0.27.7",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "remark-directive": "4.0.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^4.1.10"
