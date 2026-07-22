@@ -46,6 +46,8 @@ declare function createScenePlan(input: CreateScenePlanInput): ScenePlanResult
 
 The candidate path is for a proposal that an upstream review workflow has approved. `createScenePlan` validates the approval reference's shape; it cannot establish that an external review occurred. It does not call a model, perform review, or persist review records.
 
+The upstream generation, disclosure, approval, sidecar storage, and ordinary-build behavior are defined by [Optional AI Scene authoring V1](./optional-ai-authoring-v1.md). In particular, provider output is never passed through as trusted approval: the authoring tool creates reviewed provenance only after approval, and every ordinary build revalidates the stored raw JSON against current source.
+
 When omitted on the recipe path, `locale` resolves to `en`. A successful plan always records the canonical Localization locale used for generated reader text and the exact catalog version. Locale resolution follows the centralized exact-match policy in the built-in Annotation recipe contract; it does not declare the language of author-supplied source.
 
 ## Materialized plan
@@ -239,6 +241,8 @@ type ScenePlanProvenanceV1 =
 ```
 
 Plan provenance is compact review context, not cryptographic proof. It contains no prompts, provider responses, private source copies, arbitrary metadata, or timestamps. The review system owns storage, privacy, and the evidence referenced by `review.id`.
+
+For a reviewed proposal, the private Review record binds `review.id` to the exact source, candidate, schema, recipe, catalog, and Generation disclosure identities. That record is not part of the plan and is not required by ordinary offline compilation; integrations that require proof enforce it at the authoring or CI policy boundary.
 
 ## Source and identity invariants
 

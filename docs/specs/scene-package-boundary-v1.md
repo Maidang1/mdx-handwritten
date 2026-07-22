@@ -90,6 +90,14 @@ Theme is optional CSS, not an Annotation renderer. It consumes stable elements a
 
 Custom themes target documented elements and data attributes rather than package-private classes. With no theme or no CSS, caption, canonical source, and complete legend remain readable in document order.
 
+## Optional AI authoring boundary
+
+Optional AI lives in an author-invoked Module upstream of these four core packages. It may prepare a Scene proposal and, after review, call `createScenePlan` to materialize a Reviewed plan artifact. It is not imported by remark, React, theme, SSR, preview, CI, or production rendering, and none of those paths receive a provider client, prompt, Generation disclosure, or Review-store handle.
+
+The default `hw-scene` path remains `recipe + source + locale`. When an author approves a proposal, the authoring tool adds one opaque plan binding and commits the validated pure-JSON sidecar. A build Adapter resolves only that explicit project-local binding, reads bounded raw JSON, and passes it with current canonical source through the Scene Module candidate path. Filesystem lookup and plan-reference policy remain outside `mdx-handwritten-scene`; proposal generation, privacy authorization, approval, atomic storage, and private Review records remain outside `remark-mdx-handwritten` and every Annotation renderer.
+
+An absent binding keeps deterministic recipe compilation. A bound artifact that is missing, invalid, incompatible, or stale follows existing strict/warning output policy but never falls back to newly inferred meaning or calls a model. The complete trust, storage, and failure matrix is defined by [Optional AI Scene authoring V1](./optional-ai-authoring-v1.md).
+
 ## Exact-eight compatibility
 
 `hw-scene` is a composed authoring construct and `HandScene` is an Annotation renderer. Neither is a ninth Annotation gesture.
@@ -168,9 +176,8 @@ During migration from the task-explainer vertical slice:
 
 ## Deferred capabilities
 
-The built-in recipe and localization boundary is defined by `annotation-recipe-v1.md`: first-party recipes are private static modules and V1 has no public registry. This boundary intentionally does not decide:
+The built-in recipe and localization boundary is defined by `annotation-recipe-v1.md`: first-party recipes are private static modules and V1 has no public registry. The optional generation, review, privacy, storage, and stale-plan boundary is defined by `optional-ai-authoring-v1.md`. This package boundary intentionally does not decide:
 
-- optional AI generation, review storage, privacy, or stale-plan policy;
 - third-party Annotation recipe discovery and trust;
 - build, SSR, CSS, font, or client bundle budgets;
 - the canonical cross-renderer fixture and release matrix.
