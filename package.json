@@ -18,7 +18,7 @@
     "dev": "npm run dev -w @mdx-handwritten/docs",
     "preview:release-fixtures": "vite preview --config tests/visual/vite.config.ts --host 127.0.0.1 --port 4174",
     "test": "vitest run",
-    "test:release-fixtures": "npm run typecheck:release-fixtures && npm run build:release-fixtures && playwright test --config tests/visual/playwright.config.ts",
+    "test:release-fixtures": "npm run build:release-fixtures && npm run typecheck:release-fixtures && playwright test --config tests/visual/playwright.config.ts",
     "test:watch": "vitest",
     "report:performance": "node scripts/budgets/report-performance.mjs",
     "typecheck": "tsc -b",
