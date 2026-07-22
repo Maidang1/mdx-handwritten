@@ -18,16 +18,24 @@ import type {
 } from 'mdast-util-directive'
 import type {
   MdxJsxAttribute,
+  MdxJsxAttributeValueExpression,
   MdxJsxFlowElement,
   MdxJsxTextElement
 } from 'mdast-util-mdx-jsx'
 import {
-  deriveAnnotationScene,
-  type AnnotationSceneDiagnosticCode,
-  type AnnotationScenePlanV1
+  createScenePlan,
+  type SceneDiagnosticV1,
+  type ScenePlanV1
 } from 'mdx-handwritten-scene'
+import type {Expression, Program, Property} from 'estree'
 import type {Node, Parent} from 'unist'
 import type {VFile} from 'vfile'
+import {
+  maximumReviewedPlanBytes,
+  readReviewedPlan,
+  resolveReviewedPlans,
+  type ResolvedReviewedPlans
+} from './reviewed-plans.js'
 import {directiveDefinitions, isHandwrittenDirectiveName} from './schema.js'
 import type {DirectiveDefinition, DirectiveKind} from './schema.js'
 import {
@@ -58,6 +66,7 @@ export type {
   HandwrittenLimits,
   HandwrittenOptions,
   HandwrittenOutput,
+  HandwrittenReviewedPlans,
   HandwrittenRotation,
   HandwrittenRuleId,
   HandwrittenSize,
@@ -77,6 +86,7 @@ interface ResolvedOptions {
   variant: {count: 1 | 2 | 3 | 4; seed: string; projectRoot?: string}
   diagnostics: 'strict' | 'warn'
   maxDirectivesPerFile: number
+  reviewedPlans: ResolvedReviewedPlans | undefined
   recordUsage: boolean
 }
 
@@ -92,7 +102,7 @@ interface ValidatedDirective {
 
 interface ValidatedScene {
   source: string
-  plan?: AnnotationScenePlanV1
+  plan?: ScenePlanV1
   sceneId: string
   valid: boolean
 }
@@ -127,6 +137,7 @@ function resolveOptions(options: HandwrittenOptions | undefined): ResolvedOption
     },
     diagnostics: options?.diagnostics ?? 'strict',
     maxDirectivesPerFile: options?.limits?.maxDirectivesPerFile ?? 500,
+    reviewedPlans: resolveReviewedPlans(options?.reviewedPlans),
     recordUsage: options?.recordUsage ?? false
   }
 }
@@ -732,27 +743,15 @@ function containsInteractive(node: Node): boolean {
   )
 }
 
-const sceneDiagnosticCodes = new Set<AnnotationSceneDiagnosticCode>([
-  'scene-recipe-unknown',
-  'scene-locale-unsupported',
-  'scene-source-empty',
-  'scene-source-too-long',
-  'scene-task-syntax-invalid',
-  'scene-task-priority-ambiguous'
-])
-
-function sceneRuleId(code: AnnotationSceneDiagnosticCode): HandwrittenRuleId {
-  if (!sceneDiagnosticCodes.has(code)) {
-    throw new Error(`Unhandled Annotation scene diagnostic ${JSON.stringify(code)}.`)
-  }
+function sceneRuleId(code: SceneDiagnosticV1['code']): HandwrittenRuleId {
   return code
 }
 
 function validateSceneAttributes(
   context: ValidationContext,
   node: HandDirective
-): {recipe?: string; locale?: string} {
-  const result: {recipe?: string; locale?: string} = {}
+): {recipe?: string; locale?: string; plan?: string} {
+  const result: {recipe?: string; locale?: string; plan?: string} = {}
   const raw = rawAttributeTokens(node, context.file)
   if (raw) {
     const counts = new Map<string, number>()
@@ -785,7 +784,7 @@ function validateSceneAttributes(
   }
 
   for (const [name, value] of Object.entries(node.attributes ?? {})) {
-    if (name !== 'recipe' && name !== 'locale') {
+    if (name !== 'recipe' && name !== 'locale' && name !== 'plan') {
       report(
         context,
         node,
@@ -807,8 +806,10 @@ function validateSceneAttributes(
       report(
         context,
         node,
-        'attribute-invalid',
-        `Attribute ${JSON.stringify(name)} cannot be empty.`
+        name === 'plan' ? 'scene-plan-binding-invalid' : 'attribute-invalid',
+        name === 'plan'
+          ? 'The Reviewed plan artifact binding is not a supported opaque reference.'
+          : `Attribute ${JSON.stringify(name)} cannot be empty.`
       )
       continue
     }
@@ -824,6 +825,122 @@ function validateSceneAttributes(
     )
   }
   return result
+}
+
+function reportSceneDiagnostics(
+  context: ValidationContext,
+  node: HandDirective,
+  diagnostics: readonly SceneDiagnosticV1[]
+): void {
+  for (const diagnostic of diagnostics) {
+    report(
+      context,
+      node,
+      sceneRuleId(diagnostic.code),
+      diagnostic.message
+    )
+  }
+}
+
+function readCandidateJson(
+  context: ValidationContext,
+  node: HandDirective,
+  binding: string
+): string | undefined {
+  const result = readReviewedPlan(context.options.reviewedPlans, binding)
+  if (result.status === 'binding-invalid') {
+    report(
+      context,
+      node,
+      'scene-plan-binding-invalid',
+      'The Reviewed plan artifact binding is not a supported opaque reference.'
+    )
+    return undefined
+  }
+  if (result.status === 'missing') {
+    report(
+      context,
+      node,
+      'scene-plan-artifact-missing',
+      `The Reviewed plan artifact for ${JSON.stringify(binding)} is missing.`
+    )
+    return undefined
+  }
+  if (result.status === 'too-large') {
+    report(
+      context,
+      node,
+      'scene-plan-limit-exceeded',
+      `The Reviewed plan artifact exceeds ${maximumReviewedPlanBytes} UTF-8 bytes.`
+    )
+    return undefined
+  }
+  if (result.status === 'unreadable') {
+    report(
+      context,
+      node,
+      'scene-plan-artifact-unreadable',
+      `The Reviewed plan artifact for ${JSON.stringify(binding)} cannot be read.`
+    )
+    return undefined
+  }
+
+  try {
+    return new TextDecoder('utf-8', {
+      fatal: true,
+      ignoreBOM: true
+    }).decode(result.bytes)
+  } catch {
+    report(
+      context,
+      node,
+      'scene-plan-artifact-unreadable',
+      `The Reviewed plan artifact for ${JSON.stringify(binding)} is not valid UTF-8.`
+    )
+    return undefined
+  }
+}
+
+function materializeBoundScene(
+  context: ValidationContext,
+  node: HandDirective,
+  source: string,
+  attributes: {recipe: string; locale?: string; plan: string}
+): ScenePlanV1 | undefined {
+  const candidateJson = readCandidateJson(context, node, attributes.plan)
+  if (candidateJson === undefined) return undefined
+
+  const result = createScenePlan({source, candidateJson})
+  if (!result.ok) {
+    reportSceneDiagnostics(context, node, result.diagnostics)
+    return undefined
+  }
+
+  let matchesDeclaration = true
+  if (result.plan.recipe.name !== attributes.recipe) {
+    report(
+      context,
+      node,
+      'scene-plan-declaration-mismatch',
+      `The Reviewed plan artifact Recipe ${JSON.stringify(result.plan.recipe.name)} does not match the declared Recipe ${JSON.stringify(attributes.recipe)}.`
+    )
+    matchesDeclaration = false
+  }
+  const declaredLocale = attributes.locale ?? 'en'
+  if (
+    declaredLocale.trim() !== declaredLocale ||
+    declaredLocale.toLowerCase() !==
+      result.plan.localization.locale.toLowerCase()
+  ) {
+    report(
+      context,
+      node,
+      'scene-plan-declaration-mismatch',
+      `The Reviewed plan artifact Localization locale ${JSON.stringify(result.plan.localization.locale)} does not match the declared locale ${JSON.stringify(declaredLocale)}.`
+    )
+    matchesDeclaration = false
+  }
+  return matchesDeclaration ? result.plan : undefined
 }
 
 function validateScene(
@@ -879,29 +996,30 @@ function validateScene(
     }
   }
 
-  let plan: AnnotationScenePlanV1 | undefined
+  let plan: ScenePlanV1 | undefined
   if (
     context.errors.length === errorsBefore &&
     attributes.recipe !== undefined
   ) {
-    const result = deriveAnnotationScene({
-      recipe: attributes.recipe,
-      source,
-      ...(attributes.locale === undefined ? {} : {locale: attributes.locale})
-    })
-    if (result.ok) {
-      plan = result.plan
-      context.sceneComponentUsed = true
+    if (attributes.plan !== undefined) {
+      plan = materializeBoundScene(context, node, source, {
+        recipe: attributes.recipe,
+        ...(attributes.locale === undefined ? {} : {locale: attributes.locale}),
+        plan: attributes.plan
+      })
     } else {
-      for (const diagnostic of result.diagnostics) {
-        report(
-          context,
-          node,
-          sceneRuleId(diagnostic.code),
-          diagnostic.message
-        )
+      const result = createScenePlan({
+        recipe: attributes.recipe,
+        source,
+        ...(attributes.locale === undefined ? {} : {locale: attributes.locale})
+      })
+      if (result.ok) {
+        plan = result.plan
+      } else {
+        reportSceneDiagnostics(context, node, result.diagnostics)
       }
     }
+    if (plan !== undefined) context.sceneComponentUsed = true
   }
 
   context.sceneMetadata.set(node, {
@@ -1113,6 +1231,64 @@ function componentNode(
   }
 }
 
+function jsonExpression(value: unknown): Expression {
+  if (
+    value === null ||
+    typeof value === 'string' ||
+    typeof value === 'boolean'
+  ) {
+    return {type: 'Literal', value}
+  }
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return {type: 'Literal', value}
+  }
+  if (Array.isArray(value)) {
+    return {
+      type: 'ArrayExpression',
+      elements: value.map((item) => jsonExpression(item))
+    }
+  }
+  if (
+    typeof value === 'object' &&
+    value !== null &&
+    (Object.getPrototypeOf(value) === Object.prototype ||
+      Object.getPrototypeOf(value) === null)
+  ) {
+    const properties = Object.entries(value).map(
+      ([name, item]): Property => ({
+        type: 'Property',
+        key: {type: 'Literal', value: name},
+        value: jsonExpression(item),
+        kind: 'init',
+        method: false,
+        shorthand: false,
+        computed: false
+      })
+    )
+    return {type: 'ObjectExpression', properties}
+  }
+  throw new TypeError('Scene plans must contain only plain JSON values.')
+}
+
+function scenePlanAttribute(plan: ScenePlanV1): MdxJsxAttribute {
+  const program: Program = {
+    type: 'Program',
+    sourceType: 'module',
+    body: [
+      {
+        type: 'ExpressionStatement',
+        expression: jsonExpression(plan)
+      }
+    ]
+  }
+  const value: MdxJsxAttributeValueExpression = {
+    type: 'mdxJsxAttributeValueExpression',
+    value: '',
+    data: {estree: program}
+  }
+  return {type: 'mdxJsxAttribute', name: 'plan', value}
+}
+
 function sceneComponentNode(
   node: HandDirective,
   metadata: ValidatedScene
@@ -1122,11 +1298,7 @@ function sceneComponentNode(
   return {
     type: 'mdxJsxFlowElement',
     name: 'HandScene',
-    attributes: [
-      {type: 'mdxJsxAttribute', name: 'recipe', value: plan.recipe.name},
-      {type: 'mdxJsxAttribute', name: 'source', value: plan.source},
-      {type: 'mdxJsxAttribute', name: 'locale', value: plan.locale}
-    ],
+    attributes: [scenePlanAttribute(plan)],
     children: [],
     ...(node.position ? {position: node.position} : {})
   }
@@ -1270,17 +1442,50 @@ function flowSvgElement(
 }
 
 function safeIdPart(value: string): string {
-  const result = value.replace(/[^A-Za-z0-9_-]+/gu, '-')
-  return result.length > 0 ? result : 'item'
+  return `u-${Array.from(value, (character) =>
+    character.codePointAt(0)!.toString(16).padStart(6, '0')
+  ).join('-')}`
 }
 
 function sceneAnnotationId(metadata: ValidatedScene, annotationId: string): string {
   return `${metadata.sceneId}-annotation-${safeIdPart(annotationId)}`
 }
 
+function relationshipTargetIds(
+  relationship: ScenePlanV1['relationships'][number]
+): readonly string[] {
+  return relationship.kind === 'describes'
+    ? relationship.targetIds
+    : [...relationship.fromTargetIds, ...relationship.toTargetIds]
+}
+
+function targetEmphasisGestures(plan: ScenePlanV1, targetId: string) {
+  return plan.gestures.filter(
+    (
+      gesture
+    ): gesture is Extract<
+      ScenePlanV1['gestures'][number],
+      {kind: 'emphasize'}
+    > => gesture.kind === 'emphasize' && gesture.targetIds.includes(targetId)
+  )
+}
+
+function relationshipGestures(plan: ScenePlanV1, relationshipId: string) {
+  return plan.gestures.filter(
+    (
+      gesture
+    ): gesture is Exclude<
+      ScenePlanV1['gestures'][number],
+      {kind: 'emphasize'}
+    > =>
+      gesture.kind !== 'emphasize' &&
+      gesture.relationshipId === relationshipId
+  )
+}
+
 function sceneSourceChildren(
   metadata: ValidatedScene,
-  plan: AnnotationScenePlanV1
+  plan: ScenePlanV1
 ): PhrasingContent[] {
   const ranges = plan.targets
     .flatMap((target) =>
@@ -1291,32 +1496,43 @@ function sceneSourceChildren(
         left.range.start - right.range.start || left.range.end - right.range.end
     )
   const result: PhrasingContent[] = []
+  const source = plan.source.text
   let cursor = 0
   for (const {range, rangeIndex, target} of ranges) {
     if (range.start > cursor) {
-      result.push(labelText(plan.source.slice(cursor, range.start)))
+      result.push(labelText(source.slice(cursor, range.start)))
     }
-    const descriptions = plan.annotations
-      .filter((annotation) => annotation.targetIds.includes(target.id))
-      .map((annotation) => sceneAnnotationId(metadata, annotation.id))
+    const descriptions = plan.relationships
+      .filter((relationship) =>
+        relationshipTargetIds(relationship).includes(target.id)
+      )
+      .map((relationship) => sceneAnnotationId(metadata, relationship.id))
+    const emphases = targetEmphasisGestures(plan, target.id)
     result.push(
       inlineElement(
-        'span',
+        emphases.length > 0 ? 'mark' : 'span',
         {
           id: `${metadata.sceneId}-target-${safeIdPart(target.id)}-${rangeIndex + 1}`,
           'data-hw-target': target.id,
           'data-hw-target-role': target.role,
+          ...(emphases.length > 0
+            ? {
+                'data-hw-gesture': 'emphasize',
+                'data-hw-gestures': emphases.map(({id}) => id).join(' '),
+                'data-hw-intent': emphases.map(({intent}) => intent).join(' ')
+              }
+            : {}),
           ...(descriptions.length > 0
             ? {'aria-describedby': descriptions.join(' ')}
             : {})
         },
-        [labelText(plan.source.slice(range.start, range.end))]
+        [labelText(source.slice(range.start, range.end))]
       )
     )
     cursor = range.end
   }
-  if (cursor < plan.source.length) {
-    result.push(labelText(plan.source.slice(cursor)))
+  if (cursor < source.length) {
+    result.push(labelText(source.slice(cursor)))
   }
   return result
 }
@@ -1329,7 +1545,7 @@ function sceneElementNode(metadata: ValidatedScene): RootContent {
   caption.data = hastData('figcaption', {
     id: captionId,
     'data-hw-scene-caption': '',
-    lang: plan.locale
+    lang: plan.localization.locale
   })
 
   const source = paragraph([
@@ -1342,35 +1558,65 @@ function sceneElementNode(metadata: ValidatedScene): RootContent {
   source.data = hastData('pre', {'data-hw-scene-source': ''})
 
   const targetById = new Map(plan.targets.map((target) => [target.id, target]))
-  const items = plan.annotations.map((annotation) => {
-    const firstTarget = targetById.get(annotation.targetIds[0] ?? '')
-    const content = paragraph([
-      inlineElement(
-        'span',
-        {'data-hw-annotation-text': ''},
-        [labelText(annotation.fallback)]
-      ),
-      svgElement(
-        'data-hw-connector',
-        'M3 18C16 20 27 4 44 7M38 4l6 3-4 5',
-        {viewBox: '0 0 48 24', dataValue: 'curved'}
-      )
-    ])
+  const items = plan.relationships.map((relationship) => {
+    const targetIds = relationshipTargetIds(relationship)
+    const firstTarget = targetById.get(targetIds[0] ?? '')
+    const gestures = relationshipGestures(plan, relationship.id)
+    const gestureKinds = gestures.map(({kind}) => kind)
+    const verdictIntents = gestures.flatMap((gesture) =>
+      gesture.kind === 'verdict' ? [gesture.intent] : []
+    )
+    const isVerdict = gestureKinds.includes('verdict')
+    const connectorKind = gestureKinds.includes('connect')
+      ? 'straight'
+      : gestureKinds.includes('annotate')
+        ? 'curved'
+        : undefined
+    const annotationText = inlineElement(
+      isVerdict ? 'mark' : 'span',
+      {
+        'data-hw-annotation-text': '',
+        ...(isVerdict ? {'data-hw-verdict': ''} : {})
+      },
+      [labelText(relationship.legendText)]
+    )
+    const connector =
+      connectorKind === undefined
+        ? undefined
+        : svgElement(
+            'data-hw-connector',
+            connectorKind === 'straight'
+              ? 'M3 18 44 5M38 3l6 2-3 6'
+              : 'M3 18C16 20 27 4 44 7M38 4l6 3-4 5',
+            {viewBox: '0 0 48 24', dataValue: connectorKind}
+          )
+    const content = paragraph(
+      connector === undefined ? [annotationText] : [annotationText, connector]
+    )
     content.data = hastData('p', {'data-hw-annotation-row': ''})
     return flowElement(
       'li',
       {
-        id: sceneAnnotationId(metadata, annotation.id),
-        'data-hw-annotation': annotation.id,
+        id: sceneAnnotationId(metadata, relationship.id),
+        'data-hw-annotation': relationship.id,
         'data-hw-annotation-role': firstTarget?.role ?? '',
-        'data-hw-targets': annotation.targetIds.join(' ')
+        'data-hw-gesture': gestureKinds.join(' '),
+        'data-hw-gestures': gestures.map(({id}) => id).join(' '),
+        ...(verdictIntents.length > 0
+          ? {'data-hw-intent': verdictIntents.join(' ')}
+          : {}),
+        ...(relationship.kind === 'relates'
+          ? {'data-hw-relation': relationship.relation}
+          : {}),
+        'data-hw-relationship': relationship.kind,
+        'data-hw-targets': targetIds.join(' ')
       },
       [content]
     )
   })
   const legend = flowElement(
     'ol',
-    {'data-hw-scene-legend': '', lang: plan.locale},
+    {'data-hw-scene-legend': '', lang: plan.localization.locale},
     items
   )
   return flowElement(
@@ -1379,7 +1625,7 @@ function sceneElementNode(metadata: ValidatedScene): RootContent {
       'data-hw-scene': plan.recipe.name,
       'data-hw-scene-version': String(plan.recipe.version),
       'data-hw-scene-schema': String(plan.schemaVersion),
-      'data-hw-locale': plan.locale,
+      'data-hw-locale': plan.localization.locale,
       'aria-labelledby': captionId
     },
     [caption, source, legend]
@@ -1394,11 +1640,11 @@ function sceneSourceNode(source: string): Paragraph {
   return result
 }
 
-function sceneStripCaptionNode(plan: AnnotationScenePlanV1): Paragraph {
+function sceneStripCaptionNode(plan: ScenePlanV1): Paragraph {
   const result = paragraph([labelText(plan.title)])
   result.data = hastData('p', {
     'data-hw-scene-caption': '',
-    lang: plan.locale
+    lang: plan.localization.locale
   })
   return result
 }
@@ -1411,16 +1657,20 @@ function sceneStripNodes(metadata: ValidatedScene): Node[] {
     ordered: true,
     start: 1,
     spread: false,
-    children: plan.annotations.map(
-      (annotation): ListItem => ({
+    children: plan.relationships.map(
+      (relationship): ListItem => ({
         type: 'listItem',
         spread: false,
-        children: [paragraph([labelText(annotation.fallback)])]
+        children: [paragraph([labelText(relationship.legendText)])]
       })
     )
   }
-  legend.data = hastData('ol', {lang: plan.locale})
-  return [sceneStripCaptionNode(plan), sceneSourceNode(plan.source), legend]
+  legend.data = hastData('ol', {lang: plan.localization.locale})
+  return [
+    sceneStripCaptionNode(plan),
+    sceneSourceNode(plan.source.text),
+    legend
+  ]
 }
 
 function invalidSceneNodes(

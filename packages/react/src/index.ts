@@ -74,4 +74,5 @@ export type {
   AnnotationSourceRange,
   AnnotationTargetRole,
   DeriveAnnotationSceneInput,
+  ScenePlanV1,
 } from 'mdx-handwritten-scene'

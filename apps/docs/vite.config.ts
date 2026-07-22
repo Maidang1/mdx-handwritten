@@ -1,13 +1,19 @@
 import mdx from '@mdx-js/rollup'
 import react from '@vitejs/plugin-react'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 import remarkDirective from 'remark-directive'
 import { remarkMdxHandwritten } from '../../packages/remark/src/index'
 
+const projectRoot = fileURLToPath(new URL('../..', import.meta.url))
+
 const mdxPlugin = mdx({
   remarkPlugins: [
     remarkDirective,
-    [remarkMdxHandwritten, { output: 'component' }]
+    [
+      remarkMdxHandwritten,
+      { output: 'component', reviewedPlans: { projectRoot } }
+    ]
   ]
 })
 const transformMdx = mdxPlugin.transform

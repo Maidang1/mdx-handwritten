@@ -41,4 +41,12 @@ describe('mdx-handwritten-theme language and recipe contracts', () => {
       )
     }
   })
+
+  it('maps scene gesture intent without changing plan meaning', () => {
+    for (const intent of ['attention', 'positive', 'warning', 'negative']) {
+      expect(styles).toContain(`[data-hw-intent~="${intent}"]`)
+    }
+    expect(styles).toContain('[data-hw-verdict]')
+    expect(styles).toContain('li[data-hw-gesture~="group"]')
+  })
 })
