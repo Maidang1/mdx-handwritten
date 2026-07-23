@@ -9,8 +9,74 @@ const repositoryUrl =
   import.meta.env.VITE_REPOSITORY_URL ??
   'https://github.com/Maidang1/mdx-handwritten'
 
-const installCommand =
-  'git clone https://github.com/Maidang1/mdx-handwritten.git && cd mdx-handwritten && npm install'
+const installCommand = `npm install @madinah/mdx-handwritten-remark \\
+  @madinah/mdx-handwritten-react \\
+  @madinah/mdx-handwritten-theme \\
+  remark-directive`
+
+const installCommandCopy =
+  'npm install @madinah/mdx-handwritten-remark @madinah/mdx-handwritten-react @madinah/mdx-handwritten-theme remark-directive'
+
+const viteSnippet = `import mdx from '@mdx-js/rollup'
+import remarkDirective from 'remark-directive'
+import remarkMdxHandwritten from '@madinah/mdx-handwritten-remark'
+
+export default {
+  plugins: [
+    mdx({
+      remarkPlugins: [
+        remarkDirective,
+        [remarkMdxHandwritten, {
+          output: 'component',
+          diagnostics: 'strict'
+        }]
+      ]
+    })
+  ]
+}`
+
+const nextSnippet = `// next.config.mjs / mdx-components
+import createMDX from '@next/mdx'
+import remarkDirective from 'remark-directive'
+import remarkMdxHandwritten from '@madinah/mdx-handwritten-remark'
+
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [
+      remarkDirective,
+      [remarkMdxHandwritten, { output: 'component' }]
+    ]
+  }
+})
+
+export default withMDX({ pageExtensions: ['md', 'mdx', 'tsx'] })`
+
+const renderSnippet = `import { mdxHandwrittenComponents } from
+  '@madinah/mdx-handwritten-react'
+import '@madinah/mdx-handwritten-theme/styles.css'
+
+// Pass through your host's MDX components prop
+export function Article({ Content }) {
+  return <Content components={mdxHandwrittenComponents} />
+}`
+
+const optionsSnippet = `// Common HandwrittenOptions
+[remarkMdxHandwritten, {
+  output: 'component',      // or 'element' | 'strip'
+  diagnostics: 'strict',    // or 'warn'
+  reviewedPlans: {          // optional reviewed scene plans
+    projectRoot: process.cwd()
+  }
+}]`
+
+const packagesSnippet = `# Core consumer stack
+@madinah/mdx-handwritten-remark   # compile-time validation
+@madinah/mdx-handwritten-react    # Hand* + HandScene components
+@madinah/mdx-handwritten-theme    # CSS tokens + font
+remark-directive                  # peer: parse :/::/::: directives
+
+# Optional
+@madinah/mdx-handwritten-scene    # createScenePlan / createSceneCompiler`
 
 function CopyButton({ value, label = 'Copy' }: { value: string; label?: string }) {
   const [copied, setCopied] = useState(false)
@@ -175,13 +241,13 @@ export function App() {
 
         <section className="setup-section" id="setup" aria-labelledby="setup-title">
           <div className="setup-copy">
-            <p className="overline">Build-time by design</p>
-            <h2 id="setup-title">Add the language, then bring your own MDX host.</h2>
+            <p className="overline">npm packages · v0.1.0</p>
+            <h2 id="setup-title">Install from npm, then wire your MDX host.</h2>
             <p>
-              The scene engine derives meaning, the remark package validates
-              author input, and the React package owns semantic markup. The
-              theme is plain CSS, so it stays easy to replace without changing
-              a single document.
+              Four scoped packages on the public registry. The remark adapter
+              validates author input at build time, React owns semantic markup,
+              and the theme is plain CSS you can replace without touching a
+              document.
             </p>
           </div>
 
@@ -191,28 +257,83 @@ export function App() {
               <h3>Install</h3>
               <div className="command-row">
                 <code>{installCommand}</code>
-                <CopyButton value={installCommand} />
+                <CopyButton value={installCommandCopy} />
               </div>
+              <p className="setup-card-note">
+                Peer: <code>remark-directive</code>. Optional for custom recipe
+                compilers: <code>@madinah/mdx-handwritten-scene</code>.
+              </p>
             </article>
 
             <article className="setup-card">
               <span className="step-number">02</span>
               <h3>Compile</h3>
-              <pre><code>{`remarkPlugins: [
+              <pre><code>{`import remarkDirective from 'remark-directive'
+import remarkMdxHandwritten from '@madinah/mdx-handwritten-remark'
+
+remarkPlugins: [
   remarkDirective,
-  [remarkMdxHandwritten, { output: 'component' }]
+  [remarkMdxHandwritten, {
+    output: 'component',
+    diagnostics: 'strict'
+  }]
 ]`}</code></pre>
             </article>
 
             <article className="setup-card">
               <span className="step-number">03</span>
               <h3>Render</h3>
-              <pre><code>{`import { mdxHandwrittenComponents } from
-  '@madinah/mdx-handwritten-react'
-import '@madinah/mdx-handwritten-theme/styles.css'
-
-<Article components={mdxHandwrittenComponents} />`}</code></pre>
+              <pre><code>{renderSnippet}</code></pre>
             </article>
+          </div>
+
+          <div className="usage-recipes" aria-labelledby="usage-recipes-title">
+            <div className="usage-recipes-heading">
+              <div>
+                <p className="overline">Host recipes</p>
+                <h3 id="usage-recipes-title">Copy a posture for your stack.</h3>
+              </div>
+              <p>
+                Default export and named export both work:
+                <code> import remarkMdxHandwritten from &apos;@madinah/mdx-handwritten-remark&apos;</code>
+                {' '}or{' '}
+                <code>{'{ remarkMdxHandwritten }'}</code>.
+              </p>
+            </div>
+
+            <div className="usage-grid">
+              <article className="usage-card">
+                <header>
+                  <h4>Vite + @mdx-js/rollup</h4>
+                  <CopyButton value={viteSnippet} label="Copy" />
+                </header>
+                <pre><code>{viteSnippet}</code></pre>
+              </article>
+
+              <article className="usage-card">
+                <header>
+                  <h4>Next.js + @next/mdx</h4>
+                  <CopyButton value={nextSnippet} label="Copy" />
+                </header>
+                <pre><code>{nextSnippet}</code></pre>
+              </article>
+
+              <article className="usage-card">
+                <header>
+                  <h4>Plugin options</h4>
+                  <CopyButton value={optionsSnippet} label="Copy" />
+                </header>
+                <pre><code>{optionsSnippet}</code></pre>
+              </article>
+
+              <article className="usage-card">
+                <header>
+                  <h4>Package map</h4>
+                  <CopyButton value={packagesSnippet} label="Copy" />
+                </header>
+                <pre><code>{packagesSnippet}</code></pre>
+              </article>
+            </div>
           </div>
         </section>
 

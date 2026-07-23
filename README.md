@@ -55,21 +55,22 @@ npm run release            # build + publish all public packages
 
 You must be logged into npm with publish rights on the `madinah` org (`npm whoami`).
 
-For an MDX build, register `remark-directive` before the handwritten transformer:
+### Quick start (consumer)
+
+Register `remark-directive` **before** the handwritten transformer, then inject the React component map and theme CSS:
 
 ```ts
 import remarkDirective from 'remark-directive'
-import remarkHandwritten from '@madinah/mdx-handwritten-remark'
+import remarkMdxHandwritten from '@madinah/mdx-handwritten-remark'
+// or: import { remarkMdxHandwritten } from '@madinah/mdx-handwritten-remark'
 
 export const mdxOptions = {
   remarkPlugins: [
     remarkDirective,
-    [remarkHandwritten, { output: 'component', diagnostics: 'strict' }]
+    [remarkMdxHandwritten, { output: 'component', diagnostics: 'strict' }]
   ]
 }
 ```
-
-Inject the components through your framework's MDX component mechanism and import the theme once:
 
 ```tsx
 import { mdxHandwrittenComponents } from '@madinah/mdx-handwritten-react'
@@ -79,6 +80,78 @@ import '@madinah/mdx-handwritten-theme/styles.css'
 ```
 
 The React adapter has no hooks, context dependency, client directive, or browser measurement. It can render on the server and in React Server Components.
+
+### Host recipes
+
+**Vite + `@mdx-js/rollup`**
+
+```ts
+import mdx from '@mdx-js/rollup'
+import remarkDirective from 'remark-directive'
+import remarkMdxHandwritten from '@madinah/mdx-handwritten-remark'
+
+export default {
+  plugins: [
+    mdx({
+      remarkPlugins: [
+        remarkDirective,
+        [remarkMdxHandwritten, { output: 'component', diagnostics: 'strict' }]
+      ]
+    })
+  ]
+}
+```
+
+**Next.js + `@next/mdx`**
+
+```js
+// next.config.mjs
+import createMDX from '@next/mdx'
+import remarkDirective from 'remark-directive'
+import remarkMdxHandwritten from '@madinah/mdx-handwritten-remark'
+
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [
+      remarkDirective,
+      [remarkMdxHandwritten, { output: 'component' }]
+    ]
+  }
+})
+
+export default withMDX({ pageExtensions: ['md', 'mdx', 'tsx'] })
+```
+
+In `mdx-components.tsx` (or your MDX provider), merge the map and import the theme once in a root layout:
+
+```tsx
+import type { MDXComponents } from 'mdx/types'
+import { mdxHandwrittenComponents } from '@madinah/mdx-handwritten-react'
+import '@madinah/mdx-handwritten-theme/styles.css'
+
+export function useMDXComponents(components: MDXComponents): MDXComponents {
+  return { ...mdxHandwrittenComponents, ...components }
+}
+```
+
+**Common plugin options**
+
+| Option | Values | Purpose |
+| --- | --- | --- |
+| `output` | `component` · `element` · `strip` | React components, semantic HTML, or decoration-free content |
+| `diagnostics` | `strict` · `warn` | Fail the build or strip invalid nodes after warning |
+| `reviewedPlans.projectRoot` | absolute path | Resolve `plan="rp1_…"` sidecars under `.mdx-handwritten/plans/` |
+| `sceneCompiler` | from `createSceneCompiler` | Trust explicit third-party recipe packages |
+
+```ts
+[remarkMdxHandwritten, {
+  output: 'component',
+  diagnostics: 'strict',
+  reviewedPlans: { projectRoot: process.cwd() }
+}]
+```
+
+Live walkthrough: [docs site Setup](https://maidang1.github.io/mdx-handwritten/#setup).
 
 ## Syntax
 
