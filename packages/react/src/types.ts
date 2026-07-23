@@ -44,7 +44,7 @@ export interface HandLinkProps extends HandwrittenVariantProps {
 
 export interface HandMarkProps extends HandwrittenVariantProps {
   children: ReactNode
-  kind?: 'underline' | 'highlight'
+  kind?: 'underline' | 'highlight' | 'circle' | 'strike' | 'box'
   tone?: HandwrittenTone
   strength?: 'subtle' | 'normal' | 'strong'
 }

@@ -388,6 +388,21 @@ describe('component output', () => {
     expect(output).toMatch(/_jsx\(HandNote, \{[\s\S]*children: _jsx\(_components\.p/u)
   })
 
+  it('accepts every supported hw-mark kind and rejects an unknown one', async () => {
+    for (const kind of ['underline', 'highlight', 'circle', 'strike', 'box']) {
+      const file = await compileMdx(`:hw-mark[x]{kind="${kind}"}`)
+      const output = String(file)
+      expect(output).toContain('HandMark')
+      expect(output).toContain(`kind: "${kind}"`)
+    }
+
+    const failure = await compileFailure(':hw-mark[x]{kind="squiggle"}')
+    expect(failure).toMatchObject({
+      source: '@madinah/mdx-handwritten-remark',
+      ruleId: 'attribute-invalid'
+    })
+  })
+
   it('auto-imports only components used by the document', async () => {
     const file = await compileMdx(':hw-text[hello]', {
       imports: {mode: 'auto', source: '@madinah/mdx-handwritten-react'}

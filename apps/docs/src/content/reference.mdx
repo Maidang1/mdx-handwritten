@@ -139,6 +139,69 @@ Ship only after the :hw-mark[blocking dependency]{kind="underline" tone="danger"
         </div>
       </td>
     </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-mark</code>
+          <strong>Circle a target</strong>
+          <dl>
+            <div><dt>kind</dt><dd>circle</dd></div>
+            <div><dt>tone</dt><dd>accent</dd></div>
+            <div><dt>strength</dt><dd>strong</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-mark[one key term]{kind="circle" tone="accent" strength="strong"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+Focus on the :hw-mark[one key term]{kind="circle" tone="accent" strength="strong"} before moving on.
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-mark</code>
+          <strong>Cross it out</strong>
+          <dl>
+            <div><dt>kind</dt><dd>strike</dd></div>
+            <div><dt>tone</dt><dd>muted</dd></div>
+            <div><dt>strength</dt><dd>normal</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-mark[old assumption]{kind="strike" tone="muted" strength="normal"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+The :hw-mark[old assumption]{kind="strike" tone="muted" strength="normal"} no longer holds after the change.
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-mark</code>
+          <strong>Box a phrase</strong>
+          <dl>
+            <div><dt>kind</dt><dd>box</dd></div>
+            <div><dt>tone</dt><dd>info</dd></div>
+            <div><dt>strength</dt><dd>strong</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-mark[stable contract]{kind="box" tone="info" strength="strong"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+Keep the :hw-mark[stable contract]{kind="box" tone="info" strength="strong"} visible at every step.
+
+        </div>
+      </td>
+    </tr>
 
     <tr>
       <th scope="row">

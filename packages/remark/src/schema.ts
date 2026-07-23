@@ -82,7 +82,10 @@ export const directiveDefinitions: Readonly<
     componentKey: 'mark',
     requiresContent: true,
     attributes: {
-      kind: {values: ['underline', 'highlight'], default: 'underline'},
+      kind: {
+        values: ['underline', 'highlight', 'circle', 'strike', 'box'],
+        default: 'underline'
+      },
       tone: {values: tones, default: 'inherit'},
       strength: {
         values: ['subtle', 'normal', 'strong'],

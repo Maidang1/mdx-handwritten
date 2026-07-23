@@ -276,6 +276,26 @@
     padding-inline: 0.09em;
   }
 
+  :where([data-hw="mark"][data-hw-kind="circle"]) {
+    border-radius: 0.6em;
+    outline: var(--hw-mark-thickness) solid var(--hw-color, currentColor);
+    outline-offset: 0.05em;
+    padding-inline: 0.14em;
+  }
+
+  :where([data-hw="mark"][data-hw-kind="strike"]) {
+    text-decoration-color: var(--hw-color, currentColor);
+    text-decoration-line: line-through;
+    text-decoration-skip-ink: none;
+    text-decoration-thickness: var(--hw-mark-thickness);
+  }
+
+  :where([data-hw="mark"][data-hw-kind="box"]) {
+    outline: var(--hw-mark-thickness) solid var(--hw-color, currentColor);
+    outline-offset: 0.05em;
+    padding-inline: 0.14em;
+  }
+
   :where([data-hw="note"]) {
     align-items: flex-start;
     display: flex;
