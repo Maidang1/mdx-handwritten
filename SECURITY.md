@@ -2,7 +2,7 @@
 
 ## Trust boundary
 
-MDX is executable source code. Do not compile untrusted MDX with JSX, ESM, or expressions enabled and then execute the result. `remark-mdx-handwritten` validates only its own `hw-*` directive language; it cannot make arbitrary MDX safe.
+MDX is executable source code. Do not compile untrusted MDX with JSX, ESM, or expressions enabled and then execute the result. `@madinah/mdx-handwritten-remark` validates only its own `hw-*` directive language; it cannot make arbitrary MDX safe.
 
 For untrusted input:
 

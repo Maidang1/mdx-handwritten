@@ -1,9 +1,10 @@
 {
-  "name": "remark-mdx-handwritten",
+  "name": "@madinah/mdx-handwritten-remark",
   "version": "0.1.0",
   "description": "Strict handwritten UI directives for MDX",
   "type": "module",
   "sideEffects": false,
+  "license": "MIT",
   "files": [
     "dist"
   ],
@@ -26,9 +27,8 @@
     "directive",
     "handwritten"
   ],
-  "license": "MIT",
   "dependencies": {
-    "mdx-handwritten-scene": "*",
+    "@madinah/mdx-handwritten-scene": "*",
     "mdast-util-directive": "^3.1.0",
     "mdast-util-mdx-jsx": "^3.2.0",
     "unified": "^11.0.5",
@@ -36,5 +36,21 @@
   },
   "peerDependencies": {
     "remark-directive": "^4.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Maidang1/mdx-handwritten.git",
+    "directory": "packages/remark"
+  },
+  "homepage": "https://github.com/Maidang1/mdx-handwritten#readme",
+  "bugs": {
+    "url": "https://github.com/Maidang1/mdx-handwritten/issues"
+  },
+  "engines": {
+    "node": ">=20.19"
   }
 }

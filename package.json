@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "npm run build:packages && npm run build:docs",
-    "build:packages": "npm run build -w mdx-handwritten-scene && npm run build -w remark-mdx-handwritten && npm run build -w mdx-handwritten-react",
+    "build:packages": "npm run build -w @madinah/mdx-handwritten-scene && npm run build -w @madinah/mdx-handwritten-remark && npm run build -w @madinah/mdx-handwritten-react",
     "build:docs": "npm run build -w @mdx-handwritten/docs",
     "build:release-fixtures": "npm run build:packages && vite build --config tests/visual/vite.config.ts",
     "check:release": "npm run check && npm run test:release-fixtures",
@@ -24,13 +24,17 @@
     "report:performance": "node scripts/budgets/report-performance.mjs",
     "typecheck": "tsc -b",
     "typecheck:release-fixtures": "tsc --noEmit --project tests/visual/tsconfig.json",
-    "check": "npm run typecheck && npm run test && npm run check:budgets && npm run test:recipe-conformance && npm run build:docs"
+    "check": "npm run typecheck && npm run test && npm run check:budgets && npm run test:recipe-conformance && npm run build:docs",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "npm run build:packages && changeset publish"
   },
   "engines": {
     "node": ">=20.19"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.12.1",
+    "@changesets/cli": "^2.29.5",
     "@mdx-js/mdx": "^3.1.1",
     "@playwright/test": "1.61.1",
     "@types/mdast": "^4.0.4",

@@ -10,8 +10,8 @@ import {
   type CreateScenePlanInput,
   type ScenePlanResult,
   type ScenePlanV1
-} from 'mdx-handwritten-scene'
-import type {ConfiguredSceneCompiler} from 'mdx-handwritten-scene/recipes'
+} from '@madinah/mdx-handwritten-scene'
+import type {ConfiguredSceneCompiler} from '@madinah/mdx-handwritten-scene/recipes'
 import remarkMdxHandwritten, {
   handwrittenComponentNames,
   handwrittenDirectiveNames,
@@ -390,27 +390,27 @@ describe('component output', () => {
 
   it('auto-imports only components used by the document', async () => {
     const file = await compileMdx(':hw-text[hello]', {
-      imports: {mode: 'auto', source: 'mdx-handwritten-react'}
+      imports: {mode: 'auto', source: '@madinah/mdx-handwritten-react'}
     })
     const output = String(file)
-    expect(output).toContain('import {HandText} from "mdx-handwritten-react"')
+    expect(output).toContain('import {HandText} from "@madinah/mdx-handwritten-react"')
     expect(output).not.toContain('HandNote')
   })
 
   it('is a true no-op when a document has no handwritten directives', async () => {
     const file = await compileMdx('# Plain MDX', {
-      imports: {mode: 'auto', source: 'mdx-handwritten-react'}
+      imports: {mode: 'auto', source: '@madinah/mdx-handwritten-react'}
     })
-    expect(String(file)).not.toContain('mdx-handwritten-react')
+    expect(String(file)).not.toContain('@madinah/mdx-handwritten-react')
   })
 
   it('detects auto-import binding conflicts, including exported declarations', async () => {
     const failure = await compileFailure(
       'export const HandText = () => null\n\n:hw-text[x]',
-      {imports: {mode: 'auto', source: 'mdx-handwritten-react'}}
+      {imports: {mode: 'auto', source: '@madinah/mdx-handwritten-react'}}
     )
     expect(failure).toMatchObject({
-      source: 'remark-mdx-handwritten',
+      source: '@madinah/mdx-handwritten-remark',
       ruleId: 'import-conflict'
     })
   })
@@ -439,17 +439,17 @@ describe('component output', () => {
   it('auto-imports HandScene without changing the exact-eight component map', async () => {
     const output = String(
       await compileMdx(taskScene(), {
-        imports: {mode: 'auto', source: 'mdx-handwritten-react'}
+        imports: {mode: 'auto', source: '@madinah/mdx-handwritten-react'}
       })
     )
-    expect(output).toContain('import {HandScene} from "mdx-handwritten-react"')
+    expect(output).toContain('import {HandScene} from "@madinah/mdx-handwritten-react"')
     expect(Object.values(handwrittenComponentNames)).not.toContain('HandScene')
   })
 
   it('detects an auto-import conflict for the fixed scene component', async () => {
     const failure = await compileFailure(
       `export const HandScene = () => null\n\n${taskScene()}`,
-      {imports: {mode: 'auto', source: 'mdx-handwritten-react'}}
+      {imports: {mode: 'auto', source: '@madinah/mdx-handwritten-react'}}
     )
     expect(failure.ruleId).toBe('import-conflict')
   })
@@ -766,7 +766,7 @@ describe('Reviewed plan artifact bindings', () => {
     })
 
     expect(failure).toMatchObject({
-      source: 'remark-mdx-handwritten',
+      source: '@madinah/mdx-handwritten-remark',
       ruleId: 'scene-plan-artifact-missing'
     })
   })
@@ -971,7 +971,7 @@ describe('Reviewed plan artifact bindings', () => {
     const projectRoot = await temporaryProjectRoot()
     const file = await compileMdx(boundTaskScene(), {
       diagnostics: 'warn',
-      imports: {mode: 'auto', source: 'mdx-handwritten-react'},
+      imports: {mode: 'auto', source: '@madinah/mdx-handwritten-react'},
       reviewedPlans: {projectRoot}
     })
     const output = String(file)
@@ -1058,7 +1058,7 @@ describe('Reviewed plan artifact bindings', () => {
         ),
         {
           diagnostics: 'warn',
-          imports: {mode: 'auto', source: 'mdx-handwritten-react'},
+          imports: {mode: 'auto', source: '@madinah/mdx-handwritten-react'},
           reviewedPlans: {projectRoot}
         }
       )
@@ -1107,7 +1107,7 @@ describe('strict validation and diagnostics', () => {
   for (const [label, source, ruleId] of cases) {
     it(`reports ${label} with a stable ruleId`, async () => {
       const failure = await compileFailure(source)
-      expect(failure).toMatchObject({source: 'remark-mdx-handwritten', ruleId})
+      expect(failure).toMatchObject({source: '@madinah/mdx-handwritten-remark', ruleId})
     })
   }
 
@@ -1213,7 +1213,7 @@ describe('strict validation and diagnostics', () => {
   for (const [label, source, ruleId] of sceneCases) {
     it(`reports ${label} with a stable ruleId`, async () => {
       const failure = await compileFailure(source)
-      expect(failure).toMatchObject({source: 'remark-mdx-handwritten', ruleId})
+      expect(failure).toMatchObject({source: '@madinah/mdx-handwritten-remark', ruleId})
     })
   }
 

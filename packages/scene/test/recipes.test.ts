@@ -106,7 +106,7 @@ function reviewed(plan: ScenePlanV1): ScenePlanV1 {
     ...plan,
     provenance: {
       kind: 'reviewed-proposal',
-      engine: {name: 'mdx-handwritten-scene', version: '0.1.0'},
+      engine: {name: '@madinah/mdx-handwritten-scene', version: '0.1.0'},
       generator: {id: 'fixture-generator'},
       review: {status: 'approved', id: 'fixture-review'}
     }

@@ -1,11 +1,12 @@
 {
-  "name": "mdx-handwritten-theme",
+  "name": "@madinah/mdx-handwritten-theme",
   "version": "0.1.0",
-  "description": "Accessible, responsive default theme for mdx-handwritten",
+  "description": "Accessible, responsive default theme for MDX Handwritten",
   "type": "module",
   "sideEffects": [
     "*.css"
   ],
+  "license": "MIT",
   "files": [
     "styles.css"
   ],
@@ -16,5 +17,24 @@
   },
   "dependencies": {
     "@fontsource-variable/shantell-sans": "^5.3.0"
-  }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Maidang1/mdx-handwritten.git",
+    "directory": "packages/theme"
+  },
+  "homepage": "https://github.com/Maidang1/mdx-handwritten#readme",
+  "bugs": {
+    "url": "https://github.com/Maidang1/mdx-handwritten/issues"
+  },
+  "keywords": [
+    "mdx",
+    "css",
+    "theme",
+    "handwritten"
+  ]
 }

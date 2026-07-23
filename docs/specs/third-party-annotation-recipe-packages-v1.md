@@ -19,7 +19,7 @@ The intended host shape is:
 
 ```ts
 import taskRecipes from '@acme/mdx-handwritten-recipes'
-import { createSceneCompiler } from 'mdx-handwritten-scene/recipes'
+import { createSceneCompiler } from '@madinah/mdx-handwritten-scene/recipes'
 
 const sceneCompiler = createSceneCompiler({
   recipePackages: [{
@@ -43,7 +43,7 @@ npm is the only standardized distribution channel. Git URLs, tarball URLs, CDNs,
 
 ## Package and compiler boundary
 
-One Recipe package may expose one or more exact Annotation recipe versions. The secondary export `mdx-handwritten-scene/recipes` defines this normative Interface:
+One Recipe package may expose one or more exact Annotation recipe versions. The secondary export `@madinah/mdx-handwritten-scene/recipes` defines this normative Interface:
 
 ```ts
 interface AnnotationRecipeLimitsV1 {
@@ -243,7 +243,7 @@ The following versions solve different problems and are never substituted for on
 | Localization catalog version | Recipe author | Exact generated reader-facing wording |
 | Scene plan schema version | Scene Module and renderers | Closed materialized JSON graph and invariants |
 
-Every Recipe package declares `mdx-handwritten-scene` as a peer dependency with the range against which it was tested. Package-manager peer resolution is an install-time signal; compiler construction still checks the package protocol and every definition at runtime. A matching peer range alone never makes an invalid definition compatible.
+Every Recipe package declares `@madinah/mdx-handwritten-scene` as a peer dependency with the range against which it was tested. Package-manager peer resolution is an install-time signal; compiler construction still checks the package protocol and every definition at runtime. A matching peer range alone never makes an invalid definition compatible.
 
 Within an existing npm package major:
 
@@ -256,7 +256,7 @@ Dropping an exposed exact recipe version, renaming a recipe, removing a supporte
 
 ## Trust and security boundary
 
-Explicit import is the trust grant. A Recipe package is arbitrary JavaScript running inside the host's build process with the authority that environment gives ordinary npm dependencies. `mdx-handwritten-scene` does not sandbox it and cannot prevent module evaluation, install scripts, filesystem access, network access, process access, nondeterminism, resource exhaustion, or data exfiltration by a malicious dependency.
+Explicit import is the trust grant. A Recipe package is arbitrary JavaScript running inside the host's build process with the authority that environment gives ordinary npm dependencies. `@madinah/mdx-handwritten-scene` does not sandbox it and cannot prevent module evaluation, install scripts, filesystem access, network access, process access, nondeterminism, resource exhaustion, or data exfiltration by a malicious dependency.
 
 Hosts therefore apply their normal dependency policy before installation: registry allow-lists, lockfile and integrity review, package provenance where available, source review, dependency scanning, and restricted CI credentials or networking. MDX Handwritten does not operate a trusted-recipe directory, certificate authority, signature service, or safety badge.
 
@@ -266,9 +266,9 @@ Author source can never name a module to load. Unknown or unconfigured recipe se
 
 ## Renderer and authoring boundaries
 
-A Recipe package compile function is invoked only by an explicitly configured build-time compiler. `remark-mdx-handwritten` accepts an optional explicit Configured Scene compiler in host configuration. When present, remark must use it for every deterministic and reviewed-candidate `hw-scene` path in the document; when absent, remark uses the root first-party `createScenePlan`. It must materialize a plan before emitting `component`, `element`, or `strip` output, never stores the compiler in a global singleton, and never serializes recipe code into generated content.
+A Recipe package compile function is invoked only by an explicitly configured build-time compiler. `@madinah/mdx-handwritten-remark` accepts an optional explicit Configured Scene compiler in host configuration. When present, remark must use it for every deterministic and reviewed-candidate `hw-scene` path in the document; when absent, remark uses the root first-party `createScenePlan`. It must materialize a plan before emitting `component`, `element`, or `strip` output, never stores the compiler in a global singleton, and never serializes recipe code into generated content.
 
-`mdx-handwritten-react`, element output, strip output, SSR, RSC, preview, and the browser consume only a successfully materialized Scene plan. They never import, resolve, or execute Recipe packages. The direct React `recipe + source + locale` convenience form remains first-party-only; callers using third-party Annotation recipes compile explicitly and pass `plan`.
+`@madinah/mdx-handwritten-react`, element output, strip output, SSR, RSC, preview, and the browser consume only a successfully materialized Scene plan. They never import, resolve, or execute Recipe packages. The direct React `recipe + source + locale` convenience form remains first-party-only; callers using third-party Annotation recipes compile explicitly and pass `plan`.
 
 A Recipe package may publish static CSS through an ordinary explicit npm export, but that asset is outside this protocol: the host opts in separately, no renderer discovers or imports it, and the scene must retain its complete source-first linear meaning without it. V1 standardizes neither third-party renderer callbacks nor a theme plugin Interface.
 

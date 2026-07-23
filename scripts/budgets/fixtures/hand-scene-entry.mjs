@@ -1,1 +1,1 @@
-export {HandScene} from 'mdx-handwritten-react'
+export {HandScene} from '@madinah/mdx-handwritten-react'

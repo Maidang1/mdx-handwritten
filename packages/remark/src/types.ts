@@ -1,7 +1,7 @@
 import type {Plugin} from 'unified'
 import type {Root} from 'mdast'
-import type {SceneDiagnosticV1} from 'mdx-handwritten-scene'
-import type {ConfiguredSceneCompiler} from 'mdx-handwritten-scene/recipes'
+import type {SceneDiagnosticV1} from '@madinah/mdx-handwritten-scene'
+import type {ConfiguredSceneCompiler} from '@madinah/mdx-handwritten-scene/recipes'
 
 /** The eight directives understood by this package. */
 export const handwrittenDirectiveNames = [

@@ -51,12 +51,12 @@ function exactPlan(locale, provenance, {catalogVersion = 1, recipeVersion = 1} =
 
 const deterministicProvenance = Object.freeze({
   kind: 'deterministic-recipe',
-  engine: {name: 'mdx-handwritten-scene', version: '0.1.0'},
+  engine: {name: '@madinah/mdx-handwritten-scene', version: '0.1.0'},
   appliedCorrections: [],
 })
 const reviewedProvenance = Object.freeze({
   kind: 'reviewed-proposal',
-  engine: {name: 'mdx-handwritten-scene', version: '0.1.0'},
+  engine: {name: '@madinah/mdx-handwritten-scene', version: '0.1.0'},
   generator: {id: 'fixture-generator'},
   review: {status: 'approved', id: 'fixture-review'},
 })
@@ -91,7 +91,7 @@ const corrections = Object.freeze([
 
 const correctedPlan = exactPlan('en', {
   kind: 'deterministic-recipe',
-  engine: {name: 'mdx-handwritten-scene', version: '0.1.0'},
+  engine: {name: '@madinah/mdx-handwritten-scene', version: '0.1.0'},
   appliedCorrections: [
     {kind: 'target', ref: 'target-review'},
     {kind: 'label', ref: 'label-review'},
@@ -278,7 +278,7 @@ const compilerLifecycles = Object.freeze([
 
 export const recipeConformanceCases = Object.freeze({
   packageName,
-  peerDependency: Object.freeze({name: 'mdx-handwritten-scene', range: '^0.1.0'}),
+  peerDependency: Object.freeze({name: '@madinah/mdx-handwritten-scene', range: '^0.1.0'}),
   expectedFiles: Object.freeze(['conformance.js', 'index.js', 'package.json']),
   configurationFailures,
   plans: Object.freeze([

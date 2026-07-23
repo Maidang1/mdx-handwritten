@@ -25,7 +25,7 @@ function reviewedReferencePlan(): ScenePlanV1 {
     ...createReferencePlan(),
     provenance: {
       kind: 'reviewed-proposal',
-      engine: {name: 'mdx-handwritten-scene', version: '0.1.0'},
+      engine: {name: '@madinah/mdx-handwritten-scene', version: '0.1.0'},
       generator: {id: 'test-authoring-tool', version: '1.0.0'},
       review: {status: 'approved', id: 'review_01arz3ndektsv4rrffq69g5fav'}
     }
@@ -87,7 +87,7 @@ describe('createScenePlan recipe Interface', () => {
       },
       provenance: {
         kind: 'deterministic-recipe',
-        engine: {name: 'mdx-handwritten-scene', version: '0.1.0'},
+        engine: {name: '@madinah/mdx-handwritten-scene', version: '0.1.0'},
         appliedCorrections: []
       }
     })
@@ -646,7 +646,7 @@ describe('createScenePlan candidate Interface', () => {
       (plan: Record<string, unknown>) => {
         plan.provenance = {
           kind: 'deterministic-recipe',
-          engine: {name: 'mdx-handwritten-scene', version: '0.1.0'},
+          engine: {name: '@madinah/mdx-handwritten-scene', version: '0.1.0'},
           appliedCorrections: []
         }
       },

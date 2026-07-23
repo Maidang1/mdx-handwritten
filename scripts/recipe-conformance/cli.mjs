@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url'
 import {runRecipePackageConformance} from './index.mjs'
 
 export function usage() {
-  return 'Usage: node scripts/recipe-conformance/cli.mjs <package-directory> [--definition-export=default] [--conformance-export=./conformance] [--scene-package-directory=./node_modules/mdx-handwritten-scene]'
+  return 'Usage: node scripts/recipe-conformance/cli.mjs <package-directory> [--definition-export=default] [--conformance-export=./conformance] [--scene-package-directory=./node_modules/@madinah/mdx-handwritten-scene]'
 }
 
 const optionNames = new Set([

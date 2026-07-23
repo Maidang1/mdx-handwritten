@@ -15,7 +15,7 @@ V1 contains:
 3. one invalid `task-explainer` input that must remain readable and fail closed; and
 4. one additive slot for every future shipped recipe/version and complete Localization catalog.
 
-Fixtures render through the public `mdx-handwritten-react` package root and import `mdx-handwritten-theme/styles.css`. Vite injects `renderToStaticMarkup` output into a static HTML document at build time. The resulting page contains no client script, copied production markup, hydration, browser measurement, clock, randomness, remote asset, or interactive documentation dependency.
+Fixtures render through the public `@madinah/mdx-handwritten-react` package root and import `@madinah/mdx-handwritten-theme/styles.css`. Vite injects `renderToStaticMarkup` output into a static HTML document at build time. The resulting page contains no client script, copied production markup, hydration, browser measurement, clock, randomness, remote asset, or interactive documentation dependency.
 
 Changing a fixture's author input or expected meaning is a contract change. Changing only screenshot pixels cannot redefine a fixture.
 

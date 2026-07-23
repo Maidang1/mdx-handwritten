@@ -282,17 +282,17 @@ assert.throws(
       peerDependency: {name: 'unrelated-package', range: '^1.0.0'},
     },
   }),
-  /peer dependency must be mdx-handwritten-scene/u,
+  /peer dependency must be @madinah\/mdx-handwritten-scene/u,
 )
 
 function peerCompatibility(range) {
   return {
     cases: {
       ...recipeConformanceCases,
-      peerDependency: {name: 'mdx-handwritten-scene', range},
+      peerDependency: {name: '@madinah/mdx-handwritten-scene', range},
     },
-    packageJson: {peerDependencies: {'mdx-handwritten-scene': range}},
-    scenePackageJson: {name: 'mdx-handwritten-scene', version: '0.1.0'},
+    packageJson: {peerDependencies: {'@madinah/mdx-handwritten-scene': range}},
+    scenePackageJson: {name: '@madinah/mdx-handwritten-scene', version: '0.1.0'},
   }
 }
 
@@ -308,7 +308,7 @@ assert.throws(
   /must be a valid non-empty SemVer range/u,
 )
 const mismatchedPackagePeer = peerCompatibility('^0.1.0')
-mismatchedPackagePeer.packageJson.peerDependencies['mdx-handwritten-scene'] = '^0.2.0'
+mismatchedPackagePeer.packageJson.peerDependencies['@madinah/mdx-handwritten-scene'] = '^0.2.0'
 assert.throws(
   () => validatePackedScenePeerCompatibility(mismatchedPackagePeer),
   /peer dependency must match exactly/u,
@@ -388,7 +388,7 @@ try {
         files: ['definition.mjs', 'node-entry.mjs', 'import-entry.mjs', 'broken-entry.mjs'],
         exports: {'.': {node: entry, import: './import-entry.mjs'}},
         dependencies: {'recipe-conformance-helper': '1.0.0'},
-        peerDependencies: {'mdx-handwritten-scene': range},
+        peerDependencies: {'@madinah/mdx-handwritten-scene': range},
       }),
     )
   }
@@ -406,7 +406,7 @@ try {
       cases: caseSet ?? {
         ...recipeConformanceCases,
         expectedFiles,
-        peerDependency: {name: 'mdx-handwritten-scene', range},
+        peerDependency: {name: '@madinah/mdx-handwritten-scene', range},
       },
       definitionExport,
       moduleExportAssertions,
@@ -480,7 +480,7 @@ try {
       type: 'commonjs',
       files: ['index.cjs', 'conformance.mjs'],
       exports: {'.': './index.cjs', './conformance': './conformance.mjs'},
-      peerDependencies: {'mdx-handwritten-scene': '^0.1.0'},
+      peerDependencies: {'@madinah/mdx-handwritten-scene': '^0.1.0'},
     }),
   )
   writeFileSync(resolve(commonJsFixtureRoot, 'index.cjs'), 'module.exports = {}\n')

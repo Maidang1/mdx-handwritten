@@ -28,8 +28,8 @@ import {
   type SceneDiagnosticV1,
   type ScenePlanResult,
   type ScenePlanV1
-} from 'mdx-handwritten-scene'
-import type {ConfiguredSceneCompiler} from 'mdx-handwritten-scene/recipes'
+} from '@madinah/mdx-handwritten-scene'
+import type {ConfiguredSceneCompiler} from '@madinah/mdx-handwritten-scene/recipes'
 import type {Expression, Program, Property} from 'estree'
 import type {Node, Parent} from 'unist'
 import type {VFile} from 'vfile'
@@ -125,7 +125,7 @@ interface ValidationContext {
   usage: HandwrittenUsage
 }
 
-const sourceName = 'remark-mdx-handwritten'
+const sourceName = '@madinah/mdx-handwritten-remark'
 
 function resolveOptions(options: HandwrittenOptions | undefined): ResolvedOptions {
   const variantCount = options?.variant?.count ?? 4

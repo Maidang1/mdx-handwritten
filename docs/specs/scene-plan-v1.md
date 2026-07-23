@@ -217,7 +217,7 @@ type ScenePlanProvenanceV1 =
   | {
       kind: 'deterministic-recipe'
       engine: {
-        name: 'mdx-handwritten-scene'
+        name: '@madinah/mdx-handwritten-scene'
         version: string
       }
       appliedCorrections: readonly {
@@ -228,7 +228,7 @@ type ScenePlanProvenanceV1 =
   | {
       kind: 'reviewed-proposal'
       engine: {
-        name: 'mdx-handwritten-scene'
+        name: '@madinah/mdx-handwritten-scene'
         version: string
       }
       generator: {

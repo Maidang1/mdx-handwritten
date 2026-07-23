@@ -63,7 +63,7 @@ export type AnnotationGestureV1 =
 export type ScenePlanProvenanceV1 =
   | {
       kind: 'deterministic-recipe'
-      engine: {name: 'mdx-handwritten-scene'; version: string}
+      engine: {name: '@madinah/mdx-handwritten-scene'; version: string}
       appliedCorrections: readonly {
         kind: 'target' | 'label' | 'relationship'
         ref: string
@@ -71,7 +71,7 @@ export type ScenePlanProvenanceV1 =
     }
   | {
       kind: 'reviewed-proposal'
-      engine: {name: 'mdx-handwritten-scene'; version: string}
+      engine: {name: '@madinah/mdx-handwritten-scene'; version: string}
       generator: {id: string; version?: string}
       review: {status: 'approved'; id: string}
     }
@@ -738,7 +738,7 @@ export function createScenePlan(input: CreateScenePlanInput): ScenePlanResult {
     ...graph,
     provenance: {
       kind: 'deterministic-recipe',
-      engine: {name: 'mdx-handwritten-scene', version: sceneEngineVersion},
+      engine: {name: '@madinah/mdx-handwritten-scene', version: sceneEngineVersion},
       appliedCorrections: []
     }
   }
@@ -932,7 +932,7 @@ function compileExternalRecipe(
     gestures: draft.gestures,
     provenance: {
       kind: 'deterministic-recipe',
-      engine: {name: 'mdx-handwritten-scene', version: sceneEngineVersion},
+      engine: {name: '@madinah/mdx-handwritten-scene', version: sceneEngineVersion},
       appliedCorrections: []
     }
   }
@@ -1525,7 +1525,7 @@ function findUnknownDraftField(
     gestures: draft.gestures,
     provenance: {
       kind: 'deterministic-recipe',
-      engine: {name: 'mdx-handwritten-scene', version: '0.1.0'},
+      engine: {name: '@madinah/mdx-handwritten-scene', version: '0.1.0'},
       appliedCorrections: []
     }
   }
@@ -2620,7 +2620,7 @@ function decodeCandidatePlan(
     !isRecord(value.provenance) ||
     value.provenance.kind !== 'reviewed-proposal' ||
     !isRecord(value.provenance.engine) ||
-    value.provenance.engine.name !== 'mdx-handwritten-scene' ||
+    value.provenance.engine.name !== '@madinah/mdx-handwritten-scene' ||
     typeof value.provenance.engine.version !== 'string' ||
     !isRecord(value.provenance.generator) ||
     typeof value.provenance.generator.id !== 'string' ||

@@ -2,7 +2,7 @@ import {readFileSync} from 'node:fs'
 import {fileURLToPath} from 'node:url'
 import AxeBuilder from '@axe-core/playwright'
 import {expect, type Page, test} from '@playwright/test'
-import {annotationRecipeNames} from 'mdx-handwritten-scene'
+import {annotationRecipeNames} from '@madinah/mdx-handwritten-scene'
 
 interface FixtureManifest {
   fixtures: Array<{

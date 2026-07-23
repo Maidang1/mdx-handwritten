@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { mdxHandwrittenComponents } from 'mdx-handwritten-react'
+import { mdxHandwrittenComponents } from '@madinah/mdx-handwritten-react'
 import Reference from './content/reference.mdx'
 import Showcase from './content/showcase.mdx'
 import showcaseSource from './content/showcase.mdx?raw'
@@ -193,8 +193,8 @@ export function App() {
               <span className="step-number">03</span>
               <h3>Render</h3>
               <pre><code>{`import { mdxHandwrittenComponents } from
-  'mdx-handwritten-react'
-import 'mdx-handwritten-theme/styles.css'
+  '@madinah/mdx-handwritten-react'
+import '@madinah/mdx-handwritten-theme/styles.css'
 
 <Article components={mdxHandwrittenComponents} />`}</code></pre>
             </article>

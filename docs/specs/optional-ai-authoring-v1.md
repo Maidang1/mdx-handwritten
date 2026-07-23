@@ -13,7 +13,7 @@ The optional workflow has two separate phases:
 1. **Authoring** may be interactive and may use a configured local or remote generator. It creates and reviews a Scene proposal.
 2. **Ordinary compilation** is synchronous, deterministic, offline, and model-free. It either compiles the declared Annotation recipe or revalidates one explicitly bound Reviewed plan artifact.
 
-`mdx-handwritten-scene` keeps the `createScenePlan` input and result contract defined by Scene plan V1. The authoring tool calls either the root first-party Interface or an explicitly supplied Configured Scene compiler when validating a third-party Annotation recipe; neither receives a provider client, prompt template, filesystem handle, policy callback, or Review store. React, remark, theme, SSR, CI, preview, and production rendering never instantiate a generator.
+`@madinah/mdx-handwritten-scene` keeps the `createScenePlan` input and result contract defined by Scene plan V1. The authoring tool calls either the root first-party Interface or an explicitly supplied Configured Scene compiler when validating a third-party Annotation recipe; neither receives a provider client, prompt template, filesystem handle, policy callback, or Review store. React, remark, theme, SSR, CI, preview, and production rendering never instantiate a generator.
 
 The authoring tool may offer generation after deterministic compilation fails or as an explicit refine action after it succeeds. It never starts generation merely because a document opened, a file changed, a build ran, or a diagnostic appeared.
 

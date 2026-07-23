@@ -84,4 +84,4 @@ export type {
   AnnotationTargetRole,
   DeriveAnnotationSceneInput,
   ScenePlanV1,
-} from 'mdx-handwritten-scene'
+} from '@madinah/mdx-handwritten-scene'

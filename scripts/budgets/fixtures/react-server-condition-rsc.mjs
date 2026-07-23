@@ -54,16 +54,16 @@ try {
     !Object.hasOwn(React, '__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE')
 
   const reactPackageRoot = realpathSync(
-    resolve(process.cwd(), 'node_modules/mdx-handwritten-react'),
+    resolve(process.cwd(), 'node_modules/@madinah/mdx-handwritten-react'),
   )
   const resolvedReactEntry = realpathSync(
-    fileURLToPath(import.meta.resolve('mdx-handwritten-react')),
+    fileURLToPath(import.meta.resolve('@madinah/mdx-handwritten-react')),
   )
   result.packedArtifactImported =
     resolvedReactEntry.startsWith(`${reactPackageRoot}/`) &&
     reactPackageRoot.startsWith(`${realpathSync(process.cwd())}/`)
 
-  const {HandScene} = await import('mdx-handwritten-react')
+  const {HandScene} = await import('@madinah/mdx-handwritten-react')
   result.importSucceeded = typeof HandScene === 'function'
 
   const plan = {
@@ -113,7 +113,7 @@ try {
     ],
     provenance: {
       kind: 'reviewed-proposal',
-      engine: {name: 'mdx-handwritten-scene', version: '0.1.0'},
+      engine: {name: '@madinah/mdx-handwritten-scene', version: '0.1.0'},
       generator: {id: 'third-party-recipe-authoring-tool', version: '1'},
       review: {status: 'approved', id: 'review-rsc-fixture-1'},
     },
@@ -160,7 +160,7 @@ try {
     relationship !== undefined &&
     connector !== undefined
   result.meaningPreserved =
-    planFingerprint === 'cd62f09f3a18a6d797ee42e87c6264ab77aa2ad79f3d9ef0236fd3a40f1527c1' &&
+    planFingerprint === '5809fc2bb011eb01410528b21c2a5901af5f83a3acd15932de71585f8ee098a7' &&
     text(caption) === 'Release transition' &&
     text(source) === 'draft -> shipped' &&
     text(beforeTarget) === 'draft' &&

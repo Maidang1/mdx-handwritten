@@ -1,9 +1,10 @@
 {
-  "name": "mdx-handwritten-scene",
+  "name": "@madinah/mdx-handwritten-scene",
   "version": "0.1.0",
   "description": "Deterministic semantic Scene plans for MDX Handwritten",
   "type": "module",
   "sideEffects": false,
+  "license": "MIT",
   "files": [
     "dist"
   ],
@@ -26,5 +27,24 @@
   },
   "engines": {
     "node": ">=20.19"
-  }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Maidang1/mdx-handwritten.git",
+    "directory": "packages/scene"
+  },
+  "homepage": "https://github.com/Maidang1/mdx-handwritten#readme",
+  "bugs": {
+    "url": "https://github.com/Maidang1/mdx-handwritten/issues"
+  },
+  "keywords": [
+    "mdx",
+    "annotation",
+    "scene-plan",
+    "handwritten"
+  ]
 }

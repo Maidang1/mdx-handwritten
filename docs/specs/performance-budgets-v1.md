@@ -12,9 +12,9 @@ The committed [`../../budgets.json`](../../budgets.json) file is the machine-rea
 
 | Surface | V1 limit |
 | --- | ---: |
-| `mdx-handwritten-scene` ESM | 64 KiB raw / 14 KiB gzip |
-| `remark-mdx-handwritten` ESM | 64 KiB raw / 15 KiB gzip |
-| `mdx-handwritten-react` ESM | 18 KiB raw / 4 KiB gzip |
+| `@madinah/mdx-handwritten-scene` ESM | 64 KiB raw / 14 KiB gzip |
+| `@madinah/mdx-handwritten-remark` ESM | 64 KiB raw / 15 KiB gzip |
+| `@madinah/mdx-handwritten-react` ESM | 18 KiB raw / 4 KiB gzip |
 | Three ESM entries combined | 35 KiB gzip |
 | Minified `HandScene` consumer, React external | 42 KiB raw / 13 KiB gzip |
 | Minified `HandText` consumer | 4 KiB gzip and 0 Scene Module bytes |
@@ -49,7 +49,7 @@ canonical gzip stdout lengths for those files. A shared chunk is therefore charg
 every public entry graph that loads it; splitting a large implementation behind a tiny
 re-export file cannot bypass the limit.
 
-Consumer measurements bundle the committed `HandScene` and `HandText` fixtures from the public `mdx-handwritten-react` package root with:
+Consumer measurements bundle the committed `HandScene` and `HandText` fixtures from the public `@madinah/mdx-handwritten-react` package root with:
 
 - bundling, tree shaking, and minification enabled;
 - ESM output for the browser;
@@ -60,7 +60,7 @@ The output metadata must still export the requested symbol. The `HandText` fixtu
 
 ## CSS and fonts
 
-Resolved theme CSS is the exact default `mdx-handwritten-theme/styles.css` entry with its leading local Fontsource import replaced in place by the referenced CSS. It is not minified. Only the default entry is counted; an explicit opt-in Visual style is measured by its own future contract.
+Resolved theme CSS is the exact default `@madinah/mdx-handwritten-theme/styles.css` entry with its leading local Fontsource import replaced in place by the referenced CSS. It is not minified. Only the default entry is counted; an explicit opt-in Visual style is measured by its own future contract.
 
 The default font total is the sum of the unique local font files referenced by that resolved Fontsource CSS, not the entire installed Fontsource package. V1 pins these five normal variable-weight subsets:
 

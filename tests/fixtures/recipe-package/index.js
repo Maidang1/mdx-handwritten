@@ -1,7 +1,7 @@
 import {
   annotationRecipeLimitsV1,
   annotationRecipePackageProtocolV1,
-} from 'mdx-handwritten-scene/recipes'
+} from '@madinah/mdx-handwritten-scene/recipes'
 
 const packageName = '@mdx-handwritten-fixtures/recipe-package'
 const recipeName = `${packageName}/change`

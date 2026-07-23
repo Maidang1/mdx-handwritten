@@ -47,10 +47,10 @@
       "requiredClientRuntimeBytes": 0
     },
     "npmPacked": {
-      "mdx-handwritten-scene": 46080,
-      "remark-mdx-handwritten": 46080,
-      "mdx-handwritten-react": 7168,
-      "mdx-handwritten-theme": 7168
+      "@madinah/mdx-handwritten-scene": 46080,
+      "@madinah/mdx-handwritten-remark": 46080,
+      "@madinah/mdx-handwritten-react": 7168,
+      "@madinah/mdx-handwritten-theme": 7168
     },
     "timing": {
       "enforcement": "report",

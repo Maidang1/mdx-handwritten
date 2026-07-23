@@ -20,20 +20,20 @@ Authors do not select packages, coordinates, renderers, sanitizer attributes, or
 The first-party dependency direction is:
 
 ```text
-mdx-handwritten-scene
+@madinah/mdx-handwritten-scene
   ↑                 ↑
-remark-mdx-handwritten   mdx-handwritten-react
+@madinah/mdx-handwritten-remark   @madinah/mdx-handwritten-react
 
-mdx-handwritten-theme ── semantic DOM contract only
+@madinah/mdx-handwritten-theme ── semantic DOM contract only
 ```
 
-`mdx-handwritten-scene` is a normal first-party dependency of remark and React, not a peer dependency that every author must install and coordinate. First-party releases declare a compatible Scene Module range and are validated as one release line. Theme has no JavaScript dependency on the other packages.
+`@madinah/mdx-handwritten-scene` is a normal first-party dependency of remark and React, not a peer dependency that every author must install and coordinate. First-party releases declare a compatible Scene Module range and are validated as one release line. Theme has no JavaScript dependency on the other packages.
 
 There is no `mdx-handwritten-render` package in V1. Scene plan V1 is already the semantic Seam between compilation and Annotation renderers. A second public JSON view tree would duplicate the plan, add another schema and migration policy, and make callers learn DOM-oriented Implementation details. Contract fixtures compare the independent renderers instead. A shared render Module is reconsidered only after another real Adapter or repeated semantic drift proves that the extra Interface earns its cost.
 
 ## Module ownership
 
-### `mdx-handwritten-scene`
+### `@madinah/mdx-handwritten-scene`
 
 The Scene Module owns the zero-configuration root Interface defined by Scene plan V1:
 
@@ -47,7 +47,7 @@ The explicit secondary export defined by [`third-party-annotation-recipe-package
 
 The Module exports its closed V1 plan, input, result, correction, and diagnostic types plus the bounded secondary Recipe package protocol. It does not export parser fragments, normalizers, hashers, localization services, mutable recipe registries, renderer settings, or general-purpose dependency-injection ports.
 
-### `remark-mdx-handwritten`
+### `@madinah/mdx-handwritten-remark`
 
 The remark Module is the author-source Adapter. It owns:
 
@@ -60,7 +60,7 @@ The remark Module is the author-source Adapter. It owns:
 
 It does not own Annotation recipe semantics, localization catalogs, plan validation, React rendering, Visual style, sanitizer policy, or browser layout.
 
-### `mdx-handwritten-react`
+### `@madinah/mdx-handwritten-react`
 
 The React Module is a server-safe Annotation renderer. It maps a valid Scene plan to semantic React elements without hooks, context, effects, `use client`, hydration, browser measurement, or global state. React escapes all plan text; decorative connector graphics remain hidden from assistive technology.
 
@@ -86,7 +86,7 @@ The plan form accepts only a plan returned by `createScenePlan`; arbitrary objec
 
 Advanced callers that need diagnostics call `createScenePlan` themselves and render the successful plan. The convenience source form intentionally does not add `onDiagnostic`, render props, context, layout props, or recipe injection.
 
-### `mdx-handwritten-theme`
+### `@madinah/mdx-handwritten-theme`
 
 Theme is optional CSS, not an Annotation renderer. It consumes stable elements and `data-hw-*` semantics, applies Visual style, and selects only recipe-owned rich topologies allowed by the Rich-layout envelope. It does not change the Scene plan, infer Annotation relationships, hide required legend text, require JavaScript, or accept author coordinates and breakpoints.
 
@@ -96,7 +96,7 @@ Custom themes target documented elements and data attributes rather than package
 
 Optional AI lives in an author-invoked Module upstream of these four core packages. It may prepare a Scene proposal and, after review, call `createScenePlan` to materialize a Reviewed plan artifact. It is not imported by remark, React, theme, SSR, preview, CI, or production rendering, and none of those paths receive a provider client, prompt, Generation disclosure, or Review-store handle.
 
-The default `hw-scene` path remains `recipe + source + locale`. When an author approves a proposal, the authoring tool adds one opaque plan binding and commits the validated pure-JSON sidecar. A build Adapter resolves only that explicit project-local binding, reads bounded raw JSON, and passes it with current canonical source through the Scene Module candidate path. Filesystem lookup and plan-reference policy remain outside `mdx-handwritten-scene`; proposal generation, privacy authorization, approval, atomic storage, and private Review records remain outside `remark-mdx-handwritten` and every Annotation renderer.
+The default `hw-scene` path remains `recipe + source + locale`. When an author approves a proposal, the authoring tool adds one opaque plan binding and commits the validated pure-JSON sidecar. A build Adapter resolves only that explicit project-local binding, reads bounded raw JSON, and passes it with current canonical source through the Scene Module candidate path. Filesystem lookup and plan-reference policy remain outside `@madinah/mdx-handwritten-scene`; proposal generation, privacy authorization, approval, atomic storage, and private Review records remain outside `@madinah/mdx-handwritten-remark` and every Annotation renderer.
 
 An absent binding keeps deterministic recipe compilation. A bound artifact that is missing, invalid, incompatible, or stale follows existing strict/warning output policy but never falls back to newly inferred meaning or calls a model. The complete trust, storage, and failure matrix is defined by [Optional AI Scene authoring V1](./optional-ai-authoring-v1.md).
 
@@ -117,11 +117,11 @@ mdxHandwrittenComponents   // eight gestures plus HandScene convenience map
 
 The remark `components` option continues to rename only the eight gesture components. `HandScene` keeps its fixed binding so generated component output cannot silently replace scene semantics. Auto-import mode adds `HandScene` only when a valid scene uses component output; documents without scenes remain a true no-op.
 
-Existing React re-exports of Scene plan types remain compatibility exports. New compiler capabilities are documented from `mdx-handwritten-scene`; neither remark nor React re-exports the `createScenePlan` runtime function.
+Existing React re-exports of Scene plan types remain compatibility exports. New compiler capabilities are documented from `@madinah/mdx-handwritten-scene`; neither remark nor React re-exports the `createScenePlan` runtime function.
 
 ## Output-mode contract
 
-All successful modes consume a plan materialized by `mdx-handwritten-scene`. They preserve the same caption, canonical source, ordered Annotation targets, Annotation relationships, and complete legend; byte-for-byte markup equality is not required.
+All successful modes consume a plan materialized by `@madinah/mdx-handwritten-scene`. They preserve the same caption, canonical source, ordered Annotation targets, Annotation relationships, and complete legend; byte-for-byte markup equality is not required.
 
 | Mode | Plan timing and transport | Required output | React/theme requirement | Untrusted-author use |
 | --- | --- | --- | --- | --- |

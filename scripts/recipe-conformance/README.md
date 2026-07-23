@@ -8,14 +8,14 @@ node scripts/recipe-conformance/cli.mjs ./path/to/recipe-package
 ```
 
 The command performs a real `npm pack` for the Recipe package, the installed
-`mdx-handwritten-scene` peer, `remark-mdx-handwritten`, and `mdx-handwritten-react`. A temporary consumer runs
+`@madinah/mdx-handwritten-scene` peer, `@madinah/mdx-handwritten-remark`, and `@madinah/mdx-handwritten-react`. A temporary consumer runs
 `npm install --ignore-scripts --strict-peer-deps` against those tarballs, resolving ordinary
 Recipe dependencies through npm. Its generated `loader.mjs` imports the Recipe, its conformance subpath, and
-`mdx-handwritten-scene/recipes` through real bare package specifiers. Node therefore owns
+`@madinah/mdx-handwritten-scene/recipes` through real bare package specifiers. Node therefore owns
 conditional `exports` resolution exactly as it does for a consumer. The runner executes
 every case against that same packed Scene build and removes the temporary directory when
 finished.
-Use `--scene-package-directory=./path/to/mdx-handwritten-scene` to select an explicit
+Use `--scene-package-directory=./path/to/@madinah/mdx-handwritten-scene` to select an explicit
 built Scene package instead of the nearest installed peer.
 Programmatic callers can supply local dependency package directories through
 `additionalPackageDirectories`; each is packed and installed into the same consumer.
@@ -34,7 +34,7 @@ By default the packed package must export `./conformance` with a named
 `recipeConformanceCases` object. Use `--conformance-export=./another-export` when needed.
 The object declares:
 
-- `packageName`, the fixed `mdx-handwritten-scene` peer name and range, and the reviewed
+- `packageName`, the fixed `@madinah/mdx-handwritten-scene` peer name and range, and the reviewed
   `expectedFiles` tarball list;
 - `plans` with exact full `ScenePlanResult` fixtures for every recipe/version/locale;
 - `reviewedCandidates` and `corrections` with exact successful results. For corrections, the
@@ -67,7 +67,7 @@ so a forged label or alternate case definition cannot stand in for the published
 Case names are unique within and across categories, and case objects cannot be reused.
 Lifecycle cases must declare at least one uniquely named step with an input, exact result, and
 exact observation object; the runner owns the observation callback. The package's fixed
-`mdx-handwritten-scene` peer range must equal the case-set range and accept the exact packed
+`@madinah/mdx-handwritten-scene` peer range must equal the case-set range and accept the exact packed
 Scene version under npm SemVer rules; strict npm installation enforces the same contract before
 any conformance case executes.
 

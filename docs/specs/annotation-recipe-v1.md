@@ -44,7 +44,7 @@ Changing the meaning of an existing recipe name requires a new recipe version an
 
 ## Private Recipe Module
 
-First-party recipes are statically imported into a frozen table owned by `mdx-handwritten-scene`:
+First-party recipes are statically imported into a frozen table owned by `@madinah/mdx-handwritten-scene`:
 
 ```ts
 const builtInRecipes = {
@@ -217,7 +217,7 @@ The standards evidence behind canonicalization, lookup, Chinese tagging, real `l
 
 Annotation renderers place `localization.locale` on generated title, label, and legend containers as a real HTML `lang` attribute. Canonical source does not inherit that catalog language: it inherits the surrounding article's language. `data-hw-locale` exposes the catalog locale on the scene root for a stable theme hook, but it does not replace `lang`. Element and component output preserve these nodes directly; strip output carries `lang` on its generated legend container.
 
-The Scene plan contains no font family, glyph choice, line-breaking rule, direction, or layout measurement. `mdx-handwritten-theme` owns language-sensitive Visual style through `:lang()` and `--hw-font-family-cjk`. Chinese handwritten labels prefer Kai-capable system fonts before the Latin handwriting font, while canonical source remains in the independent monospace stack. Hosts may override the token without changing recipe or plan compatibility.
+The Scene plan contains no font family, glyph choice, line-breaking rule, direction, or layout measurement. `@madinah/mdx-handwritten-theme` owns language-sensitive Visual style through `:lang()` and `--hw-font-family-cjk`. Chinese handwritten labels prefer Kai-capable system fonts before the Latin handwriting font, while canonical source remains in the independent monospace stack. Hosts may override the token without changing recipe or plan compatibility.
 
 V1 does not bundle a large CJK web font. The default font and CSS limits are fixed by [`performance-budgets-v1.md`](./performance-budgets-v1.md), and every additional Visual style or font is explicit opt-in. A Rich-layout envelope must be proven for each recipe version and Localization locale without relying on one machine's exact glyph metrics; otherwise the whole scene uses its linear fallback. Issue #14 owns cross-browser CJK visual fixtures.
 

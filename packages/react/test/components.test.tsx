@@ -17,7 +17,7 @@ import {
   type ScenePlanV1,
 } from '../src/index.js'
 
-describe('mdx-handwritten-react server rendering', () => {
+describe('@madinah/mdx-handwritten-react server rendering', () => {
   it('exports the exact eight-component MDX map', () => {
     expect(Object.keys(handwrittenComponents)).toEqual([
       'HandText',
@@ -246,7 +246,7 @@ describe('Annotation scene server rendering', () => {
     ],
     provenance: {
       kind: 'reviewed-proposal',
-      engine: { name: 'mdx-handwritten-scene', version: '0.1.0' },
+      engine: { name: '@madinah/mdx-handwritten-scene', version: '0.1.0' },
       generator: { id: 'fixture-generator' },
       review: { status: 'approved', id: 'review_01k0m6q7j8v3c2f5' },
     },

@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import '@fontsource-variable/manrope/wght.css'
 import '@fontsource/dm-mono/400.css'
 import '@fontsource/dm-mono/500.css'
-import 'mdx-handwritten-theme/styles.css'
+import '@madinah/mdx-handwritten-theme/styles.css'
 import './styles.css'
 import { App } from './App'
 

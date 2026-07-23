@@ -204,8 +204,8 @@ function packWorkspace(workspace, destination) {
 function measurePackedReactServerCondition() {
   const temporaryDirectory = mkdtempSync(resolve(tmpdir(), 'mdx-handwritten-react-server-'))
   try {
-    const reactArchive = packWorkspace('mdx-handwritten-react', temporaryDirectory)
-    const sceneArchive = packWorkspace('mdx-handwritten-scene', temporaryDirectory)
+    const reactArchive = packWorkspace('@madinah/mdx-handwritten-react', temporaryDirectory)
+    const sceneArchive = packWorkspace('@madinah/mdx-handwritten-scene', temporaryDirectory)
     runNpm([
       'install',
       '--ignore-scripts',
@@ -265,7 +265,7 @@ async function measurePackedRecipeFixture() {
     packageNameMatches:
       result.packageName === '@mdx-handwritten-fixtures/recipe-package',
     peerDependency:
-      result.peerDependency.name === 'mdx-handwritten-scene' &&
+      result.peerDependency.name === '@madinah/mdx-handwritten-scene' &&
       result.peerDependency.range === '^0.1.0',
     size: result.size,
   }
@@ -374,17 +374,17 @@ export async function measureBlockingBudgets() {
   const scene = await measureStandardScene()
   const npmPacked = Object.fromEntries(
     [
-      'mdx-handwritten-scene',
-      'remark-mdx-handwritten',
-      'mdx-handwritten-react',
-      'mdx-handwritten-theme',
+      '@madinah/mdx-handwritten-scene',
+      '@madinah/mdx-handwritten-remark',
+      '@madinah/mdx-handwritten-react',
+      '@madinah/mdx-handwritten-theme',
     ].map((workspace) => [workspace, measurePackedWorkspace(workspace)]),
   )
   const packedRecipeFixture = await measurePackedRecipeFixture()
   const packedReactServerCondition = measurePackedReactServerCondition()
   const reactPackage = JSON.parse(readFileSync(resolve(projectRoot, 'packages/react/package.json'), 'utf8'))
   const scenePackage = JSON.parse(readFileSync(resolve(projectRoot, 'packages/scene/package.json'), 'utf8'))
-  const scenePackedFiles = new Set(npmPacked['mdx-handwritten-scene'].files)
+  const scenePackedFiles = new Set(npmPacked['@madinah/mdx-handwritten-scene'].files)
   const browserReachable = readEsmGraphs([reactEsm, sceneEsm])
   const forbiddenRecipeImplementationMarkers = [
     'mdx-handwritten/annotation-recipe-package',
@@ -431,11 +431,11 @@ export async function measureBlockingBudgets() {
       packedReactServerPackageImported: packedReactServerCondition.packedArtifactImported,
       packedReactServerScriptFree: packedReactServerCondition.scriptFree,
       packedReactServerStructureComplete: packedReactServerCondition.structureComplete,
-      remarkSourceMapPacked: npmPacked['remark-mdx-handwritten'].files.includes('dist/index.js.map'),
+      remarkSourceMapPacked: npmPacked['@madinah/mdx-handwritten-remark'].files.includes('dist/index.js.map'),
       sceneRecipesDeclarationPacked:
-        npmPacked['mdx-handwritten-scene'].files.includes('dist/recipes.d.ts'),
+        npmPacked['@madinah/mdx-handwritten-scene'].files.includes('dist/recipes.d.ts'),
       sceneRecipesEntryPacked:
-        npmPacked['mdx-handwritten-scene'].files.includes('dist/recipes.js'),
+        npmPacked['@madinah/mdx-handwritten-scene'].files.includes('dist/recipes.js'),
       sceneRecipesSourceMapPacked:
         scenePackedFiles.has('dist/recipes.js.map'),
       sceneSourceMapPacked: scenePackedFiles.has('dist/index.js.map'),

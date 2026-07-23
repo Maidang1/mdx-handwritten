@@ -1,9 +1,10 @@
 {
-  "name": "mdx-handwritten-react",
+  "name": "@madinah/mdx-handwritten-react",
   "version": "0.1.0",
-  "description": "Server-renderable React components for remark-mdx-handwritten",
+  "description": "Server-renderable React components for MDX Handwritten",
   "type": "module",
   "sideEffects": false,
+  "license": "MIT",
   "files": [
     "dist/index.js",
     "dist/index.d.ts"
@@ -24,7 +25,7 @@
     "typecheck": "tsc -b"
   },
   "dependencies": {
-    "mdx-handwritten-scene": "*"
+    "@madinah/mdx-handwritten-scene": "*"
   },
   "peerDependencies": {
     "react": ">=18.2.0"
@@ -35,5 +36,24 @@
   },
   "engines": {
     "node": ">=20.19"
-  }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Maidang1/mdx-handwritten.git",
+    "directory": "packages/react"
+  },
+  "homepage": "https://github.com/Maidang1/mdx-handwritten#readme",
+  "bugs": {
+    "url": "https://github.com/Maidang1/mdx-handwritten/issues"
+  },
+  "keywords": [
+    "mdx",
+    "react",
+    "handwritten",
+    "annotation"
+  ]
 }

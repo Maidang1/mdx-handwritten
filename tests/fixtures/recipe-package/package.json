@@ -19,7 +19,7 @@
     }
   },
   "peerDependencies": {
-    "mdx-handwritten-scene": "^0.1.0"
+    "@madinah/mdx-handwritten-scene": "^0.1.0"
   },
   "license": "MIT"
 }

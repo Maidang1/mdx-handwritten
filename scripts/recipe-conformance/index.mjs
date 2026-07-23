@@ -114,7 +114,7 @@ async function createConsumerLoader({
       `export const recipeModuleUrl = import.meta.resolve(${JSON.stringify(packageName)})`,
       `export const recipeModule = await import(${JSON.stringify(packageName)})`,
       conformanceImport,
-      "export const sceneRecipes = await import('mdx-handwritten-scene/recipes')",
+      "export const sceneRecipes = await import('@madinah/mdx-handwritten-scene/recipes')",
       '',
     ].join('\n'),
   )
@@ -546,8 +546,8 @@ export function validateRecipeConformanceCaseSet({definition, cases}) {
   assert.ok(cases && typeof cases === 'object', 'The conformance case set must be an object.')
   assert.equal(
     cases.peerDependency?.name,
-    'mdx-handwritten-scene',
-    'The conformance peer dependency must be mdx-handwritten-scene.',
+    '@madinah/mdx-handwritten-scene',
+    'The conformance peer dependency must be @madinah/mdx-handwritten-scene.',
   )
 
   const requiredCategories = [
@@ -668,30 +668,30 @@ export function validatePackedScenePeerCompatibility({
 }) {
   assert.equal(
     scenePackageJson?.name,
-    'mdx-handwritten-scene',
-    'The packed peer must be mdx-handwritten-scene.',
+    '@madinah/mdx-handwritten-scene',
+    'The packed peer must be @madinah/mdx-handwritten-scene.',
   )
   assert.equal(
     cases?.peerDependency?.name,
-    'mdx-handwritten-scene',
-    'The conformance peer dependency must be mdx-handwritten-scene.',
+    '@madinah/mdx-handwritten-scene',
+    'The conformance peer dependency must be @madinah/mdx-handwritten-scene.',
   )
 
   const range = cases.peerDependency.range
   assert.ok(
     typeof range === 'string' && range.trim().length > 0 && semver.validRange(range) !== null,
-    'The mdx-handwritten-scene peer dependency must be a valid non-empty SemVer range.',
+    'The @madinah/mdx-handwritten-scene peer dependency must be a valid non-empty SemVer range.',
   )
   assert.ok(
     semver.valid(scenePackageJson.version) !== null,
-    'The packed mdx-handwritten-scene version must be valid SemVer.',
+    'The packed @madinah/mdx-handwritten-scene version must be valid SemVer.',
   )
   assert.ok(
     semver.satisfies(scenePackageJson.version, range),
-    `Packed mdx-handwritten-scene@${scenePackageJson.version} does not satisfy ${range}.`,
+    `Packed @madinah/mdx-handwritten-scene@${scenePackageJson.version} does not satisfy ${range}.`,
   )
   assert.equal(
-    packageJson.peerDependencies?.['mdx-handwritten-scene'],
+    packageJson.peerDependencies?.['@madinah/mdx-handwritten-scene'],
     range,
     'The tested Scene Module peer dependency must match exactly.',
   )
@@ -1107,21 +1107,21 @@ async function runPackedAdapterProbes({
   writeFileSync(adapterLoaderPath, [
     "export {compile, evaluate} from '@mdx-js/mdx'",
     "export {default as remarkDirective} from 'remark-directive'",
-    "export {default as remarkMdxHandwritten} from 'remark-mdx-handwritten'",
+    "export {default as remarkMdxHandwritten} from '@madinah/mdx-handwritten-remark'",
     "export {Fragment, createElement} from 'react'",
     "export {jsx, jsxs} from 'react/jsx-runtime'",
     "export {renderToStaticMarkup} from 'react-dom/server'",
-    "export {HandScene} from 'mdx-handwritten-react'",
-    "export const remarkUrl = import.meta.resolve('remark-mdx-handwritten')",
-    "export const reactUrl = import.meta.resolve('mdx-handwritten-react')",
-    "export const sceneRecipesUrl = import.meta.resolve('mdx-handwritten-scene/recipes')",
+    "export {HandScene} from '@madinah/mdx-handwritten-react'",
+    "export const remarkUrl = import.meta.resolve('@madinah/mdx-handwritten-remark')",
+    "export const reactUrl = import.meta.resolve('@madinah/mdx-handwritten-react')",
+    "export const sceneRecipesUrl = import.meta.resolve('@madinah/mdx-handwritten-scene/recipes')",
     '',
   ].join('\n'))
   const adapters = await import(pathToFileURL(adapterLoaderPath).href)
   for (const [url, directory, name] of [
-    [adapters.remarkUrl, installedRemarkDirectory, 'remark-mdx-handwritten'],
-    [adapters.reactUrl, installedReactDirectory, 'mdx-handwritten-react'],
-    [adapters.sceneRecipesUrl, installedSceneDirectory, 'mdx-handwritten-scene/recipes'],
+    [adapters.remarkUrl, installedRemarkDirectory, '@madinah/mdx-handwritten-remark'],
+    [adapters.reactUrl, installedReactDirectory, '@madinah/mdx-handwritten-react'],
+    [adapters.sceneRecipesUrl, installedSceneDirectory, '@madinah/mdx-handwritten-scene/recipes'],
   ]) {
     const resolvedEntry = realpathSync(fileURLToPath(url))
     const packageRoot = realpathSync(directory)
@@ -1167,7 +1167,7 @@ async function runPackedAdapterProbes({
     thirdPartyScene,
   ].join('\n')
   const mixedCompiled = await compileMdx(mixedSource, {
-    imports: {mode: 'auto', source: 'mdx-handwritten-react'},
+    imports: {mode: 'auto', source: '@madinah/mdx-handwritten-react'},
     sceneCompiler,
   })
   const mixed = String(mixedCompiled)
@@ -1252,7 +1252,7 @@ async function runPackedAdapterProbes({
 
   const rscProbePath = resolve(consumerDirectory, 'rsc-probe.mjs')
   writeFileSync(rscProbePath, [
-    "import {HandScene} from 'mdx-handwritten-react'",
+    "import {HandScene} from '@madinah/mdx-handwritten-react'",
     `const plan = ${JSON.stringify(reviewedPlan)}`,
     'function text(value) {',
     "  if (typeof value === 'string' || typeof value === 'number') return String(value)",
@@ -1338,13 +1338,13 @@ export async function runRecipePackageConformance({
   const sourceDirectory = resolve(packageDirectory)
   const sceneSourceDirectory = scenePackageDirectory
     ? resolve(scenePackageDirectory)
-    : findInstalledPackage(sourceDirectory, 'mdx-handwritten-scene')
+    : findInstalledPackage(sourceDirectory, '@madinah/mdx-handwritten-scene')
   const remarkSourceDirectory = remarkPackageDirectory
     ? resolve(remarkPackageDirectory)
-    : findInstalledPackage(sceneSourceDirectory, 'remark-mdx-handwritten')
+    : findInstalledPackage(sceneSourceDirectory, '@madinah/mdx-handwritten-remark')
   const reactSourceDirectory = reactPackageDirectory
     ? resolve(reactPackageDirectory)
-    : findInstalledPackage(sceneSourceDirectory, 'mdx-handwritten-react')
+    : findInstalledPackage(sceneSourceDirectory, '@madinah/mdx-handwritten-react')
   const adapterRuntimeDirectories = [
     '@mdx-js/mdx',
     'remark-directive',
@@ -1357,17 +1357,17 @@ export async function runRecipePackageConformance({
     const scenePack = packDirectory(
       sceneSourceDirectory,
       temporaryDirectory,
-      'mdx-handwritten-scene',
+      '@madinah/mdx-handwritten-scene',
     )
     const remarkPack = packDirectory(
       remarkSourceDirectory,
       temporaryDirectory,
-      'remark-mdx-handwritten',
+      '@madinah/mdx-handwritten-remark',
     )
     const reactPack = packDirectory(
       reactSourceDirectory,
       temporaryDirectory,
-      'mdx-handwritten-react',
+      '@madinah/mdx-handwritten-react',
     )
     const additionalPacks = additionalPackageDirectories.map((directory, index) =>
       packDirectory(
@@ -1394,13 +1394,13 @@ export async function runRecipePackageConformance({
       'package.json',
     ), 'utf8'))
     const scenePackageJson = JSON.parse(readFileSync(resolve(
-      installedPackageDirectory(consumerDirectory, 'mdx-handwritten-scene'),
+      installedPackageDirectory(consumerDirectory, '@madinah/mdx-handwritten-scene'),
       'package.json',
     ), 'utf8'))
     assert.equal(
       scenePackageJson.name,
-      'mdx-handwritten-scene',
-      'The packed peer must be mdx-handwritten-scene.',
+      '@madinah/mdx-handwritten-scene',
+      'The packed peer must be @madinah/mdx-handwritten-scene.',
     )
     const loader = await createConsumerLoader({
       consumerDirectory,
@@ -1481,15 +1481,15 @@ export async function runRecipePackageConformance({
       installedRecipeDirectory,
       installedReactDirectory: installedPackageDirectory(
         consumerDirectory,
-        'mdx-handwritten-react',
+        '@madinah/mdx-handwritten-react',
       ),
       installedRemarkDirectory: installedPackageDirectory(
         consumerDirectory,
-        'remark-mdx-handwritten',
+        '@madinah/mdx-handwritten-remark',
       ),
       installedSceneDirectory: installedPackageDirectory(
         consumerDirectory,
-        'mdx-handwritten-scene',
+        '@madinah/mdx-handwritten-scene',
       ),
       sceneRecipes,
     })

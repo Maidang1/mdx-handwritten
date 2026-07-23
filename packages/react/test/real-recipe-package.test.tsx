@@ -4,13 +4,13 @@ import {createHash} from 'node:crypto'
 import {readFileSync} from 'node:fs'
 import {fileURLToPath} from 'node:url'
 import {describe, expect, it} from 'vitest'
-import type {ScenePlanV1} from 'mdx-handwritten-scene'
+import type {ScenePlanV1} from '@madinah/mdx-handwritten-scene'
 import {
   annotationRecipeLimitsV1,
   annotationRecipePackageProtocolV1,
   createSceneCompiler,
   type AnnotationRecipePackageV1
-} from 'mdx-handwritten-scene/recipes'
+} from '@madinah/mdx-handwritten-scene/recipes'
 import {HandScene} from '../src/index.js'
 
 const packageName = '@evidence/transition-recipes'
@@ -28,7 +28,7 @@ const sharedPlan = JSON.parse(
   )
 ) as ScenePlanV1
 const sharedPlanFingerprint =
-  'cd62f09f3a18a6d797ee42e87c6264ab77aa2ad79f3d9ef0236fd3a40f1527c1'
+  '5809fc2bb011eb01410528b21c2a5901af5f83a3acd15932de71585f8ee098a7'
 
 describe('third-party Scene plan server rendering', () => {
   it('renders a materialized third-party plan from plan-only serializable props', () => {

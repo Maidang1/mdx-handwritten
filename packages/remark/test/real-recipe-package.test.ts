@@ -8,13 +8,13 @@ import {fileURLToPath} from 'node:url'
 import {Fragment, jsx, jsxs} from 'react/jsx-runtime'
 import remarkDirective from 'remark-directive'
 import {describe, expect, it} from 'vitest'
-import type {ScenePlanV1} from 'mdx-handwritten-scene'
+import type {ScenePlanV1} from '@madinah/mdx-handwritten-scene'
 import {
   annotationRecipeLimitsV1,
   annotationRecipePackageProtocolV1,
   createSceneCompiler,
   type AnnotationRecipePackageV1
-} from 'mdx-handwritten-scene/recipes'
+} from '@madinah/mdx-handwritten-scene/recipes'
 import remarkMdxHandwritten, {
   type HandwrittenOptions
 } from '../src/index.js'
@@ -33,7 +33,7 @@ const sharedPlanBytes = readFileSync(
 )
 const sharedPlan = JSON.parse(sharedPlanBytes) as ScenePlanV1
 const sharedPlanFingerprint =
-  'cd62f09f3a18a6d797ee42e87c6264ab77aa2ad79f3d9ef0236fd3a40f1527c1'
+  '5809fc2bb011eb01410528b21c2a5901af5f83a3acd15932de71585f8ee098a7'
 
 interface RenderedElement {
   props: Record<string, unknown>
@@ -293,7 +293,7 @@ describe('real Configured Scene compiler integration', () => {
     const source = `:::hw-scene{recipe="task-explainer"}\n[ ] CLI-007 Ship adapter evidence\n:::\n\n${transitionScene()}`
     const output = String(
       await compileMdx(source, {
-        imports: {mode: 'auto', source: 'mdx-handwritten-react'},
+        imports: {mode: 'auto', source: '@madinah/mdx-handwritten-react'},
         sceneCompiler: sceneCompiler()
       })
     )
@@ -433,7 +433,7 @@ describe('real Configured Scene compiler integration', () => {
 
     const warned = await compileMdx(scene, {
       diagnostics: 'warn',
-      imports: {mode: 'auto', source: 'mdx-handwritten-react'},
+      imports: {mode: 'auto', source: '@madinah/mdx-handwritten-react'},
       sceneCompiler: compiler
     })
     const output = String(warned)

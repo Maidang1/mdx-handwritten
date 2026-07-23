@@ -12,14 +12,28 @@ Handwritten UI is useful for editorial emphasis, margin notes, code annotations,
 
 | Package | Responsibility |
 | --- | --- |
-| `mdx-handwritten-scene` | Pure, versioned scene-plan derivation from compact author input |
-| `remark-mdx-handwritten` | Validation and MDX/HTML/strip compilation |
-| `mdx-handwritten-react` | Server-safe React components and SVG decoration |
-| `mdx-handwritten-theme` | Tokens, self-hosted font, responsive and print CSS |
+| `@madinah/mdx-handwritten-scene` | Pure, versioned scene-plan derivation from compact author input |
+| `@madinah/mdx-handwritten-remark` | Validation and MDX/HTML/strip compilation |
+| `@madinah/mdx-handwritten-react` | Server-safe React components and SVG decoration |
+| `@madinah/mdx-handwritten-theme` | Tokens, self-hosted font, responsive and print CSS |
 
 ## Installation
 
-The repository is an npm workspace. Until the packages are published to npm, clone the repository to try or develop them:
+Install the packages you need from npm (scope `@madinah`). All four libraries share the same version:
+
+```bash
+npm install @madinah/mdx-handwritten-remark \
+  @madinah/mdx-handwritten-react \
+  @madinah/mdx-handwritten-theme \
+  remark-directive
+
+# optional when building custom recipe compilers
+npm install @madinah/mdx-handwritten-scene
+```
+
+`@madinah/mdx-handwritten-scene` is also pulled in transitively by the remark and React packages.
+
+For local development of this monorepo:
 
 ```bash
 git clone https://github.com/Maidang1/mdx-handwritten.git
@@ -29,11 +43,23 @@ npm run check
 npm run dev
 ```
 
+### Releasing (maintainers)
+
+Versions are locked together with [Changesets](https://github.com/changesets/changesets) in **fixed** mode:
+
+```bash
+npm run changeset          # record a change
+npm run version-packages   # bump all four packages to the same version
+npm run release            # build + publish all public packages
+```
+
+You must be logged into npm with publish rights on the `madinah` org (`npm whoami`).
+
 For an MDX build, register `remark-directive` before the handwritten transformer:
 
 ```ts
 import remarkDirective from 'remark-directive'
-import remarkHandwritten from 'remark-mdx-handwritten'
+import remarkHandwritten from '@madinah/mdx-handwritten-remark'
 
 export const mdxOptions = {
   remarkPlugins: [
@@ -46,8 +72,8 @@ export const mdxOptions = {
 Inject the components through your framework's MDX component mechanism and import the theme once:
 
 ```tsx
-import { mdxHandwrittenComponents } from 'mdx-handwritten-react'
-import 'mdx-handwritten-theme/styles.css'
+import { mdxHandwrittenComponents } from '@madinah/mdx-handwritten-react'
+import '@madinah/mdx-handwritten-theme/styles.css'
 
 <MDXContent components={mdxHandwrittenComponents} />
 ```
@@ -84,7 +110,7 @@ that compiler to the remark Adapter:
 
 ```ts
 import acmeRecipes from '@acme/mdx-handwritten-recipes'
-import { createSceneCompiler } from 'mdx-handwritten-scene/recipes'
+import { createSceneCompiler } from '@madinah/mdx-handwritten-scene/recipes'
 
 const sceneCompiler = createSceneCompiler({
   recipePackages: [{

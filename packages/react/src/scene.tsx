@@ -1,4 +1,4 @@
-import { createScenePlan, type ScenePlanV1 } from 'mdx-handwritten-scene'
+import { createScenePlan, type ScenePlanV1 } from '@madinah/mdx-handwritten-scene'
 import { HandConnector } from './icons.js'
 
 export type HandSceneProps =

@@ -8,7 +8,7 @@ import {
   HandScene,
   HandText,
   HandWatermark
-} from 'mdx-handwritten-react'
+} from '@madinah/mdx-handwritten-react'
 import manifest from '../../../visual-fixtures.json'
 
 interface SceneFixture {
