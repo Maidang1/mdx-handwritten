@@ -32,6 +32,29 @@
     <tr>
       <th scope="row">
         <div className="syntax-config">
+          <code>hw-text</code>
+          <strong>Strong warning voice</strong>
+          <dl>
+            <div><dt>tone</dt><dd>danger</dd></div>
+            <div><dt>size</dt><dd>display</dd></div>
+            <div><dt>weight</dt><dd>semibold</dd></div>
+            <div><dt>rotate</dt><dd>1</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-text[Do not skip the review.]{tone="danger" size="display" weight="semibold" rotate="1"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:hw-text[Do not skip the review.]{tone="danger" size="display" weight="semibold" rotate="1"}
+
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
           <code>hw-link</code>
           <strong>Hand-drawn action</strong>
           <dl>
@@ -54,6 +77,29 @@
     <tr>
       <th scope="row">
         <div className="syntax-config">
+          <code>hw-link</code>
+          <strong>External reference</strong>
+          <dl>
+            <div><dt>target</dt><dd>blank</dd></div>
+            <div><dt>tone</dt><dd>info</dd></div>
+            <div><dt>underline</dt><dd>subtle</dd></div>
+            <div><dt>icon</dt><dd>external</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-link[Open the recipe docs]{href="https://github.com/Maidang1/mdx-handwritten" target="blank" tone="info" underline="subtle" icon="external"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:hw-link[Open the recipe docs]{href="https://github.com/Maidang1/mdx-handwritten" target="blank" tone="info" underline="subtle" icon="external"}
+
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
           <code>hw-mark</code>
           <strong>Draw attention</strong>
           <dl>
@@ -72,6 +118,28 @@
         </div>
       </td>
     </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-mark</code>
+          <strong>Inline underline</strong>
+          <dl>
+            <div><dt>kind</dt><dd>underline</dd></div>
+            <div><dt>tone</dt><dd>danger</dd></div>
+            <div><dt>strength</dt><dd>strong</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-mark[blocking dependency]{kind="underline" tone="danger" strength="strong"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+Ship only after the :hw-mark[blocking dependency]{kind="underline" tone="danger" strength="strong"} is resolved.
+
+        </div>
+      </td>
+    </tr>
+
     <tr>
       <th scope="row">
         <div className="syntax-config">
@@ -97,6 +165,29 @@
     <tr>
       <th scope="row">
         <div className="syntax-config">
+          <code>hw-annotate</code>
+          <strong>Beside the target</strong>
+          <dl>
+            <div><dt>label</dt><dd>15 minutes</dd></div>
+            <div><dt>placement</dt><dd>inline-end</dd></div>
+            <div><dt>mark</dt><dd>underline</dd></div>
+            <div><dt>arrow</dt><dd>straight</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-annotate[timeout]{label="15 minutes" placement="inline-end" tone="warning" mark="underline" arrow="straight" distance="tight"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+The default is :hw-annotate[timeout]{label="15 minutes" placement="inline-end" tone="warning" mark="underline" arrow="straight" distance="tight"}.
+
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
           <code>hw-note</code>
           <strong>Status or warning</strong>
           <dl>
@@ -116,6 +207,29 @@
         </div>
       </td>
     </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-note</code>
+          <strong>Panel callout</strong>
+          <dl>
+            <div><dt>appearance</dt><dd>panel</dd></div>
+            <div><dt>tone</dt><dd>danger</dd></div>
+            <div><dt>icon</dt><dd>cross</dd></div>
+            <div><dt>size</dt><dd>sm</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`::hw-note[Do not regenerate a stale Scene plan during an ordinary build.]{appearance="panel" tone="danger" icon="cross" size="sm" density="compact"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+::hw-note[Do not regenerate a stale Scene plan during an ordinary build.]{appearance="panel" tone="danger" icon="cross" size="sm" density="compact"}
+
+        </div>
+      </td>
+    </tr>
+
     <tr>
       <th scope="row">
         <div className="syntax-config">
@@ -149,6 +263,39 @@
     <tr>
       <th scope="row">
         <div className="syntax-config">
+          <code>hw-brace</code>
+          <strong>Group from the start edge</strong>
+          <dl>
+            <div><dt>side</dt><dd>inline-start</dd></div>
+            <div><dt>align</dt><dd>start</dd></div>
+            <div><dt>tone</dt><dd>info</dd></div>
+            <div><dt>distance</dt><dd>loose</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:::hw-brace[shared contract]{side="inline-start" align="start" tone="info" rotate="1" distance="loose"}
+- Scene plan
+- targets
+- relationships
+:::`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:::hw-brace[shared contract]{side="inline-start" align="start" tone="info" rotate="1" distance="loose"}
+
+- Scene plan
+- targets
+- relationships
+
+:::
+
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
           <code>hw-margin</code>
           <strong>Keep context nearby</strong>
           <dl>
@@ -174,6 +321,35 @@ The decision stays in the document flow.
         </div>
       </td>
     </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-margin</code>
+          <strong>Note below the content</strong>
+          <dl>
+            <div><dt>side</dt><dd>block-end</dd></div>
+            <div><dt>align</dt><dd>start</dd></div>
+            <div><dt>icon</dt><dd>arrow-away</dd></div>
+            <div><dt>size</dt><dd>sm</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:::hw-margin[fallback path]{side="block-end" align="start" tone="info" size="sm" icon="arrow-away" distance="normal"}
+Narrow viewports keep the note in reading order.
+:::`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:::hw-margin[fallback path]{side="block-end" align="start" tone="info" size="sm" icon="arrow-away" distance="normal"}
+
+Narrow viewports keep the note in reading order.
+
+:::
+
+        </div>
+      </td>
+    </tr>
+
     <tr>
       <th scope="row">
         <div className="syntax-config">
@@ -205,6 +381,35 @@ The prose remains primary.
     <tr>
       <th scope="row">
         <div className="syntax-config">
+          <code>hw-watermark</code>
+          <strong>Draft stamp</strong>
+          <dl>
+            <div><dt>placement</dt><dd>center</dd></div>
+            <div><dt>tone</dt><dd>muted</dd></div>
+            <div><dt>strength</dt><dd>ghost</dd></div>
+            <div><dt>rotate</dt><dd>-2</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:::hw-watermark[draft]{placement="center" tone="muted" size="display" weight="semibold" rotate="-2" strength="ghost"}
+Still useful without the flourish.
+:::`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:::hw-watermark[draft]{placement="center" tone="muted" size="display" weight="semibold" rotate="-2" strength="ghost"}
+
+Still useful without the flourish.
+
+:::
+
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
           <code>hw-scene</code>
           <strong>Explain structured input</strong>
           <dl>
@@ -228,5 +433,32 @@ Write task output as JSON for scripts and agents
         </div>
       </td>
     </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-scene</code>
+          <strong>Localized task scene</strong>
+          <dl>
+            <div><dt>recipe</dt><dd>task-explainer</dd></div>
+            <div><dt>locale</dt><dd>zh-CN</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:::hw-scene{recipe="task-explainer" locale="zh-CN"}
+[x] DOC-018 补充语法示例 #docs !medium
+在参考表上方展示更多属性组合
+:::`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:::hw-scene{recipe="task-explainer" locale="zh-CN"}
+[x] DOC-018 补充语法示例 #docs !medium
+在参考表上方展示更多属性组合
+:::
+
+        </div>
+      </td>
+    </tr>
+
   </tbody>
 </table>

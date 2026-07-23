@@ -891,6 +891,144 @@ button {
   font-size: 0.66rem;
 }
 
+
+.syntax-examples-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.65fr);
+  align-items: end;
+  gap: 40px;
+  margin: 8px 0 28px;
+}
+
+.syntax-examples-intro h3 {
+  max-width: 640px;
+  margin: 0;
+  color: var(--site-ink);
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+}
+
+.syntax-examples-intro > p {
+  margin: 0 0 2px;
+  color: var(--site-muted);
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.syntax-examples-shell {
+  margin-bottom: 36px;
+}
+
+.syntax-examples {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.syntax-example {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px 16px 18px;
+  border: 1px solid #cfc9bd;
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, #fffefb 0%, #f7f3ea 100%);
+  box-shadow: 0 12px 30px rgb(41 37 31 / 7%);
+}
+
+.syntax-example-wide {
+  grid-column: 1 / -1;
+}
+
+.syntax-example > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.syntax-example > header code {
+  padding: 3px 7px;
+  border: 1px solid rgb(23 127 91 / 18%);
+  border-radius: 6px;
+  color: var(--site-green);
+  background: var(--site-green-soft);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+}
+
+.syntax-example > header span {
+  color: #7a8079;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.syntax-example > pre {
+  margin: 0;
+  padding: 12px 13px;
+  border: 1px solid #343a36;
+  border-radius: 9px;
+  color: #dce3dc;
+  background: #202521;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.syntax-example > pre code {
+  color: inherit;
+  font: inherit;
+}
+
+.syntax-example-render {
+  min-height: 3.5rem;
+  padding: 12px 13px;
+  border: 1px dashed #c5bfb3;
+  border-radius: 10px;
+  color: #3b403c;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 27px, rgb(39 68 48 / 4%) 27px 28px),
+    #fffdf8;
+  font-size: 0.82rem;
+  line-height: 1.65;
+  --hw-color-muted: #716d69;
+  --hw-color-info: #356eb8;
+  --hw-color-success: #2f8f5b;
+  --hw-color-warning: #b96817;
+  --hw-color-danger: #bb4e35;
+  --hw-color-accent: #8052ba;
+}
+
+.syntax-example-render > p,
+.syntax-example-render blockquote,
+.syntax-example-render ul {
+  margin-block: 0.45rem;
+}
+
+.syntax-example-render ul {
+  padding-inline-start: 1.2rem;
+}
+
+.syntax-example-render :where([data-hw="note"], [data-hw="brace"], [data-hw="margin"], [data-hw="watermark"], figure[data-hw-scene]) {
+  margin-block: 0;
+}
+
+.syntax-example-render [data-hw="watermark"] {
+  min-height: 3.5rem;
+  padding: 0.55rem;
+  border: 1px solid var(--site-line);
+  border-radius: 8px;
+}
+
 .setup-section {
   width: min(1180px, calc(100% - 40px));
   margin: 0 auto;
@@ -1112,9 +1250,14 @@ footer > a:last-child {
 
   .section-heading,
   .reference-heading,
+  .syntax-examples-intro,
   .setup-copy {
     grid-template-columns: 1fr;
     gap: 25px;
+  }
+
+  .syntax-examples {
+    grid-template-columns: 1fr;
   }
 
   .setup-copy .overline {

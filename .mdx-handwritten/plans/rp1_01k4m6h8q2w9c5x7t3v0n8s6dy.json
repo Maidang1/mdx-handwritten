@@ -217,7 +217,7 @@
   "provenance": {
     "kind": "reviewed-proposal",
     "engine": {
-      "name": "mdx-handwritten-scene",
+      "name": "@madinah/mdx-handwritten-scene",
       "version": "0.1.0"
     },
     "generator": {

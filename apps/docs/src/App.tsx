@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { mdxHandwrittenComponents } from '@madinah/mdx-handwritten-react'
+import Examples from './content/examples.mdx'
 import Reference from './content/reference.mdx'
 import Showcase from './content/showcase.mdx'
 import showcaseSource from './content/showcase.mdx?raw'
@@ -145,6 +146,20 @@ export function App() {
               the attributes in the middle column to tune the same semantic
               gesture without hand-building its layout.
             </p>
+          </div>
+
+          <div className="syntax-examples-intro">
+            <div>
+              <p className="overline">More patterns</p>
+              <h3 id="examples-title">Live syntax beyond the table defaults.</h3>
+            </div>
+            <p>
+              Alternate tones, placements, icons, and locales—each card is
+              compiled from the source shown above its output.
+            </p>
+          </div>
+          <div className="syntax-examples-shell" aria-labelledby="examples-title">
+            <Examples components={mdxHandwrittenComponents} />
           </div>
 
           <div

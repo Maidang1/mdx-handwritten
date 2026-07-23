@@ -1,0 +1,148 @@
+<div className="syntax-examples hw-scope">
+
+<article className="syntax-example">
+  <header>
+    <code>hw-text</code>
+    <span>danger · display</span>
+  </header>
+  <pre><code>{`:hw-text[Do not skip the review.]{tone="danger" size="display" weight="semibold" rotate="1"}`}</code></pre>
+  <div className="syntax-example-render">
+
+:hw-text[Do not skip the review.]{tone="danger" size="display" weight="semibold" rotate="1"}
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-mark</code>
+    <span>underline · strong</span>
+  </header>
+  <pre><code>{`:hw-mark[blocking dependency]{kind="underline" tone="danger" strength="strong"}`}</code></pre>
+  <div className="syntax-example-render">
+
+Ship only after the :hw-mark[blocking dependency]{kind="underline" tone="danger" strength="strong"} is resolved.
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-link</code>
+    <span>external · blank</span>
+  </header>
+  <pre><code>{`:hw-link[Open the recipe docs]{href="https://github.com/Maidang1/mdx-handwritten" target="blank" tone="info" underline="subtle" icon="external"}`}</code></pre>
+  <div className="syntax-example-render">
+
+:hw-link[Open the recipe docs]{href="https://github.com/Maidang1/mdx-handwritten" target="blank" tone="info" underline="subtle" icon="external"}
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-annotate</code>
+    <span>inline-end · underline</span>
+  </header>
+  <pre><code>{`:hw-annotate[timeout]{label="15 minutes" placement="inline-end" tone="warning" mark="underline" arrow="straight" distance="tight"}`}</code></pre>
+  <div className="syntax-example-render">
+
+The default is :hw-annotate[timeout]{label="15 minutes" placement="inline-end" tone="warning" mark="underline" arrow="straight" distance="tight"}.
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-note</code>
+    <span>panel · danger</span>
+  </header>
+  <pre><code>{`::hw-note[Do not regenerate a stale Scene plan during an ordinary build.]{appearance="panel" tone="danger" icon="cross" size="sm" density="compact"}`}</code></pre>
+  <div className="syntax-example-render">
+
+::hw-note[Do not regenerate a stale Scene plan during an ordinary build.]{appearance="panel" tone="danger" icon="cross" size="sm" density="compact"}
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-brace</code>
+    <span>inline-start · loose</span>
+  </header>
+  <pre><code>{`:::hw-brace[shared contract]{side="inline-start" align="start" tone="info" rotate="1" distance="loose"}
+- Scene plan
+- targets
+- relationships
+:::`}</code></pre>
+  <div className="syntax-example-render">
+
+:::hw-brace[shared contract]{side="inline-start" align="start" tone="info" rotate="1" distance="loose"}
+
+- Scene plan
+- targets
+- relationships
+
+:::
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-margin</code>
+    <span>block-end · arrow-away</span>
+  </header>
+  <pre><code>{`:::hw-margin[fallback path]{side="block-end" align="start" tone="info" size="sm" icon="arrow-away" distance="normal"}
+Narrow viewports keep the note in reading order.
+:::`}</code></pre>
+  <div className="syntax-example-render">
+
+:::hw-margin[fallback path]{side="block-end" align="start" tone="info" size="sm" icon="arrow-away" distance="normal"}
+
+Narrow viewports keep the note in reading order.
+
+:::
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-watermark</code>
+    <span>center · ghost</span>
+  </header>
+  <pre><code>{`:::hw-watermark[draft]{placement="center" tone="muted" size="display" weight="semibold" rotate="-2" strength="ghost"}
+Still useful without the flourish.
+:::`}</code></pre>
+  <div className="syntax-example-render">
+
+:::hw-watermark[draft]{placement="center" tone="muted" size="display" weight="semibold" rotate="-2" strength="ghost"}
+
+Still useful without the flourish.
+
+:::
+
+  </div>
+</article>
+
+<article className="syntax-example syntax-example-wide">
+  <header>
+    <code>hw-scene</code>
+    <span>task-explainer · zh-CN</span>
+  </header>
+  <pre><code>{`:::hw-scene{recipe="task-explainer" locale="zh-CN"}
+[x] DOC-018 补充语法示例 #docs !medium
+在参考表上方展示更多属性组合
+:::`}</code></pre>
+  <div className="syntax-example-render">
+
+:::hw-scene{recipe="task-explainer" locale="zh-CN"}
+[x] DOC-018 补充语法示例 #docs !medium
+在参考表上方展示更多属性组合
+:::
+
+  </div>
+</article>
+
+</div>
