@@ -1372,6 +1372,48 @@ function labelText(value: string): Text {
   return {type: 'text', value}
 }
 
+
+/** Placement-aware hand-drawn annotate connectors inspired by neat-annotations. */
+const annotateConnectorPaths = {
+  curved: {
+    'block-start': 'M23 4 C22 13 22 24 23 35 M17 29 L23 36 L29 29',
+    'block-start-inline-start': 'M6 6 C16 8 28 20 40 32 M36 22 L40 32 L30 28',
+    'block-start-inline-end': 'M40 6 C30 8 18 20 6 32 M10 22 L6 32 L16 28',
+    'block-end': 'M23 35 C22 26 22 15 23 4 M17 10 L23 3 L29 10',
+    'block-end-inline-start': 'M6 32 C16 30 28 18 40 6 M30 10 L40 6 L36 16',
+    'block-end-inline-end': 'M40 32 C30 30 18 18 6 6 M16 10 L6 6 L10 16',
+    'inline-start': 'M4 19 C15 18 31 18 43 19 M36 13 L43 19 L36 25',
+    'inline-end': 'M43 19 C32 18 15 18 3 19 M10 13 L3 19 L10 25'
+  },
+  straight: {
+    'block-start': 'M23 5 L23 34 M17 28 L23 35 L29 28',
+    'block-start-inline-start': 'M8 8 L38 30 M32 22 L38 30 L28 28',
+    'block-start-inline-end': 'M38 8 L8 30 M14 22 L8 30 L18 28',
+    'block-end': 'M23 33 L23 4 M17 10 L23 3 L29 10',
+    'block-end-inline-start': 'M8 30 L38 8 M32 14 L38 8 L28 10',
+    'block-end-inline-end': 'M38 30 L8 8 M14 14 L8 8 L18 10',
+    'inline-start': 'M5 19 L42 19 M35 13 L42 19 L35 25',
+    'inline-end': 'M41 19 L4 19 M11 13 L4 19 L11 25'
+  }
+} as const
+
+type AnnotateConnectorPlacement = keyof typeof annotateConnectorPaths.curved
+
+function annotateConnectorPath(
+  kind: 'curved' | 'straight',
+  placement: string | undefined
+): {path: string; viewBox: string; placement: AnnotateConnectorPlacement} {
+  const resolved: AnnotateConnectorPlacement =
+    placement && placement in annotateConnectorPaths[kind]
+      ? (placement as AnnotateConnectorPlacement)
+      : 'block-start'
+  return {
+    path: annotateConnectorPaths[kind][resolved],
+    viewBox: '0 0 46 38',
+    placement: resolved
+  }
+}
+
 const iconPaths: Readonly<Record<string, string>> = {
   check: 'M4 12.5 9.2 18 20 6',
   cross: 'M6 6 18 18M18 6 6 18',
@@ -1404,6 +1446,9 @@ function svgElement(
     viewBox?: string
     preserveAspectRatio?: string
     dataValue?: string
+    dataPlacement?: string
+    width?: number | string
+    height?: number | string
   } = {}
 ): Emphasis {
   const pathNode = inlineElement(
@@ -1422,9 +1467,14 @@ function svgElement(
     'svg',
     {
       [dataAttribute]: options.dataValue ?? '',
+      ...(options.dataPlacement
+        ? {'data-hw-connector-placement': options.dataPlacement}
+        : {}),
       ariaHidden: true,
       focusable: false,
       viewBox: options.viewBox ?? '0 0 24 24',
+      ...(options.width === undefined ? {} : {width: options.width}),
+      ...(options.height === undefined ? {} : {height: options.height}),
       ...(options.preserveAspectRatio
         ? {preserveAspectRatio: options.preserveAspectRatio}
         : {})
@@ -1765,13 +1815,21 @@ function elementNode(
       const connector =
         metadata.attributes.arrow === 'none'
           ? undefined
-          : svgElement(
-              'data-hw-connector',
-              metadata.attributes.arrow === 'straight'
-                ? 'M3 18 44 5M38 3l6 2-3 6'
-                : 'M3 18C16 20 27 4 44 7M38 4l6 3-4 5',
-              {viewBox: '0 0 48 24'}
-            )
+          : (() => {
+              const arrowKind =
+                metadata.attributes.arrow === 'straight' ? 'straight' : 'curved'
+              const resolved = annotateConnectorPath(
+                arrowKind,
+                metadata.attributes.placement
+              )
+              return svgElement('data-hw-connector', resolved.path, {
+                viewBox: resolved.viewBox,
+                dataValue: arrowKind,
+                dataPlacement: resolved.placement,
+                width: 46,
+                height: 38
+              })
+            })()
       return inlineElement(
         'span',
         properties,

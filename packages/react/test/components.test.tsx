@@ -196,8 +196,29 @@ describe('@madinah/mdx-handwritten-react server rendering', () => {
     )
 
     expect(html).toContain('data-hw-connector="curved"')
-    expect(html).toContain('width="72"')
-    expect(html).toContain('height="32"')
+    expect(html).toContain('data-hw-connector-placement="block-start"')
+    expect(html).toContain('width="46"')
+    expect(html).toContain('height="38"')
+    expect(html).toContain('viewBox="0 0 46 38"')
+  })
+
+  it('picks a placement-specific neat-style connector path', () => {
+    const north = renderToStaticMarkup(
+      <HandAnnotate label="from below" placement="block-end" arrow="curved">
+        target
+      </HandAnnotate>,
+    )
+    const east = renderToStaticMarkup(
+      <HandAnnotate label="from start" placement="inline-start" arrow="straight">
+        target
+      </HandAnnotate>,
+    )
+
+    expect(north).toContain('data-hw-connector-placement="block-end"')
+    expect(north).toContain('M23 35 C22 26 22 15 23 4')
+    expect(east).toContain('data-hw-connector-placement="inline-start"')
+    expect(east).toContain('data-hw-connector="straight"')
+    expect(east).toContain('M5 19 L42 19')
   })
 
   it('renders a static note without creating a live region or landmark', () => {

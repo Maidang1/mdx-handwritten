@@ -71,4 +71,11 @@ describe('@madinah/mdx-handwritten-theme language and recipe contracts', () => {
     }
   })
 
+  it('paints neat-style highlighter bleed and placement-aware connectors', () => {
+    expect(styles).toContain('--hw-mark-fill:')
+    expect(styles).toContain('-0.22em 0 0 0 var(--hw-mark-fill)')
+    expect(styles).toContain('data-hw-connector-placement^="inline-"')
+    expect(styles).toContain('max-inline-size: min(9.5rem, 42vw)')
+  })
+
 })

@@ -141,7 +141,7 @@ export function HandAnnotate({
       <span data-hw-label="" dir="auto">
         {label}
       </span>
-      {arrow === 'none' ? null : <HandConnector kind={arrow} />}
+      {arrow === 'none' ? null : <HandConnector kind={arrow} placement={placement} />}
     </span>
   )
 }
