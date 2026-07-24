@@ -1,6 +1,6 @@
 {
   "name": "@madinah/mdx-handwritten-react",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Server-renderable React components for MDX Handwritten",
   "type": "module",
   "sideEffects": false,

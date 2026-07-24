@@ -158,6 +158,19 @@ Live walkthrough: [docs site Setup](https://maidang1.github.io/mdx-handwritten/#
 The eight annotation gestures remain a deliberately fixed language. Annotation
 recipes add higher-level automation without expanding that low-level surface.
 
+| Gesture | Form | Role |
+| --- | --- | --- |
+| `hw-text` | text | Handwritten editorial voice |
+| `hw-link` | text | Hand-drawn link with optional icon |
+| `hw-mark` | text | Closed Mark treatment on existing words |
+| `hw-annotate` | text | Label + connector + optional Mark treatment |
+| `hw-note` | leaf | Status line, tape, or panel |
+| `hw-brace` | container | Stretchable brace around a group |
+| `hw-margin` | container | Note outside the content edge |
+| `hw-watermark` | container | Always-decorative watermark |
+
+Scenes use `:::hw-scene{recipe=…}` and compile to the same readable source-first model.
+
 ### Automated annotation scenes
 
 Choose a recipe and provide only the source readers should see. The
@@ -182,6 +195,8 @@ package definition once, constructs a Configured Scene compiler, and supplies
 that compiler to the remark Adapter:
 
 ```ts
+import remarkDirective from 'remark-directive'
+import remarkMdxHandwritten from '@madinah/mdx-handwritten-remark'
 import acmeRecipes from '@acme/mdx-handwritten-recipes'
 import { createSceneCompiler } from '@madinah/mdx-handwritten-scene/recipes'
 
@@ -195,7 +210,7 @@ const sceneCompiler = createSceneCompiler({
 export const mdxOptions = {
   remarkPlugins: [
     remarkDirective,
-    [remarkHandwritten, { sceneCompiler }]
+    [remarkMdxHandwritten, { sceneCompiler }]
   ]
 }
 ```
@@ -237,7 +252,7 @@ The binding resolves exactly one committed JSON artifact at
 project root:
 
 ```ts
-[remarkHandwritten, {
+[remarkMdxHandwritten, {
   output: 'component',
   diagnostics: 'strict',
   reviewedPlans: { projectRoot: process.cwd() }
@@ -263,17 +278,30 @@ over 64 KiB.
 
 :hw-mark[Spec updated]{kind="underline" tone="success" strength="subtle"}
 
-:hw-mark[still under review?]{kind="wavy" tone="warning"}
+:hw-mark[still under review?]{kind="wavy" tone="warning" strength="strong"}
 
 :hw-mark[stable ID]{kind="bracket" tone="info"}
 
-:hw-annotate[`CLI-042`]{label="stable ID" placement="block-start" tone="info" arrow="curved"}
+:hw-annotate[`CLI-042`]{label="stable ID" placement="block-start" tone="info" mark="bracket" arrow="curved"}
+
+:hw-annotate[timeout]{label="verify" placement="block-start" tone="warning" mark="wavy" arrow="curved"}
 ```
 
-`hw-mark` accepts `underline`, `highlight`, `circle`, `strike`, `box`, `wavy`, and `bracket` as
-`kind` values. `hw-annotate` uses the same Mark treatment set on `mark`, plus `none`. Prefer short targets for `circle` and `bracket`; multi-line targets may paint imperfectly and stay readable without CSS.
+`hw-mark` and `hw-annotate` share one closed **Mark treatment** vocabulary:
 
-`hw-annotate` draws placement-aware hand-drawn connectors (eight logical placements) with a soft highlighter mark on the target—visually in the same family as neat-annotations, but expressed as the existing annotation gesture rather than a separate CSS class API. Labels wrap within a bounded max width; leave margin around annotated lines so arrows and notes can sit outside the line box.
+| Treatment | Typical use |
+| --- | --- |
+| `underline` | Soft emphasis under a phrase |
+| `highlight` | Highlighter band behind a phrase (annotate default) |
+| `circle` | Circle a short term |
+| `strike` | Cross out superseded wording |
+| `box` | Box a short phrase |
+| `wavy` | Mark something unsettled or still under review |
+| `bracket` | Side-clamp a short identifier or group (not a closed box) |
+
+Use them as `kind` on `hw-mark`, or as `mark` on `hw-annotate` (plus `none` when the target needs no treatment). Strength (`subtle` · `normal` · `strong`) is mark-only. Prefer short targets for `circle` and `bracket`; multi-line targets may paint imperfectly and stay readable without CSS. Treatments never inject decorative characters into the DOM.
+
+`hw-annotate` draws placement-aware hand-drawn connectors across eight logical placements, with the chosen Mark treatment on the target. Labels wrap within a bounded max width; leave margin around annotated lines so arrows and notes can sit outside the line box.
 
 ### One-line note
 
