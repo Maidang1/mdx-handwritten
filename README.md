@@ -45,15 +45,22 @@ npm run dev
 
 ### Releasing (maintainers)
 
-Versions are locked together with [Changesets](https://github.com/changesets/changesets) in **fixed** mode:
+Versions are locked together with [Changesets](https://github.com/changesets/changesets) in **fixed** mode. On every push to `main`, [`.github/workflows/release.yml`](./.github/workflows/release.yml) either opens/updates a **Version Packages** PR or publishes to npm after that PR is merged.
 
 ```bash
-npm run changeset          # record a change
+npm run changeset          # record a change on a feature branch / PR
+# merge to main → CI opens or refreshes the Version Packages PR
+# merge Version Packages → CI builds and publishes all four packages
+```
+
+Manual fallback (local publish rights required):
+
+```bash
 npm run version-packages   # bump all four packages to the same version
 npm run release            # build + publish all public packages
 ```
 
-You must be logged into npm with publish rights on the `madinah` org (`npm whoami`).
+CI needs an npm `NPM_TOKEN` repository secret with publish access to the `madinah` org (or Trusted Publishing configured for the release workflow on npmjs.com). GitHub Releases and tags are created automatically after a successful publish.
 
 ### Quick start (consumer)
 
