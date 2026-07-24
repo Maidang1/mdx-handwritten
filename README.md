@@ -266,6 +266,9 @@ over 64 KiB.
 :hw-annotate[`CLI-042`]{label="stable ID" placement="block-start" tone="info" arrow="curved"}
 ```
 
+`hw-mark` accepts `underline`, `highlight`, `circle`, `strike`, and `box` as
+`kind` values.
+
 ### One-line note
 
 One primitive covers status lines, warning tape, panels, and display copy:

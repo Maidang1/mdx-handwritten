@@ -486,6 +486,17 @@ describe('element output', () => {
     expect(output).toContain('_components.aside')
   })
 
+  it('preserves strike meaning without relying on CSS', async () => {
+    const output = String(
+      await compileMdx(':hw-mark[old assumption]{kind="strike"}', {
+        output: 'element'
+      })
+    )
+
+    expect(output).toContain('_components.s')
+    expect(output).not.toContain('_components.em')
+  })
+
   it('puts a back arrow before its link label', async () => {
     const output = String(
       await compileMdx(

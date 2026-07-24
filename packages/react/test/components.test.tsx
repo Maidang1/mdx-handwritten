@@ -96,7 +96,7 @@ describe('@madinah/mdx-handwritten-react server rendering', () => {
     expect(html).toContain('aria-hidden="true"')
   })
 
-  it('renders emphasis-based mark kinds on <em> and highlight on <mark>', () => {
+  it('renders every mark kind with its corresponding semantic element', () => {
     const html = renderToStaticMarkup(
       <p>
         <HandMark kind="circle" tone="accent" strength="strong">
@@ -120,10 +120,11 @@ describe('@madinah/mdx-handwritten-react server rendering', () => {
     expect(html).toContain('<em data-hw="mark" data-hw-kind="circle"')
     expect(html).toContain('data-hw-strength="strong"')
     expect(html).toContain('data-hw-tone="accent"')
-    expect(html).toContain('<em data-hw="mark" data-hw-kind="strike"')
+    expect(html).toContain('<s data-hw="mark" data-hw-kind="strike"')
     expect(html).toContain('<em data-hw="mark" data-hw-kind="box"')
     expect(html).toContain('<em data-hw="mark" data-hw-kind="underline"')
     expect(html).toContain('<mark data-hw="mark" data-hw-kind="highlight"')
+    expect(html).not.toContain('<em data-hw="mark" data-hw-kind="strike"')
     expect(html).not.toContain('<mark data-hw="mark" data-hw-kind="circle"')
     expect(html).not.toContain('<mark data-hw="mark" data-hw-kind="strike"')
     expect(html).not.toContain('<mark data-hw="mark" data-hw-kind="box"')

@@ -1743,7 +1743,11 @@ function elementNode(
     }
     case 'hw-mark':
       return inlineElement(
-        metadata.attributes.kind === 'highlight' ? 'mark' : 'em',
+        metadata.attributes.kind === 'highlight'
+          ? 'mark'
+          : metadata.attributes.kind === 'strike'
+            ? 's'
+            : 'em',
         properties,
         node.children as PhrasingContent[]
       )
