@@ -17,6 +17,16 @@ export type HandwrittenAlign = 'start' | 'center' | 'end'
 export type HandwrittenDistance = 'tight' | 'normal' | 'loose'
 export type HandwrittenShift = '-3' | '-2' | '-1' | '0' | '1' | '2' | '3'
 
+/** Closed Mark treatment vocabulary shared by HandMark.kind and HandAnnotate.mark. */
+export type HandwrittenMarkTreatment =
+  | 'underline'
+  | 'highlight'
+  | 'circle'
+  | 'strike'
+  | 'box'
+  | 'wavy'
+  | 'bracket'
+
 export interface HandwrittenVariantProps {
   /** A deterministic variant emitted by the remark plugin. */
   'data-hw-variant'?: string | number
@@ -44,7 +54,7 @@ export interface HandLinkProps extends HandwrittenVariantProps {
 
 export interface HandMarkProps extends HandwrittenVariantProps {
   children: ReactNode
-  kind?: 'underline' | 'highlight'
+  kind?: HandwrittenMarkTreatment
   tone?: HandwrittenTone
   strength?: 'subtle' | 'normal' | 'strong'
 }
@@ -64,7 +74,7 @@ export interface HandAnnotateProps extends HandwrittenVariantProps {
   label: string
   placement?: HandAnnotationPlacement
   tone?: HandwrittenTone
-  mark?: 'highlight' | 'underline' | 'none'
+  mark?: HandwrittenMarkTreatment | 'none'
   arrow?: 'curved' | 'straight' | 'none'
   distance?: HandwrittenDistance
   shiftInline?: HandwrittenShift

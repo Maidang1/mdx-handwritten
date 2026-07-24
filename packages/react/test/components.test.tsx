@@ -96,6 +96,72 @@ describe('@madinah/mdx-handwritten-react server rendering', () => {
     expect(html).toContain('aria-hidden="true"')
   })
 
+  it('renders every mark kind with its corresponding semantic element', () => {
+    const html = renderToStaticMarkup(
+      <p>
+        <HandMark kind="circle" tone="accent" strength="strong">
+          circled
+        </HandMark>{' '}
+        <HandMark kind="strike" tone="muted">
+          struck
+        </HandMark>{' '}
+        <HandMark kind="box" tone="info" strength="strong">
+          boxed
+        </HandMark>{' '}
+        <HandMark kind="underline" tone="danger">
+          underlined
+        </HandMark>{' '}
+        <HandMark kind="highlight" tone="success">
+          highlighted
+        </HandMark>{' '}
+        <HandMark kind="wavy" tone="warning" strength="strong">
+          wavy
+        </HandMark>{' '}
+        <HandMark kind="bracket" tone="info">
+          bracketed
+        </HandMark>
+      </p>,
+    )
+
+    expect(html).toContain('<em data-hw="mark" data-hw-kind="circle"')
+    expect(html).toContain('data-hw-strength="strong"')
+    expect(html).toContain('data-hw-tone="accent"')
+    expect(html).toContain('<s data-hw="mark" data-hw-kind="strike"')
+    expect(html).toContain('<em data-hw="mark" data-hw-kind="box"')
+    expect(html).toContain('<em data-hw="mark" data-hw-kind="underline"')
+    expect(html).toContain('<mark data-hw="mark" data-hw-kind="highlight"')
+    expect(html).toContain('<em data-hw="mark" data-hw-kind="wavy"')
+    expect(html).toContain('<em data-hw="mark" data-hw-kind="bracket"')
+    expect(html).not.toContain('<em data-hw="mark" data-hw-kind="strike"')
+    expect(html).not.toContain('<mark data-hw="mark" data-hw-kind="circle"')
+    expect(html).not.toContain('<mark data-hw="mark" data-hw-kind="strike"')
+    expect(html).not.toContain('<mark data-hw="mark" data-hw-kind="box"')
+    expect(html).not.toContain('<mark data-hw="mark" data-hw-kind="wavy"')
+    expect(html).not.toContain('<mark data-hw="mark" data-hw-kind="bracket"')
+  })
+
+  it('passes every shared Mark treatment through HandAnnotate', () => {
+    for (const mark of [
+      'underline',
+      'highlight',
+      'circle',
+      'strike',
+      'box',
+      'wavy',
+      'bracket',
+      'none',
+    ] as const) {
+      const html = renderToStaticMarkup(
+        <HandAnnotate label="note" mark={mark}>
+          target
+        </HandAnnotate>,
+      )
+      expect(html).toContain(`data-hw-mark="${mark}"`)
+      expect(html).toContain('<span data-hw-target="">target</span>')
+      expect(html).toContain('note')
+    }
+  })
+
   it('keeps link glyphs bounded when CSS is unavailable', () => {
     const html = renderToStaticMarkup(
       <HandLink href="/guide" icon="arrow-forward">
@@ -130,8 +196,29 @@ describe('@madinah/mdx-handwritten-react server rendering', () => {
     )
 
     expect(html).toContain('data-hw-connector="curved"')
-    expect(html).toContain('width="72"')
-    expect(html).toContain('height="32"')
+    expect(html).toContain('data-hw-connector-placement="block-start"')
+    expect(html).toContain('width="46"')
+    expect(html).toContain('height="38"')
+    expect(html).toContain('viewBox="0 0 46 38"')
+  })
+
+  it('picks a placement-specific neat-style connector path', () => {
+    const north = renderToStaticMarkup(
+      <HandAnnotate label="from below" placement="block-end" arrow="curved">
+        target
+      </HandAnnotate>,
+    )
+    const east = renderToStaticMarkup(
+      <HandAnnotate label="from start" placement="inline-start" arrow="straight">
+        target
+      </HandAnnotate>,
+    )
+
+    expect(north).toContain('data-hw-connector-placement="block-end"')
+    expect(north).toContain('M23 35 C22 26 22 15 23 4')
+    expect(east).toContain('data-hw-connector-placement="inline-start"')
+    expect(east).toContain('data-hw-connector="straight"')
+    expect(east).toContain('M5 19 L42 19')
   })
 
   it('renders a static note without creating a live region or landmark', () => {

@@ -106,11 +106,9 @@ export function HandMark({
     'data-hw-variant': variantOf(variantProps),
   } as const
 
-  return kind === 'highlight' ? (
-    <mark {...shared}>{children}</mark>
-  ) : (
-    <em {...shared}>{children}</em>
-  )
+  if (kind === 'highlight') return <mark {...shared}>{children}</mark>
+  if (kind === 'strike') return <s {...shared}>{children}</s>
+  return <em {...shared}>{children}</em>
 }
 
 export function HandAnnotate({
@@ -143,7 +141,7 @@ export function HandAnnotate({
       <span data-hw-label="" dir="auto">
         {label}
       </span>
-      {arrow === 'none' ? null : <HandConnector kind={arrow} />}
+      {arrow === 'none' ? null : <HandConnector kind={arrow} placement={placement} />}
     </span>
   )
 }

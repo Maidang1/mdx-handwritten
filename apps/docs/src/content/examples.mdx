@@ -28,6 +28,71 @@ Ship only after the :hw-mark[blocking dependency]{kind="underline" tone="danger"
 
 <article className="syntax-example">
   <header>
+    <code>hw-mark</code>
+    <span>circle · strong</span>
+  </header>
+  <pre><code>{`:hw-mark[one key term]{kind="circle" tone="accent" strength="strong"}`}</code></pre>
+  <div className="syntax-example-render">
+
+Focus on the :hw-mark[one key term]{kind="circle" tone="accent" strength="strong"} before moving on.
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-mark</code>
+    <span>strike · normal</span>
+  </header>
+  <pre><code>{`:hw-mark[old assumption]{kind="strike" tone="muted" strength="normal"}`}</code></pre>
+  <div className="syntax-example-render">
+
+The :hw-mark[old assumption]{kind="strike" tone="muted" strength="normal"} no longer holds after the change.
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-mark</code>
+    <span>box · strong</span>
+  </header>
+  <pre><code>{`:hw-mark[stable contract]{kind="box" tone="info" strength="strong"}`}</code></pre>
+  <div className="syntax-example-render">
+
+Keep the :hw-mark[stable contract]{kind="box" tone="info" strength="strong"} visible at every step.
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-mark</code>
+    <span>wavy · strong</span>
+  </header>
+  <pre><code>{`:hw-mark[still under review?]{kind="wavy" tone="warning" strength="strong"}`}</code></pre>
+  <div className="syntax-example-render">
+
+Treat :hw-mark[still under review?]{kind="wavy" tone="warning" strength="strong"} as unsettled until the check lands.
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-mark</code>
+    <span>bracket · normal</span>
+  </header>
+  <pre><code>{`:hw-mark[stable ID]{kind="bracket" tone="info" strength="normal"}`}</code></pre>
+  <div className="syntax-example-render">
+
+Keep the :hw-mark[stable ID]{kind="bracket" tone="info" strength="normal"} short so side brackets stay readable.
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
     <code>hw-link</code>
     <span>external · blank</span>
   </header>
@@ -39,6 +104,33 @@ Ship only after the :hw-mark[blocking dependency]{kind="underline" tone="danger"
   </div>
 </article>
 
+
+<article className="syntax-example">
+  <header>
+    <code>hw-annotate</code>
+    <span>block-end · neat highlight</span>
+  </header>
+  <pre><code>{`:hw-annotate[in real time]{label="no refresh needed" placement="block-end" tone="warning" mark="highlight" arrow="curved"}`}</code></pre>
+  <div className="syntax-example-render">
+
+The dashboard updates :hw-annotate[in real time]{label="no refresh needed" placement="block-end" tone="warning" mark="highlight" arrow="curved"}.
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-annotate</code>
+    <span>eight placements</span>
+  </header>
+  <pre><code>{`:hw-annotate[target]{label="block-start" placement="block-start" tone="info"}
+:hw-annotate[target]{label="inline-end" placement="inline-end" tone="accent" mark="none"}`}</code></pre>
+  <div className="syntax-example-render gesture-annotation-grid">
+
+Leave room around :hw-annotate[target]{label="from above" placement="block-start" tone="info" mark="highlight" arrow="curved"} and :hw-annotate[target]{label="from end" placement="inline-end" tone="accent" mark="underline" arrow="straight" distance="tight"}.
+
+  </div>
+</article>
 <article className="syntax-example">
   <header>
     <code>hw-annotate</code>
@@ -48,6 +140,32 @@ Ship only after the :hw-mark[blocking dependency]{kind="underline" tone="danger"
   <div className="syntax-example-render">
 
 The default is :hw-annotate[timeout]{label="15 minutes" placement="inline-end" tone="warning" mark="underline" arrow="straight" distance="tight"}.
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-annotate</code>
+    <span>wavy · verify</span>
+  </header>
+  <pre><code>{`:hw-annotate[timeout]{label="verify" placement="block-start" tone="warning" mark="wavy" arrow="curved"}`}</code></pre>
+  <div className="syntax-example-render">
+
+:hw-annotate[timeout]{label="verify" placement="block-start" tone="warning" mark="wavy" arrow="curved"}
+
+  </div>
+</article>
+
+<article className="syntax-example">
+  <header>
+    <code>hw-annotate</code>
+    <span>bracket · stable ID</span>
+  </header>
+  <pre><code>{`:hw-annotate[AUTH-004]{label="stable ID" placement="block-start-inline-end" tone="info" mark="bracket" arrow="curved"}`}</code></pre>
+  <div className="syntax-example-render">
+
+:hw-annotate[AUTH-004]{label="stable ID" placement="block-start-inline-end" tone="info" mark="bracket" arrow="curved"}
 
   </div>
 </article>

@@ -55,4 +55,27 @@ describe('@madinah/mdx-handwritten-theme language and recipe contracts', () => {
     expect(styles).toContain('[data-hw-verdict]')
     expect(styles).toContain('li[data-hw-gesture~="group"]')
   })
+
+  it('publishes shared Mark treatment styles for mark and annotate targets', () => {
+    for (const kind of ['wavy', 'bracket'] as const) {
+      expect(styles).toContain(`[data-hw="mark"][data-hw-kind="${kind}"]`)
+      expect(styles).toContain(`[data-hw="annotate"][data-hw-mark="${kind}"]`)
+    }
+
+    expect(styles).toContain('text-decoration-style: wavy')
+    expect(styles).toContain(String.raw`content: "\3014"`)
+    expect(styles).toContain(String.raw`content: "\3015"`)
+
+    for (const kind of ['circle', 'strike', 'box'] as const) {
+      expect(styles).toContain(`[data-hw="annotate"][data-hw-mark="${kind}"]`)
+    }
+  })
+
+  it('paints neat-style highlighter bleed and placement-aware connectors', () => {
+    expect(styles).toContain('--hw-mark-fill:')
+    expect(styles).toContain('-0.22em 0 0 0 var(--hw-mark-fill)')
+    expect(styles).toContain('data-hw-connector-placement^="inline-"')
+    expect(styles).toContain('max-inline-size: min(9.5rem, 42vw)')
+  })
+
 })

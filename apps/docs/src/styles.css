@@ -883,6 +883,19 @@ button {
   border-radius: 8px;
 }
 
+/* Outside labels and hand-drawn connectors need room in the reference table. */
+.syntax-render-annotate {
+  min-height: 7.5rem;
+  overflow: visible;
+  padding-block: 2.8rem;
+  padding-inline: 1.1rem;
+}
+
+.syntax-reference-table tbody td:last-child:has(.syntax-render-annotate) {
+  overflow: visible;
+}
+
+
 .syntax-scroll-hint {
   display: none;
   margin: 12px 2px 0;
@@ -1028,6 +1041,19 @@ button {
   border: 1px solid var(--site-line);
   border-radius: 8px;
 }
+
+/* Leave room for outside labels and neat-style connectors. */
+.syntax-example-render:has([data-hw="annotate"]) {
+  overflow: visible;
+  padding-block: 3.2rem;
+  padding-inline: 1.4rem;
+}
+
+.syntax-example-render .gesture-annotation-grid {
+  display: grid;
+  gap: 2.8rem 1.2rem;
+}
+
 
 .setup-section {
   width: min(1180px, calc(100% - 40px));

@@ -139,7 +139,112 @@ Ship only after the :hw-mark[blocking dependency]{kind="underline" tone="danger"
         </div>
       </td>
     </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-mark</code>
+          <strong>Circle a target</strong>
+          <dl>
+            <div><dt>kind</dt><dd>circle</dd></div>
+            <div><dt>tone</dt><dd>accent</dd></div>
+            <div><dt>strength</dt><dd>strong</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-mark[one key term]{kind="circle" tone="accent" strength="strong"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
 
+Focus on the :hw-mark[one key term]{kind="circle" tone="accent" strength="strong"} before moving on.
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-mark</code>
+          <strong>Cross it out</strong>
+          <dl>
+            <div><dt>kind</dt><dd>strike</dd></div>
+            <div><dt>tone</dt><dd>muted</dd></div>
+            <div><dt>strength</dt><dd>normal</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-mark[old assumption]{kind="strike" tone="muted" strength="normal"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+The :hw-mark[old assumption]{kind="strike" tone="muted" strength="normal"} no longer holds after the change.
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-mark</code>
+          <strong>Box a phrase</strong>
+          <dl>
+            <div><dt>kind</dt><dd>box</dd></div>
+            <div><dt>tone</dt><dd>info</dd></div>
+            <div><dt>strength</dt><dd>strong</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-mark[stable contract]{kind="box" tone="info" strength="strong"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+Keep the :hw-mark[stable contract]{kind="box" tone="info" strength="strong"} visible at every step.
+
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-mark</code>
+          <strong>Mark doubt</strong>
+          <dl>
+            <div><dt>kind</dt><dd>wavy</dd></div>
+            <div><dt>tone</dt><dd>warning</dd></div>
+            <div><dt>strength</dt><dd>strong</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-mark[still under review?]{kind="wavy" tone="warning" strength="strong"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+Treat :hw-mark[still under review?]{kind="wavy" tone="warning" strength="strong"} as unsettled until the check lands.
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-mark</code>
+          <strong>Bracket a short phrase</strong>
+          <dl>
+            <div><dt>kind</dt><dd>bracket</dd></div>
+            <div><dt>tone</dt><dd>info</dd></div>
+            <div><dt>strength</dt><dd>normal</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-mark[stable ID]{kind="bracket" tone="info" strength="normal"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+Keep the :hw-mark[stable ID]{kind="bracket" tone="info" strength="normal"} short so side brackets stay readable.
+
+        </div>
+      </td>
+    </tr>
     <tr>
       <th scope="row">
         <div className="syntax-config">
@@ -155,7 +260,7 @@ Ship only after the :hw-mark[blocking dependency]{kind="underline" tone="danger"
       </th>
       <td><pre><code>{`:hw-annotate[AUTH-004]{label="stable ID" placement="block-start" tone="info" mark="highlight" arrow="curved"}`}</code></pre></td>
       <td>
-        <div className="syntax-render hw-scope">
+        <div className="syntax-render hw-scope syntax-render-annotate">
 
 :hw-annotate[AUTH-004]{label="stable ID" placement="block-start" tone="info" mark="highlight" arrow="curved"}
 
@@ -177,14 +282,169 @@ Ship only after the :hw-mark[blocking dependency]{kind="underline" tone="danger"
       </th>
       <td><pre><code>{`:hw-annotate[timeout]{label="15 minutes" placement="inline-end" tone="warning" mark="underline" arrow="straight" distance="tight"}`}</code></pre></td>
       <td>
-        <div className="syntax-render hw-scope">
+        <div className="syntax-render hw-scope syntax-render-annotate">
 
 The default is :hw-annotate[timeout]{label="15 minutes" placement="inline-end" tone="warning" mark="underline" arrow="straight" distance="tight"}.
 
         </div>
       </td>
     </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-annotate</code>
+          <strong>Wavy target mark</strong>
+          <dl>
+            <div><dt>label</dt><dd>verify</dd></div>
+            <div><dt>placement</dt><dd>block-start</dd></div>
+            <div><dt>mark</dt><dd>wavy</dd></div>
+            <div><dt>arrow</dt><dd>curved</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-annotate[timeout]{label="verify" placement="block-start" tone="warning" mark="wavy" arrow="curved"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope syntax-render-annotate">
 
+:hw-annotate[timeout]{label="verify" placement="block-start" tone="warning" mark="wavy" arrow="curved"}
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-annotate</code>
+          <strong>Bracket target mark</strong>
+          <dl>
+            <div><dt>label</dt><dd>stable ID</dd></div>
+            <div><dt>placement</dt><dd>block-start-inline-end</dd></div>
+            <div><dt>mark</dt><dd>bracket</dd></div>
+            <div><dt>arrow</dt><dd>curved</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-annotate[AUTH-004]{label="stable ID" placement="block-start-inline-end" tone="info" mark="bracket" arrow="curved"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope syntax-render-annotate">
+
+:hw-annotate[AUTH-004]{label="stable ID" placement="block-start-inline-end" tone="info" mark="bracket" arrow="curved"}
+
+        </div>
+      </td>
+    </tr>
+
+
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-annotate</code>
+          <strong>Label below the target</strong>
+          <dl>
+            <div><dt>label</dt><dd>no refresh needed</dd></div>
+            <div><dt>placement</dt><dd>block-end</dd></div>
+            <div><dt>mark</dt><dd>highlight</dd></div>
+            <div><dt>arrow</dt><dd>curved</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-annotate[in real time]{label="no refresh needed" placement="block-end" tone="warning" mark="highlight" arrow="curved"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope syntax-render-annotate">
+
+The dashboard updates :hw-annotate[in real time]{label="no refresh needed" placement="block-end" tone="warning" mark="highlight" arrow="curved"}.
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-annotate</code>
+          <strong>No target mark</strong>
+          <dl>
+            <div><dt>label</dt><dd>keeps its own fill</dd></div>
+            <div><dt>placement</dt><dd>block-start</dd></div>
+            <div><dt>mark</dt><dd>none</dd></div>
+            <div><dt>arrow</dt><dd>curved</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-annotate[stable]{label="keeps its own fill" placement="block-start" tone="accent" mark="none" arrow="curved"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope syntax-render-annotate">
+
+Ship only after :hw-annotate[stable]{label="keeps its own fill" placement="block-start" tone="accent" mark="none" arrow="curved"} is green.
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-annotate</code>
+          <strong>Circle the target</strong>
+          <dl>
+            <div><dt>label</dt><dd>key term</dd></div>
+            <div><dt>placement</dt><dd>block-start-inline-start</dd></div>
+            <div><dt>mark</dt><dd>circle</dd></div>
+            <div><dt>arrow</dt><dd>curved</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-annotate[export path]{label="key term" placement="block-start-inline-start" tone="accent" mark="circle" arrow="curved"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope syntax-render-annotate">
+
+Focus on the :hw-annotate[export path]{label="key term" placement="block-start-inline-start" tone="accent" mark="circle" arrow="curved"} before moving on.
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-annotate</code>
+          <strong>Box the target</strong>
+          <dl>
+            <div><dt>label</dt><dd>stable surface</dd></div>
+            <div><dt>placement</dt><dd>inline-start</dd></div>
+            <div><dt>mark</dt><dd>box</dd></div>
+            <div><dt>arrow</dt><dd>straight</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-annotate[Scene plan]{label="stable surface" placement="inline-start" tone="info" mark="box" arrow="straight" distance="tight"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope syntax-render-annotate">
+
+Treat :hw-annotate[Scene plan]{label="stable surface" placement="inline-start" tone="info" mark="box" arrow="straight" distance="tight"} as the review contract.
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-annotate</code>
+          <strong>Strike a stale claim</strong>
+          <dl>
+            <div><dt>label</dt><dd>retired</dd></div>
+            <div><dt>placement</dt><dd>block-end-inline-end</dd></div>
+            <div><dt>mark</dt><dd>strike</dd></div>
+            <div><dt>arrow</dt><dd>curved</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-annotate[old cache path]{label="retired" placement="block-end-inline-end" tone="muted" mark="strike" arrow="curved"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope syntax-render-annotate">
+
+Drop the :hw-annotate[old cache path]{label="retired" placement="block-end-inline-end" tone="muted" mark="strike" arrow="curved"} after the cutover.
+
+        </div>
+      </td>
+    </tr>
     <tr>
       <th scope="row">
         <div className="syntax-config">

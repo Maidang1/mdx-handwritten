@@ -388,6 +388,57 @@ describe('component output', () => {
     expect(output).toMatch(/_jsx\(HandNote, \{[\s\S]*children: _jsx\(_components\.p/u)
   })
 
+  it('accepts every supported hw-mark kind and rejects an unknown one', async () => {
+    for (const kind of [
+      'underline',
+      'highlight',
+      'circle',
+      'strike',
+      'box',
+      'wavy',
+      'bracket'
+    ]) {
+      const file = await compileMdx(`:hw-mark[x]{kind="${kind}"}`)
+      const output = String(file)
+      expect(output).toContain('HandMark')
+      expect(output).toContain(`kind: "${kind}"`)
+    }
+
+    const failure = await compileFailure(':hw-mark[x]{kind="squiggle"}')
+    expect(failure).toMatchObject({
+      source: '@madinah/mdx-handwritten-remark',
+      ruleId: 'attribute-invalid'
+    })
+  })
+
+  it('accepts every shared Mark treatment on hw-annotate plus none', async () => {
+    for (const mark of [
+      'underline',
+      'highlight',
+      'circle',
+      'strike',
+      'box',
+      'wavy',
+      'bracket',
+      'none'
+    ]) {
+      const file = await compileMdx(
+        `:hw-annotate[x]{label="note" mark="${mark}"}`
+      )
+      const output = String(file)
+      expect(output).toContain('HandAnnotate')
+      expect(output).toContain(`mark: "${mark}"`)
+    }
+
+    const failure = await compileFailure(
+      ':hw-annotate[x]{label="note" mark="squiggle"}'
+    )
+    expect(failure).toMatchObject({
+      source: '@madinah/mdx-handwritten-remark',
+      ruleId: 'attribute-invalid'
+    })
+  })
+
   it('auto-imports only components used by the document', async () => {
     const file = await compileMdx(':hw-text[hello]', {
       imports: {mode: 'auto', source: '@madinah/mdx-handwritten-react'}
@@ -469,6 +520,17 @@ describe('element output', () => {
     expect(output).toContain('"data-hw-body"')
     expect(output).toContain('_components.figcaption')
     expect(output).toContain('_components.aside')
+  })
+
+  it('preserves strike meaning without relying on CSS', async () => {
+    const output = String(
+      await compileMdx(':hw-mark[old assumption]{kind="strike"}', {
+        output: 'element'
+      })
+    )
+
+    expect(output).toContain('_components.s')
+    expect(output).not.toContain('_components.em')
   })
 
   it('puts a back arrow before its link label', async () => {

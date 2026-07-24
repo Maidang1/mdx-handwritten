@@ -263,8 +263,17 @@ over 64 KiB.
 
 :hw-mark[Spec updated]{kind="underline" tone="success" strength="subtle"}
 
+:hw-mark[still under review?]{kind="wavy" tone="warning"}
+
+:hw-mark[stable ID]{kind="bracket" tone="info"}
+
 :hw-annotate[`CLI-042`]{label="stable ID" placement="block-start" tone="info" arrow="curved"}
 ```
+
+`hw-mark` accepts `underline`, `highlight`, `circle`, `strike`, `box`, `wavy`, and `bracket` as
+`kind` values. `hw-annotate` uses the same Mark treatment set on `mark`, plus `none`. Prefer short targets for `circle` and `bracket`; multi-line targets may paint imperfectly and stay readable without CSS.
+
+`hw-annotate` draws placement-aware hand-drawn connectors (eight logical placements) with a soft highlighter mark on the target—visually in the same family as neat-annotations, but expressed as the existing annotation gesture rather than a separate CSS class API. Labels wrap within a bounded max width; leave margin around annotated lines so arrows and notes can sit outside the line box.
 
 ### One-line note
 
