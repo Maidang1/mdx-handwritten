@@ -249,29 +249,6 @@ Keep the :hw-mark[stable ID]{kind="bracket" tone="info" strength="normal"} short
       <th scope="row">
         <div className="syntax-config">
           <code>hw-annotate</code>
-          <strong>Wavy target mark</strong>
-          <dl>
-            <div><dt>label</dt><dd>verify</dd></div>
-            <div><dt>placement</dt><dd>block-start</dd></div>
-            <div><dt>mark</dt><dd>wavy</dd></div>
-            <div><dt>arrow</dt><dd>curved</dd></div>
-          </dl>
-        </div>
-      </th>
-      <td><pre><code>{`:hw-annotate[timeout]{label="verify" placement="block-start" tone="warning" mark="wavy" arrow="curved"}`}</code></pre></td>
-      <td>
-        <div className="syntax-render hw-scope">
-
-:hw-annotate[timeout]{label="verify" placement="block-start" tone="warning" mark="wavy" arrow="curved"}
-
-        </div>
-      </td>
-    </tr>
-
-    <tr>
-      <th scope="row">
-        <div className="syntax-config">
-          <code>hw-annotate</code>
           <strong>Explain one target</strong>
           <dl>
             <div><dt>label</dt><dd>stable ID</dd></div>
@@ -308,6 +285,50 @@ Keep the :hw-mark[stable ID]{kind="bracket" tone="info" strength="normal"} short
         <div className="syntax-render hw-scope">
 
 The default is :hw-annotate[timeout]{label="15 minutes" placement="inline-end" tone="warning" mark="underline" arrow="straight" distance="tight"}.
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-annotate</code>
+          <strong>Wavy target mark</strong>
+          <dl>
+            <div><dt>label</dt><dd>verify</dd></div>
+            <div><dt>placement</dt><dd>block-start</dd></div>
+            <div><dt>mark</dt><dd>wavy</dd></div>
+            <div><dt>arrow</dt><dd>curved</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-annotate[timeout]{label="verify" placement="block-start" tone="warning" mark="wavy" arrow="curved"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:hw-annotate[timeout]{label="verify" placement="block-start" tone="warning" mark="wavy" arrow="curved"}
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-annotate</code>
+          <strong>Bracket target mark</strong>
+          <dl>
+            <div><dt>label</dt><dd>stable ID</dd></div>
+            <div><dt>placement</dt><dd>block-start-inline-end</dd></div>
+            <div><dt>mark</dt><dd>bracket</dd></div>
+            <div><dt>arrow</dt><dd>curved</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-annotate[AUTH-004]{label="stable ID" placement="block-start-inline-end" tone="info" mark="bracket" arrow="curved"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:hw-annotate[AUTH-004]{label="stable ID" placement="block-start-inline-end" tone="info" mark="bracket" arrow="curved"}
 
         </div>
       </td>

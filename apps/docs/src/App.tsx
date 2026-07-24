@@ -214,20 +214,6 @@ export function App() {
             </p>
           </div>
 
-          <div className="syntax-examples-intro">
-            <div>
-              <p className="overline">More patterns</p>
-              <h3 id="examples-title">Live syntax beyond the table defaults.</h3>
-            </div>
-            <p>
-              Alternate tones, placements, icons, and locales—each card is
-              compiled from the source shown above its output.
-            </p>
-          </div>
-          <div className="syntax-examples-shell" aria-labelledby="examples-title">
-            <Examples components={mdxHandwrittenComponents} />
-          </div>
-
           <div
             aria-labelledby="reference-title"
             className="syntax-table-scroll"
@@ -237,6 +223,20 @@ export function App() {
             <Reference components={mdxHandwrittenComponents} />
           </div>
           <p className="syntax-scroll-hint">Scroll horizontally to compare every column.</p>
+
+          <div className="syntax-examples-intro">
+            <div>
+              <p className="overline">More patterns</p>
+              <h3 id="examples-title">Live syntax beyond the table defaults.</h3>
+            </div>
+            <p>
+              Alternate tones, placements, icons, and Mark treatments—each card is
+              compiled from the source shown above its output.
+            </p>
+          </div>
+          <div className="syntax-examples-shell" aria-labelledby="examples-title">
+            <Examples components={mdxHandwrittenComponents} />
+          </div>
         </section>
 
         <section className="setup-section" id="setup" aria-labelledby="setup-title">
