@@ -1,6 +1,6 @@
 {
   "name": "@madinah/mdx-handwritten-scene",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Deterministic semantic Scene plans for MDX Handwritten",
   "type": "module",
   "sideEffects": false,
