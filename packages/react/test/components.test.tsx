@@ -113,6 +113,12 @@ describe('@madinah/mdx-handwritten-react server rendering', () => {
         </HandMark>{' '}
         <HandMark kind="highlight" tone="success">
           highlighted
+        </HandMark>{' '}
+        <HandMark kind="wavy" tone="warning" strength="strong">
+          wavy
+        </HandMark>{' '}
+        <HandMark kind="bracket" tone="info">
+          bracketed
         </HandMark>
       </p>,
     )
@@ -124,10 +130,36 @@ describe('@madinah/mdx-handwritten-react server rendering', () => {
     expect(html).toContain('<em data-hw="mark" data-hw-kind="box"')
     expect(html).toContain('<em data-hw="mark" data-hw-kind="underline"')
     expect(html).toContain('<mark data-hw="mark" data-hw-kind="highlight"')
+    expect(html).toContain('<em data-hw="mark" data-hw-kind="wavy"')
+    expect(html).toContain('<em data-hw="mark" data-hw-kind="bracket"')
     expect(html).not.toContain('<em data-hw="mark" data-hw-kind="strike"')
     expect(html).not.toContain('<mark data-hw="mark" data-hw-kind="circle"')
     expect(html).not.toContain('<mark data-hw="mark" data-hw-kind="strike"')
     expect(html).not.toContain('<mark data-hw="mark" data-hw-kind="box"')
+    expect(html).not.toContain('<mark data-hw="mark" data-hw-kind="wavy"')
+    expect(html).not.toContain('<mark data-hw="mark" data-hw-kind="bracket"')
+  })
+
+  it('passes every shared Mark treatment through HandAnnotate', () => {
+    for (const mark of [
+      'underline',
+      'highlight',
+      'circle',
+      'strike',
+      'box',
+      'wavy',
+      'bracket',
+      'none',
+    ] as const) {
+      const html = renderToStaticMarkup(
+        <HandAnnotate label="note" mark={mark}>
+          target
+        </HandAnnotate>,
+      )
+      expect(html).toContain(`data-hw-mark="${mark}"`)
+      expect(html).toContain('<span data-hw-target="">target</span>')
+      expect(html).toContain('note')
+    }
   })
 
   it('keeps link glyphs bounded when CSS is unavailable', () => {

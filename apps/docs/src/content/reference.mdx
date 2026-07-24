@@ -206,6 +206,71 @@ Keep the :hw-mark[stable contract]{kind="box" tone="info" strength="strong"} vis
     <tr>
       <th scope="row">
         <div className="syntax-config">
+          <code>hw-mark</code>
+          <strong>Mark doubt</strong>
+          <dl>
+            <div><dt>kind</dt><dd>wavy</dd></div>
+            <div><dt>tone</dt><dd>warning</dd></div>
+            <div><dt>strength</dt><dd>strong</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-mark[still under review?]{kind="wavy" tone="warning" strength="strong"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+Treat :hw-mark[still under review?]{kind="wavy" tone="warning" strength="strong"} as unsettled until the check lands.
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-mark</code>
+          <strong>Bracket a short phrase</strong>
+          <dl>
+            <div><dt>kind</dt><dd>bracket</dd></div>
+            <div><dt>tone</dt><dd>info</dd></div>
+            <div><dt>strength</dt><dd>normal</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-mark[stable ID]{kind="bracket" tone="info" strength="normal"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+Keep the :hw-mark[stable ID]{kind="bracket" tone="info" strength="normal"} short so side brackets stay readable.
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
+          <code>hw-annotate</code>
+          <strong>Wavy target mark</strong>
+          <dl>
+            <div><dt>label</dt><dd>verify</dd></div>
+            <div><dt>placement</dt><dd>block-start</dd></div>
+            <div><dt>mark</dt><dd>wavy</dd></div>
+            <div><dt>arrow</dt><dd>curved</dd></div>
+          </dl>
+        </div>
+      </th>
+      <td><pre><code>{`:hw-annotate[timeout]{label="verify" placement="block-start" tone="warning" mark="wavy" arrow="curved"}`}</code></pre></td>
+      <td>
+        <div className="syntax-render hw-scope">
+
+:hw-annotate[timeout]{label="verify" placement="block-start" tone="warning" mark="wavy" arrow="curved"}
+
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <th scope="row">
+        <div className="syntax-config">
           <code>hw-annotate</code>
           <strong>Explain one target</strong>
           <dl>

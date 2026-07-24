@@ -263,11 +263,15 @@ over 64 KiB.
 
 :hw-mark[Spec updated]{kind="underline" tone="success" strength="subtle"}
 
+:hw-mark[still under review?]{kind="wavy" tone="warning"}
+
+:hw-mark[stable ID]{kind="bracket" tone="info"}
+
 :hw-annotate[`CLI-042`]{label="stable ID" placement="block-start" tone="info" arrow="curved"}
 ```
 
-`hw-mark` accepts `underline`, `highlight`, `circle`, `strike`, and `box` as
-`kind` values.
+`hw-mark` accepts `underline`, `highlight`, `circle`, `strike`, `box`, `wavy`, and `bracket` as
+`kind` values. `hw-annotate` uses the same Mark treatment set on `mark`, plus `none`. Prefer short targets for `circle` and `bracket`; multi-line targets may paint imperfectly and stay readable without CSS.
 
 ### One-line note
 

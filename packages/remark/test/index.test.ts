@@ -389,7 +389,15 @@ describe('component output', () => {
   })
 
   it('accepts every supported hw-mark kind and rejects an unknown one', async () => {
-    for (const kind of ['underline', 'highlight', 'circle', 'strike', 'box']) {
+    for (const kind of [
+      'underline',
+      'highlight',
+      'circle',
+      'strike',
+      'box',
+      'wavy',
+      'bracket'
+    ]) {
       const file = await compileMdx(`:hw-mark[x]{kind="${kind}"}`)
       const output = String(file)
       expect(output).toContain('HandMark')
@@ -397,6 +405,34 @@ describe('component output', () => {
     }
 
     const failure = await compileFailure(':hw-mark[x]{kind="squiggle"}')
+    expect(failure).toMatchObject({
+      source: '@madinah/mdx-handwritten-remark',
+      ruleId: 'attribute-invalid'
+    })
+  })
+
+  it('accepts every shared Mark treatment on hw-annotate plus none', async () => {
+    for (const mark of [
+      'underline',
+      'highlight',
+      'circle',
+      'strike',
+      'box',
+      'wavy',
+      'bracket',
+      'none'
+    ]) {
+      const file = await compileMdx(
+        `:hw-annotate[x]{label="note" mark="${mark}"}`
+      )
+      const output = String(file)
+      expect(output).toContain('HandAnnotate')
+      expect(output).toContain(`mark: "${mark}"`)
+    }
+
+    const failure = await compileFailure(
+      ':hw-annotate[x]{label="note" mark="squiggle"}'
+    )
     expect(failure).toMatchObject({
       source: '@madinah/mdx-handwritten-remark',
       ruleId: 'attribute-invalid'

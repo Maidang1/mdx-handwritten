@@ -80,6 +80,10 @@ _Avoid_: Layout override, manual positioning
 The appearance used to render an annotation gesture without changing what that gesture communicates.
 _Avoid_: Annotation gesture
 
+**Mark treatment**:
+A closed Visual style applied to an inline run of existing source text by a mark gesture or an annotate target. It never introduces its own reader-facing words; extra wording belongs on annotate labels or notes.
+_Avoid_: Decoration type, highlight style, emphasis effect
+
 **Canonical content fixture**:
 A stable author input and expected reader meaning used to prove an Annotation gesture or Annotation scene across renderers, locales, and fallback states. Its identity comes from semantic content, not screenshot pixels.
 _Avoid_: Golden screenshot, demo mockup

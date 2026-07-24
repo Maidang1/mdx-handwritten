@@ -296,6 +296,37 @@
     padding-inline: 0.14em;
   }
 
+  :where([data-hw="mark"][data-hw-kind="wavy"]) {
+    text-decoration-color: var(--hw-color, currentColor);
+    text-decoration-line: underline;
+    text-decoration-skip-ink: none;
+    text-decoration-style: wavy;
+    text-decoration-thickness: var(--hw-mark-thickness);
+    text-underline-offset: var(--hw-line-offset, 0.14em);
+  }
+
+  :where([data-hw="mark"][data-hw-kind="bracket"]) {
+    padding-inline: 0.22em;
+  }
+
+  :where([data-hw="mark"][data-hw-kind="bracket"])::before,
+  :where([data-hw="mark"][data-hw-kind="bracket"])::after {
+    color: var(--hw-color, currentColor);
+    font-style: normal;
+    font-weight: var(--hw-weight-medium);
+    line-height: 1;
+  }
+
+  :where([data-hw="mark"][data-hw-kind="bracket"])::before {
+    content: "\3014";
+    margin-inline-end: 0.05em;
+  }
+
+  :where([data-hw="mark"][data-hw-kind="bracket"])::after {
+    content: "\3015";
+    margin-inline-start: 0.05em;
+  }
+
   :where([data-hw="note"]) {
     align-items: flex-start;
     display: flex;
@@ -380,6 +411,52 @@
     text-decoration: underline 0.1em var(--hw-color, currentColor);
     text-decoration-skip-ink: none;
     text-underline-offset: 0.12em;
+  }
+
+  :where([data-hw="annotate"][data-hw-mark="circle"] > [data-hw-target]) {
+    border-radius: 0.6em;
+    outline: 0.1em solid var(--hw-color, currentColor);
+    outline-offset: 0.05em;
+    padding-inline: 0.12em;
+  }
+
+  :where([data-hw="annotate"][data-hw-mark="strike"] > [data-hw-target]) {
+    text-decoration: line-through 0.1em var(--hw-color, currentColor);
+    text-decoration-skip-ink: none;
+  }
+
+  :where([data-hw="annotate"][data-hw-mark="box"] > [data-hw-target]) {
+    outline: 0.1em solid var(--hw-color, currentColor);
+    outline-offset: 0.05em;
+    padding-inline: 0.12em;
+  }
+
+  :where([data-hw="annotate"][data-hw-mark="wavy"] > [data-hw-target]) {
+    text-decoration: underline wavy 0.1em var(--hw-color, currentColor);
+    text-decoration-skip-ink: none;
+    text-underline-offset: 0.12em;
+  }
+
+  :where([data-hw="annotate"][data-hw-mark="bracket"] > [data-hw-target]) {
+    padding-inline: 0.2em;
+  }
+
+  :where([data-hw="annotate"][data-hw-mark="bracket"] > [data-hw-target])::before,
+  :where([data-hw="annotate"][data-hw-mark="bracket"] > [data-hw-target])::after {
+    color: var(--hw-color, currentColor);
+    font-style: normal;
+    font-weight: var(--hw-weight-medium);
+    line-height: 1;
+  }
+
+  :where([data-hw="annotate"][data-hw-mark="bracket"] > [data-hw-target])::before {
+    content: "\3014";
+    margin-inline-end: 0.05em;
+  }
+
+  :where([data-hw="annotate"][data-hw-mark="bracket"] > [data-hw-target])::after {
+    content: "\3015";
+    margin-inline-start: 0.05em;
   }
 
   :where([data-hw="annotate"] > [data-hw-label]) {

@@ -68,6 +68,7 @@ export type {
   HandwrittenSize,
   HandwrittenTone,
   HandwrittenVariantProps,
+  HandwrittenMarkTreatment,
   HandwrittenWeight,
 } from './types.js'
 export type { HandSceneProps } from './scene.js'

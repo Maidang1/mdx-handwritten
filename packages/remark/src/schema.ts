@@ -44,6 +44,17 @@ const rotations = ['-3', '-2', '-1', '0', '1', '2', '3'] as const
 const aligns = ['start', 'center', 'end'] as const
 const distances = ['tight', 'normal', 'loose'] as const
 const shifts = rotations
+/** Closed Mark treatment vocabulary shared by hw-mark.kind and hw-annotate.mark. */
+export const markTreatments = [
+  'underline',
+  'highlight',
+  'circle',
+  'strike',
+  'box',
+  'wavy',
+  'bracket'
+] as const
+export type MarkTreatment = (typeof markTreatments)[number]
 
 export const directiveDefinitions: Readonly<
   Record<HandwrittenDirectiveName, DirectiveDefinition>
@@ -83,7 +94,7 @@ export const directiveDefinitions: Readonly<
     requiresContent: true,
     attributes: {
       kind: {
-        values: ['underline', 'highlight', 'circle', 'strike', 'box'],
+        values: markTreatments,
         default: 'underline'
       },
       tone: {values: tones, default: 'inherit'},
@@ -113,7 +124,7 @@ export const directiveDefinitions: Readonly<
         default: 'block-start'
       },
       tone: {values: tones, default: 'muted'},
-      mark: {values: ['highlight', 'underline', 'none'], default: 'highlight'},
+      mark: {values: [...markTreatments, 'none'], default: 'highlight'},
       arrow: {values: ['curved', 'straight', 'none'], default: 'curved'},
       distance: {values: distances, default: 'normal'},
       'shift-inline': {values: shifts, default: '0'},
