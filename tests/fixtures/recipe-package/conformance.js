@@ -278,7 +278,7 @@ const compilerLifecycles = Object.freeze([
 
 export const recipeConformanceCases = Object.freeze({
   packageName,
-  peerDependency: Object.freeze({name: '@madinah/mdx-handwritten-scene', range: '^0.1.0'}),
+  peerDependency: Object.freeze({name: '@madinah/mdx-handwritten-scene', range: '^0.2.0'}),
   expectedFiles: Object.freeze(['conformance.js', 'index.js', 'package.json']),
   configurationFailures,
   plans: Object.freeze([

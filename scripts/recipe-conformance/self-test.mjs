@@ -18,6 +18,11 @@ import {parseRecipeConformanceArguments} from './cli.mjs'
 const scriptDirectory = dirname(fileURLToPath(import.meta.url))
 const projectRoot = resolve(scriptDirectory, '../..')
 const cliPath = resolve(scriptDirectory, 'cli.mjs')
+const scenePackageVersion = JSON.parse(
+  readFileSync(resolve(projectRoot, 'packages/scene/package.json'), 'utf8'),
+).version
+const [sceneMajor, sceneMinor] = scenePackageVersion.split('.')
+const monorepoScenePeerRange = `^${sceneMajor}.${sceneMinor}.0`
 
 assert.deepStrictEqual(
   parseRecipeConformanceArguments([
@@ -414,7 +419,7 @@ try {
     })
   }
 
-  const result = await runConsumerFixture('^0.1.0', [
+  const result = await runConsumerFixture(monorepoScenePeerRange, [
     {name: 'dependencyProbe', expected: 'node'},
     {name: 'recipeEntryCondition', expected: 'node'},
   ])
@@ -432,7 +437,7 @@ try {
   ]
   await assert.rejects(
     () => runConsumerFixture(
-      '^0.1.0',
+      monorepoScenePeerRange,
       [],
       {...recipeConformanceCases, expectedFiles, failures: forgedFailures},
     ),
@@ -449,7 +454,7 @@ try {
   )
   await assert.rejects(
     () => runConsumerFixture(
-      '^0.1.0',
+      monorepoScenePeerRange,
       [],
       alternateDefinitionCases,
       './broken-entry.mjs',
@@ -480,7 +485,7 @@ try {
       type: 'commonjs',
       files: ['index.cjs', 'conformance.mjs'],
       exports: {'.': './index.cjs', './conformance': './conformance.mjs'},
-      peerDependencies: {'@madinah/mdx-handwritten-scene': '^0.1.0'},
+      peerDependencies: {'@madinah/mdx-handwritten-scene': monorepoScenePeerRange},
     }),
   )
   writeFileSync(resolve(commonJsFixtureRoot, 'index.cjs'), 'module.exports = {}\n')

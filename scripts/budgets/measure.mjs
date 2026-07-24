@@ -5,6 +5,7 @@ import {tmpdir} from 'node:os'
 import {basename, dirname, isAbsolute, relative, resolve} from 'node:path'
 import {fileURLToPath, pathToFileURL} from 'node:url'
 import {build, version as esbuildVersion} from 'esbuild'
+import semver from 'semver'
 import {runRecipePackageConformance} from '../recipe-conformance/index.mjs'
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url))
@@ -252,6 +253,9 @@ async function measurePackedRecipeFixture() {
     packageDirectory: resolve(projectRoot, 'tests/fixtures/recipe-package'),
     scenePackageDirectory: resolve(projectRoot, 'packages/scene'),
   })
+  const sceneVersion = JSON.parse(
+    readFileSync(resolve(projectRoot, 'packages/scene/package.json'), 'utf8'),
+  ).version
   return {
     conformsThroughCompiler:
       result.checks.plans === 2 &&
@@ -266,7 +270,7 @@ async function measurePackedRecipeFixture() {
       result.packageName === '@mdx-handwritten-fixtures/recipe-package',
     peerDependency:
       result.peerDependency.name === '@madinah/mdx-handwritten-scene' &&
-      result.peerDependency.range === '^0.1.0',
+      semver.satisfies(sceneVersion, result.peerDependency.range),
     size: result.size,
   }
 }
