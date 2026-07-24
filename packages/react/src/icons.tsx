@@ -44,21 +44,13 @@ const commonProps = {
  */
 const connectorPaths = {
   curved: {
-    // Label above; arrow points south into the target.
     'block-start': 'M23 4 C22 13 22 24 23 35 M17 29 L23 36 L29 29',
-    // Label above-start; arrow points southeast.
     'block-start-inline-start': 'M6 6 C16 8 28 20 40 32 M36 22 L40 32 L30 28',
-    // Label above-end; arrow points southwest.
     'block-start-inline-end': 'M40 6 C30 8 18 20 6 32 M10 22 L6 32 L16 28',
-    // Label below; arrow points north into the target.
     'block-end': 'M23 35 C22 26 22 15 23 4 M17 10 L23 3 L29 10',
-    // Label below-start; arrow points northeast.
     'block-end-inline-start': 'M6 32 C16 30 28 18 40 6 M30 10 L40 6 L36 16',
-    // Label below-end; arrow points northwest.
     'block-end-inline-end': 'M40 32 C30 30 18 18 6 6 M16 10 L6 6 L10 16',
-    // Label on the start side; arrow points toward the target (east in LTR).
     'inline-start': 'M4 19 C15 18 31 18 43 19 M36 13 L43 19 L36 25',
-    // Label on the end side; arrow points toward the target (west in LTR).
     'inline-end': 'M43 19 C32 18 15 18 3 19 M10 13 L3 19 L10 25',
   },
   straight: {

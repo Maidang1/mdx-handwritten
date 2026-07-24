@@ -478,7 +478,6 @@
     margin-block-start: var(--hw-shift-block);
     margin-inline-start: var(--hw-shift-inline);
     max-inline-size: min(9.5rem, 42vw);
-    opacity: 0.92;
     overflow-wrap: anywhere;
     position: absolute;
     rotate: calc(var(--hw-rotation, -2deg) + var(--hw-variant-rotation, 0deg));
